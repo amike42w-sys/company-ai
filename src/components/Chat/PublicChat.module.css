@@ -1,0 +1,166 @@
+.container {
+  height: calc(100vh - 160px);
+}
+
+.chatCard {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatCard :global(.ant-card-body) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.messagesArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background: #f5f5f5;
+}
+
+.messageItem {
+  padding: 12px 0 !important;
+  border: none !important;
+}
+
+.messageContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 80%;
+}
+
+.userMessage .messageContent {
+  flex-direction: row-reverse;
+  margin-left: auto;
+}
+
+.aiMessage .messageContent {
+  margin-right: auto;
+}
+
+.userAvatar {
+  background: #1890ff;
+  flex-shrink: 0;
+}
+
+.aiAvatar {
+  background: #52c41a;
+  flex-shrink: 0;
+}
+
+.messageBubble {
+  background: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  max-width: calc(100% - 48px);
+}
+
+.userMessage .messageBubble {
+  background: #1890ff;
+  color: white;
+}
+
+.userMessage .messageBubble :global(.ant-typography) {
+  color: white;
+}
+
+.messageText {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.messageText :global(p) {
+  margin-bottom: 8px;
+}
+
+.messageText :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+.messageTime {
+  font-size: 11px;
+  margin-top: 4px;
+  display: block;
+}
+
+.userMessage .messageTime {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.inputArea {
+  padding: 16px 24px;
+  background: white;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.inputArea :global(.ant-input) {
+  min-height: 80px !important;
+  font-size: 14px;
+}
+
+.sendButton {
+  height: auto;
+  padding: 8px 24px;
+  min-height: 80px;
+}
+
+.loadingIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.suggestionTag {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.suggestionTag:hover {
+  background: #1890ff;
+  color: white;
+}
+
+.guestBanner {
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sessionItem {
+  cursor: pointer;
+  padding: 12px !important;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.sessionItem:hover {
+  background: #f5f5f5;
+}
+
+.activeSession {
+  background: #e6f7ff !important;
+  border: 1px solid #1890ff;
+}

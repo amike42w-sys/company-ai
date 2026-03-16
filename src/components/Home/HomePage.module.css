@@ -1,0 +1,172 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero {
+  text-align: center;
+  padding: 48px 24px;
+  background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+  border-radius: 12px;
+  margin-bottom: 32px;
+  color: white;
+}
+
+.heroIcon {
+  font-size: 64px;
+  margin-bottom: 24px;
+  color: white;
+}
+
+.heroTitle {
+  color: white !important;
+  margin-bottom: 8px !important;
+}
+
+.heroSubtitle {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 24px !important;
+  margin-bottom: 16px !important;
+  font-weight: 600 !important;
+}
+
+.heroDesc {
+  color: rgba(255, 255, 255, 0.8) !important;
+  max-width: 600px;
+  margin: 0 auto !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+.internalTag {
+  margin-top: 16px;
+  font-size: 14px;
+  padding: 4px 12px;
+}
+
+.features {
+  margin-bottom: 32px;
+}
+
+.featureCard {
+  height: 100%;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.featureContent {
+  text-align: center;
+  padding: 24px;
+}
+
+.featureIcon {
+  font-size: 48px;
+  color: #1890ff;
+  margin-bottom: 16px;
+}
+
+.infoCard {
+  margin-bottom: 32px;
+  border-radius: 12px;
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statValue {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1890ff;
+  margin-bottom: 8px;
+}
+
+.statLabel {
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.productCard {
+  text-align: center;
+  padding: 24px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.productCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.productIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.productName {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #262626;
+}
+
+.productSlogan {
+  font-size: 13px;
+  color: #1890ff;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.productDesc {
+  font-size: 13px;
+  color: #8c8c8c;
+  line-height: 1.5;
+}
+
+.serviceCard {
+  text-align: center;
+  padding: 24px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #f6ffed 0%, #f0f5ff 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.serviceCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.serviceIcon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.serviceName {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #262626;
+}
+
+.serviceDesc {
+  font-size: 13px;
+  color: #595959;
+  line-height: 1.6;
+}

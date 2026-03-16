@@ -1,0 +1,93 @@
+.layout {
+  min-height: 100vh;
+}
+
+/* 顶栏改成纯白色，增加细微的底部阴影 */
+.header {
+  background: #ffffff;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.06);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoIcon {
+  font-size: 28px;
+  color: #2f54eb; /* 和新的主题色保持一致 */
+}
+
+/* 顶栏变白后，文字必须变黑 */
+.logoText {
+  color: #1f2937; 
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  color: #4b5563; /* 用户信息图标颜色 */
+}
+
+.userInfo:hover {
+  background: #f3f4f6; /* 浅灰色悬浮反馈 */
+}
+
+/* 顶栏变白后，用户名必须变黑 */
+.username {
+  color: #374151; 
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 侧边栏去掉生硬的阴影，改为极细的边框感 */
+.sider {
+  background: #ffffff;
+  box-shadow: 1px 0 0 0 rgba(0, 0, 0, 0.04);
+  z-index: 10;
+}
+
+.contentLayout {
+  background: transparent;
+}
+
+/* 关键修复：去掉白色背景和内边距，让内部的 Card 组件自己负责白底！ */
+.content {
+  margin: 24px;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  min-height: calc(100vh - 112px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sider {
+    display: none;
+  }
+  
+  .content {
+    margin: 16px;
+  }
+}
