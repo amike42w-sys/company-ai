@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // API 基础 URL
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = '/api';
 
 // 证书信息
 const certificateInfo = {
