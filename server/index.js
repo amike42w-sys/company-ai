@@ -525,16 +525,20 @@ app.post('/api/certificates', async (req, res) => {
     }
     console.log("---------------------------------------");
 
+    // 使用安全的日期转换逻辑
+    const safeIssueDate = (issueDate && !isNaN(new Date(issueDate).getTime())) ? new Date(issueDate) : null;
+    const safeExpiryDate = (expiryDate && !isNaN(new Date(expiryDate).getTime())) ? new Date(expiryDate) : null;
+    
     const newCertificate = await Certificate.create({
       id: generateId(),
       companyId,
       name,
       type: category,
-      issueDate: (issueDate && !isNaN(new Date(issueDate))) ? new Date(issueDate) : null,
-      expiryDate: (expiryDate && !isNaN(new Date(expiryDate))) ? new Date(expiryDate) : null,
+      issueDate: safeIssueDate,
+      expiryDate: safeExpiryDate,
       imageUrl,
       imagePath,
-      imageBase64: imageBase64 || null,
+      imageBase64: null, // 【关键】不要把这几百万个字符存入数据库！设为 null
       status: status || 'valid',
       notes: description || '',
       createdAt: new Date(),
@@ -621,11 +625,13 @@ app.put('/api/certificates/:id', async (req, res) => {
       // 写入文件，带完整错误处理
       try {
         fs.writeFileSync(filePath, buffer);
-        console.log("文件物理写入成功，路径:", filePath);
-
+        console.log("文件物理写入成功");
+        
         certificate.imagePath = filePath;
         certificate.imageUrl = `/uploads/certificates/${fileName}`;
-        console.log("更新 imageUrl 为:", certificate.imageUrl);
+        
+        // 【关键】不要把这几百万个字符存入数据库！设为 null
+        certificate.imageBase64 = null;
       } catch (err) {
         console.error("文件写入硬盘失败:", err);
         return res.status(500).json({ success: false, message: '文件保存到服务器失败' });
@@ -638,8 +644,11 @@ app.put('/api/certificates/:id', async (req, res) => {
     // 更新其他字段
     if (name) certificate.name = name;
     if (standard) certificate.standard = standard;
-    if (issueDate) certificate.issueDate = new Date(issueDate);
-    if (expiryDate) certificate.expiryDate = new Date(expiryDate);
+    
+    // 使用这个安全的日期转换逻辑
+    certificate.issueDate = (issueDate && !isNaN(new Date(issueDate).getTime())) ? new Date(issueDate) : null;
+    certificate.expiryDate = (expiryDate && !isNaN(new Date(expiryDate).getTime())) ? new Date(expiryDate) : null;
+    
     if (issuingAuthority) certificate.issuingAuthority = issuingAuthority;
     if (description !== undefined) certificate.notes = description;
     if (category) certificate.type = category;
