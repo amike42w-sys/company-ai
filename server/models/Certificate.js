@@ -45,7 +45,7 @@ const Certificate = sequelize.define('Certificate', {
     allowNull: true
   },
   notes: {
-    type: DataTypes.TEXT,
+    type: DataTypes.TEXT('long'),
     allowNull: true
   },
   originalName: { // 顺便把你之前代码里用到的 originalName 也加上
