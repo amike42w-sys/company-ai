@@ -37,7 +37,7 @@ const Certificate = sequelize.define('Certificate', {
     allowNull: true
   },
   imageBase64: {
-    type: DataTypes.TEXT,
+    type: DataTypes.TEXT('long'),
     allowNull: true
   },
   status: {
