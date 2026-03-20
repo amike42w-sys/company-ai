@@ -1,9 +1,12 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { readJSON, writeJSON, usersPath, sessionsPath, messagesPath, certificatesPath, companiesPath, quotationsPath, certificatesUploadPath, initDatabase } = require('./database');
+// 导入你的数据库模型和同步函数
+const { User, Company, Certificate, Quotation, Message, Session, syncDatabase } = require('./models');
+const { Op } = require('sequelize');
+const { certificatesUploadPath } = require('./database');
 
-// 【第二步修改】打印后端使用的文件存储目录
+// 打印后端使用的文件存储目录
 console.log("后端使用的文件存储目录是:", certificatesUploadPath);
 
 // 简单的ID生成函数
@@ -13,6 +16,9 @@ function generateId() {
 
 const app = express();
 const PORT = 3001;
+
+// 在 app 启动前先同步数据库
+syncDatabase(); // 确保数据库表存在
 
 // 简单的CORS头部设置
 app.use((req, res, next) => {
@@ -27,20 +33,22 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: '150mb' }));
 
+// 1. 设置静态资源目录 (指向打包好的 dist 文件夹)
+app.use(express.static(path.join(__dirname, '../dist')));
+
 // 自定义静态文件服务 - 确保正确设置Content-Type
 app.get('/uploads/certificates/:filename', (req, res) => {
   const filename = req.params.filename;
   
-  // 【关键修改】强制使用 path.resolve 向上回退一级目录，确保定位到根目录下的 uploads
-  // 假设你的 index.js 在 server 文件夹里，uploads 在根目录下，这里使用 '..' 返回上一级
+  // 强制使用 path.resolve 向上回退一级目录，确保定位到根目录下的 uploads
   const rootDir = path.resolve(__dirname, '..');
   const filePath = path.join(rootDir, 'uploads', 'certificates', filename);
   
-  console.log("后端正在寻找文件路径:", filePath); // 这里会打印出真实的绝对路径
+  console.log("后端正在寻找文件路径:", filePath);
   
   // 检查文件是否存在
   if (!fs.existsSync(filePath)) {
-    console.error("文件未找到:", filePath); // 报错时把路径打印出来
+    console.error("文件未找到:", filePath);
     return res.status(404).json({ success: false, message: '文件不存在' });
   }
   
@@ -59,149 +67,112 @@ app.get('/uploads/certificates/:filename', (req, res) => {
   res.sendFile(filePath);
 });
 
-initDatabase();
+// ==================== 用户 API ====================
 
+// 登录接口重构
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
-  
   try {
-    const users = readJSON(usersPath);
-    const user = users.find(u => u.username === username);
-    
-    if (!user) {
+    const user = await User.findOne({ where: { username } });
+    if (!user || user.password !== password) {
       return res.json({ success: false, message: '用户名或密码错误' });
     }
-    
-    // 暂时使用明文密码验证，方便测试
-    const isValid = user.password === password;
-    
-    if (!isValid) {
-      return res.json({ success: false, message: '用户名或密码错误' });
-    }
-    
-    const { password: _, ...userWithoutPassword } = user;
-    res.json({ 
-      success: true, 
-      user: userWithoutPassword 
-    });
+    // 登录成功，返回用户信息
+    res.json({ success: true, user: { id: user.id, username: user.username, role: user.role } });
   } catch (error) {
-    console.error('登录错误:', error);
+    console.error('登录数据库错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
+// 注册接口重构
 app.post('/api/register', async (req, res) => {
   const { username, password, email, phone } = req.body;
-  
   try {
-    const users = readJSON(usersPath);
-    
-    const existingUser = users.find(u => u.username === username);
-    
+    const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
       return res.json({ success: false, message: '用户名已存在' });
     }
     
-    const id = generateId();
-    const avatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`;
-    const now = Date.now();
-    
-    const newUser = {
-      id,
+    const newUser = await User.create({
+      id: Date.now().toString(), // 简单的ID生成
       username,
-      password: password,
-      email: email || null,
-      phone: phone || null,
-      avatar,
-      role: 'external',
-      emailVerified: false,
-      phoneVerified: false,
-      createdAt: now,
-      updatedAt: now
-    };
-    
-    users.push(newUser);
-    writeJSON(usersPath, users);
-    
-    const { password: _, ...userWithoutPassword } = newUser;
-    
-    res.json({ 
-      success: true, 
-      user: userWithoutPassword 
+      password,
+      email,
+      phone,
+      role: 'external'
     });
+    
+    res.json({ success: true, user: newUser });
   } catch (error) {
-    console.error('注册错误:', error);
+    console.error('注册数据库错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
-app.get('/api/user/:id', (req, res) => {
+app.get('/api/user/:id', async (req, res) => {
   try {
-    const users = readJSON(usersPath);
-    const user = users.find(u => u.id === req.params.id);
+    const user = await User.findByPk(req.params.id);
     
     if (!user) {
       return res.json({ success: false, message: '用户不存在' });
     }
     
-    const { password: _, ...userWithoutPassword } = user;
-    res.json({ success: true, user: userWithoutPassword });
+    const userData = user.toJSON();
+    delete userData.password;
+    
+    res.json({ success: true, user: userData });
   } catch (error) {
     console.error('获取用户错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
-app.put('/api/user/:id', (req, res) => {
+app.put('/api/user/:id', async (req, res) => {
   const { email, phone, password } = req.body;
   const userId = req.params.id;
   
   try {
-    const users = readJSON(usersPath);
-    const userIndex = users.findIndex(u => u.id === userId);
+    const user = await User.findByPk(userId);
     
-    if (userIndex === -1) {
+    if (!user) {
       return res.json({ success: false, message: '用户不存在' });
     }
     
-    if (email) users[userIndex].email = email;
-    if (phone) users[userIndex].phone = phone;
+    if (email) user.email = email;
+    if (phone) user.phone = phone;
     if (password) {
-      users[userIndex].password = password;
+      user.password = password;
     }
     
-    users[userIndex].updatedAt = Date.now();
-    writeJSON(usersPath, users);
+    await user.save();
     
-    const { password: _, ...userWithoutPassword } = users[userIndex];
+    const userData = user.toJSON();
+    delete userData.password;
     
-    res.json({ success: true, user: userWithoutPassword });
+    res.json({ success: true, user: userData });
   } catch (error) {
     console.error('更新用户错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
-app.post('/api/sessions', (req, res) => {
+// ==================== 会话 API ====================
+
+app.post('/api/sessions', async (req, res) => {
   const { userId, type, title } = req.body;
   
   try {
-    const sessions = readJSON(sessionsPath);
     const id = generateId();
     const now = Date.now();
     
-    const newSession = {
+    const newSession = await Session.create({
       id,
       userId,
-      title: title || '新对话',
-      type,
-      createdAt: now,
-      updatedAt: now,
-      messageCount: 0
-    };
-    
-    sessions.push(newSession);
-    writeJSON(sessionsPath, sessions);
+      token: generateId(),
+      createdAt: new Date(now),
+      expiresAt: new Date(now + 7 * 24 * 60 * 60 * 1000) // 7天过期
+    });
     
     res.json({ success: true, sessionId: id });
   } catch (error) {
@@ -210,19 +181,18 @@ app.post('/api/sessions', (req, res) => {
   }
 });
 
-app.get('/api/sessions/:userId', (req, res) => {
+app.get('/api/sessions/:userId', async (req, res) => {
   const { userId } = req.params;
   const { type } = req.query;
   
   try {
-    let sessions = readJSON(sessionsPath);
-    sessions = sessions.filter(s => s.userId === userId);
+    let sessions = await Session.findAll({ where: { userId } });
     
     if (type) {
       sessions = sessions.filter(s => s.type === type);
     }
     
-    sessions.sort((a, b) => b.updatedAt - a.updatedAt);
+    sessions.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
     
     res.json({ success: true, sessions });
   } catch (error) {
@@ -231,18 +201,12 @@ app.get('/api/sessions/:userId', (req, res) => {
   }
 });
 
-app.delete('/api/sessions/:sessionId', (req, res) => {
+app.delete('/api/sessions/:sessionId', async (req, res) => {
   const { sessionId } = req.params;
   
   try {
-    let sessions = readJSON(sessionsPath);
-    let messages = readJSON(messagesPath);
-    
-    sessions = sessions.filter(s => s.id !== sessionId);
-    messages = messages.filter(m => m.sessionId !== sessionId);
-    
-    writeJSON(sessionsPath, sessions);
-    writeJSON(messagesPath, messages);
+    await Session.destroy({ where: { id: sessionId } });
+    await Message.destroy({ where: { sessionId } });
     
     res.json({ success: true });
   } catch (error) {
@@ -251,26 +215,20 @@ app.delete('/api/sessions/:sessionId', (req, res) => {
   }
 });
 
-app.delete('/api/sessions/user/:userId', (req, res) => {
+app.delete('/api/sessions/user/:userId', async (req, res) => {
   const { userId } = req.params;
   const { type } = req.query;
   
   try {
-    let sessions = readJSON(sessionsPath);
-    let messages = readJSON(messagesPath);
-    
-    let userSessions = sessions.filter(s => s.userId === userId);
+    let sessions = await Session.findAll({ where: { userId } });
     if (type) {
-      userSessions = userSessions.filter(s => s.type === type);
+      sessions = sessions.filter(s => s.type === type);
     }
     
-    const sessionIds = userSessions.map(s => s.id);
+    const sessionIds = sessions.map(s => s.id);
     
-    sessions = sessions.filter(s => !sessionIds.includes(s.id));
-    messages = messages.filter(m => !sessionIds.includes(m.sessionId));
-    
-    writeJSON(sessionsPath, sessions);
-    writeJSON(messagesPath, messages);
+    await Session.destroy({ where: { id: sessionIds } });
+    await Message.destroy({ where: { sessionId: sessionIds } });
     
     res.json({ success: true });
   } catch (error) {
@@ -279,36 +237,28 @@ app.delete('/api/sessions/user/:userId', (req, res) => {
   }
 });
 
-app.post('/api/messages', (req, res) => {
+// ==================== 消息 API ====================
+
+app.post('/api/messages', async (req, res) => {
   const { sessionId, userId, role, content, type } = req.body;
   
   try {
-    const messages = readJSON(messagesPath);
-    const sessions = readJSON(sessionsPath);
-    
     const id = generateId();
     const timestamp = Date.now();
     
-    const newMessage = {
+    const newMessage = await Message.create({
       id,
-      sessionId,
       userId,
-      role,
       content,
       type,
-      timestamp
-    };
-    
-    messages.push(newMessage);
-    writeJSON(messagesPath, messages);
+      createdAt: new Date(timestamp)
+    });
     
     if (sessionId) {
-      const sessionIndex = sessions.findIndex(s => s.id === sessionId);
-      if (sessionIndex !== -1) {
-        const sessionMessages = messages.filter(m => m.sessionId === sessionId);
-        sessions[sessionIndex].messageCount = sessionMessages.length;
-        sessions[sessionIndex].updatedAt = timestamp;
-        writeJSON(sessionsPath, sessions);
+      const session = await Session.findByPk(sessionId);
+      if (session) {
+        session.updatedAt = new Date(timestamp);
+        await session.save();
       }
     }
     
@@ -319,54 +269,53 @@ app.post('/api/messages', (req, res) => {
   }
 });
 
-app.get('/api/messages/:sessionId', (req, res) => {
+app.get('/api/messages/:sessionId', async (req, res) => {
   const { sessionId } = req.params;
   
   try {
-    const messages = readJSON(messagesPath);
-    const sessionMessages = messages
-      .filter(m => m.sessionId === sessionId)
-      .sort((a, b) => a.timestamp - b.timestamp);
+    const messages = await Message.findAll({
+      where: { sessionId },
+      order: [['createdAt', 'ASC']]
+    });
     
-    res.json({ success: true, messages: sessionMessages });
+    res.json({ success: true, messages });
   } catch (error) {
     console.error('获取消息错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
-app.get('/api/messages/user/:userId', (req, res) => {
+app.get('/api/messages/user/:userId', async (req, res) => {
   const { userId } = req.params;
   const { type } = req.query;
   
   try {
-    const messages = readJSON(messagesPath);
-    const sessions = readJSON(sessionsPath);
+    const sessions = await Session.findAll({ where: { userId } });
     
-    let userSessions = sessions.filter(s => s.userId === userId);
     if (type) {
-      userSessions = userSessions.filter(s => s.type === type);
+      sessions = sessions.filter(s => s.type === type);
     }
     
-    const sessionIds = userSessions.map(s => s.id);
+    const sessionIds = sessions.map(s => s.id);
     
-    const userMessages = messages
-      .filter(m => sessionIds.includes(m.sessionId))
-      .sort((a, b) => a.timestamp - b.timestamp);
+    const messages = await Message.findAll({
+      where: { sessionId: sessionIds },
+      order: [['createdAt', 'ASC']]
+    });
     
-    res.json({ success: true, messages: userMessages });
+    res.json({ success: true, messages });
   } catch (error) {
     console.error('获取用户消息错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
-// ==================== 证书管理 API ====================
+// ==================== 公司 API ====================
 
 // 获取所有公司列表
-app.get('/api/companies', (req, res) => {
+app.get('/api/companies', async (req, res) => {
   try {
-    const companies = readJSON(companiesPath, []);
+    const companies = await Company.findAll();
     res.json({ success: true, companies });
   } catch (error) {
     console.error('获取公司列表错误:', error);
@@ -375,27 +324,20 @@ app.get('/api/companies', (req, res) => {
 });
 
 // 添加新公司
-app.post('/api/companies', (req, res) => {
+app.post('/api/companies', async (req, res) => {
   const { name, description } = req.body;
   
   try {
-    const companies = readJSON(companiesPath, []);
-    
-    // 检查公司是否已存在
-    const existingCompany = companies.find(c => c.name === name);
+    const existingCompany = await Company.findOne({ where: { name } });
     if (existingCompany) {
       return res.json({ success: false, message: '公司已存在' });
     }
     
-    const newCompany = {
+    const newCompany = await Company.create({
       id: generateId(),
       name,
-      description: description || '',
-      createdAt: Date.now()
-    };
-    
-    companies.push(newCompany);
-    writeJSON(companiesPath, companies);
+      description: description || ''
+    });
     
     res.json({ success: true, company: newCompany });
   } catch (error) {
@@ -405,34 +347,31 @@ app.post('/api/companies', (req, res) => {
 });
 
 // 更新公司
-app.put('/api/companies/:id', (req, res) => {
+app.put('/api/companies/:id', async (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
   
   try {
-    let companies = readJSON(companiesPath, []);
-    const index = companies.findIndex(c => c.id === id);
-    
-    if (index === -1) {
+    const company = await Company.findByPk(id);
+    if (!company) {
       return res.json({ success: false, message: '公司不存在' });
     }
     
     // 检查新名称是否与其他公司重复
-    if (name && name !== companies[index].name) {
-      const existingCompany = companies.find(c => c.name === name && c.id !== id);
+    if (name && name !== company.name) {
+      const existingCompany = await Company.findOne({ where: { name, id: { [Op.ne]: id } } });
       if (existingCompany) {
         return res.json({ success: false, message: '公司名称已存在' });
       }
     }
     
     // 更新公司信息
-    if (name) companies[index].name = name;
-    if (description !== undefined) companies[index].description = description;
-    companies[index].updatedAt = Date.now();
+    if (name) company.name = name;
+    if (description !== undefined) company.description = description;
     
-    writeJSON(companiesPath, companies);
+    await company.save();
     
-    res.json({ success: true, company: companies[index] });
+    res.json({ success: true, company });
   } catch (error) {
     console.error('更新公司错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
@@ -440,29 +379,25 @@ app.put('/api/companies/:id', (req, res) => {
 });
 
 // 删除公司
-app.delete('/api/companies/:id', (req, res) => {
+app.delete('/api/companies/:id', async (req, res) => {
   const { id } = req.params;
   
   try {
-    let companies = readJSON(companiesPath, []);
-    let certificates = readJSON(certificatesPath, []);
-    
-    // 删除公司
-    companies = companies.filter(c => c.id !== id);
-    
-    // 删除该公司相关的所有证书
-    const companyCertificates = certificates.filter(c => c.companyId === id);
-    certificates = certificates.filter(c => c.companyId !== id);
+    // 删除公司相关的所有证书
+    const certificates = await Certificate.findAll({ where: { companyId: id } });
     
     // 删除证书图片文件
-    companyCertificates.forEach(cert => {
+    certificates.forEach(cert => {
       if (cert.imagePath && fs.existsSync(cert.imagePath)) {
         fs.unlinkSync(cert.imagePath);
       }
     });
     
-    writeJSON(companiesPath, companies);
-    writeJSON(certificatesPath, certificates);
+    // 删除证书
+    await Certificate.destroy({ where: { companyId: id } });
+    
+    // 删除公司
+    await Company.destroy({ where: { id } });
     
     res.json({ success: true });
   } catch (error) {
@@ -471,17 +406,19 @@ app.delete('/api/companies/:id', (req, res) => {
   }
 });
 
+// ==================== 证书 API ====================
+
 // 获取所有证书列表
-app.get('/api/certificates', (req, res) => {
+app.get('/api/certificates', async (req, res) => {
   try {
-    const certificates = readJSON(certificatesPath, []);
-    const companies = readJSON(companiesPath, []);
+    const certificates = await Certificate.findAll();
+    const companies = await Company.findAll();
     
     // 添加公司信息到证书数据
     const certificatesWithCompany = certificates.map(cert => {
       const company = companies.find(c => c.id === cert.companyId);
       return {
-        ...cert,
+        ...cert.toJSON(),
         companyName: company ? company.name : '未知公司'
       };
     });
@@ -494,24 +431,21 @@ app.get('/api/certificates', (req, res) => {
 });
 
 // 获取单个证书详情
-app.get('/api/certificates/:id', (req, res) => {
+app.get('/api/certificates/:id', async (req, res) => {
   const { id } = req.params;
   
   try {
-    const certificates = readJSON(certificatesPath, []);
-    const companies = readJSON(companiesPath, []);
-    
-    const certificate = certificates.find(c => c.id === id);
+    const certificate = await Certificate.findByPk(id);
     if (!certificate) {
       return res.json({ success: false, message: '证书不存在' });
     }
     
-    const company = companies.find(c => c.id === certificate.companyId);
+    const company = await Company.findByPk(certificate.companyId);
     
     res.json({ 
       success: true, 
       certificate: {
-        ...certificate,
+        ...certificate.toJSON(),
         companyName: company ? company.name : '未知公司'
       }
     });
@@ -522,15 +456,12 @@ app.get('/api/certificates/:id', (req, res) => {
 });
 
 // 添加证书（支持Base64图片）
-app.post('/api/certificates', (req, res) => {
+app.post('/api/certificates', async (req, res) => {
   const { companyId, name, standard, issueDate, expiryDate, issuingAuthority, description, category, status, imageBase64, originalName } = req.body;
   
   try {
-    const certificates = readJSON(certificatesPath, []);
-    const companies = readJSON(companiesPath, []);
-    
     // 验证公司是否存在
-    const company = companies.find(c => c.id === companyId);
+    const company = await Company.findByPk(companyId);
     if (!company) {
       return res.json({ success: false, message: '公司不存在' });
     }
@@ -545,14 +476,14 @@ app.post('/api/certificates', (req, res) => {
     if (imageBase64) {
       console.log("进入文件处理逻辑");
       
-      // 【第一步修改】确保文件夹一定存在
+      // 确保文件夹一定存在
       const dir = certificatesUploadPath;
       if (!fs.existsSync(dir)) {
         console.log("文件夹不存在，正在创建:", dir);
         fs.mkdirSync(dir, { recursive: true });
       }
       
-      // 1. 获取 MIME 类型 (比如 image/png 或 application/pdf)
+      // 1. 获取 MIME 类型
       const matches = imageBase64.match(/^data:([A-Za-z-+\/]+);base64,/);
       const mimeType = matches ? matches[1] : 'image/png';
       console.log("检测到的文件类型:", mimeType);
@@ -571,14 +502,14 @@ app.post('/api/certificates', (req, res) => {
       // 3. 使用正确的后缀名
       const base64Data = imageBase64.replace(/^data:([A-Za-z-+\/]+);base64,/, '');
       const buffer = Buffer.from(base64Data, 'base64');
-      const fileName = `cert_${generateId()}${ext}`; // 动态扩展名
+      const fileName = `cert_${generateId()}${ext}`;
       const filePath = path.join(certificatesUploadPath, fileName);
       
       console.log("certificatesUploadPath:", certificatesUploadPath);
       console.log("准备保存的完整路径:", filePath);
       console.log("Buffer大小:", buffer.length, "字节");
       
-      // 【第一步修改】写入文件，带完整错误处理
+      // 写入文件，带完整错误处理
       try {
         fs.writeFileSync(filePath, buffer);
         console.log("文件物理写入成功，路径:", filePath);
@@ -594,31 +525,25 @@ app.post('/api/certificates', (req, res) => {
     }
     console.log("---------------------------------------");
     
-    const newCertificate = {
+    const newCertificate = await Certificate.create({
       id: generateId(),
       companyId,
       name,
-      standard,
-      issueDate,
-      expiryDate,
-      issuingAuthority,
-      description: description || '',
-      category,
-      status: status || 'valid',
-      imagePath,
+      type: category,
+      issueDate: issueDate ? new Date(issueDate) : null,
+      expiryDate: expiryDate ? new Date(expiryDate) : null,
       imageUrl,
-      originalName: originalName || '未知文件',
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    };
-    
-    certificates.push(newCertificate);
-    writeJSON(certificatesPath, certificates);
+      imageBase64: imageBase64 || null,
+      status: status || 'valid',
+      notes: description || '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
     
     res.json({ 
       success: true, 
       certificate: {
-        ...newCertificate,
+        ...newCertificate.toJSON(),
         companyName: company.name
       }
     });
@@ -629,20 +554,17 @@ app.post('/api/certificates', (req, res) => {
 });
 
 // 更新证书
-app.put('/api/certificates/:id', (req, res) => {
+app.put('/api/certificates/:id', async (req, res) => {
   const { id } = req.params;
   const { name, standard, issueDate, expiryDate, issuingAuthority, description, category, status, imageBase64, originalName } = req.body;
   
   try {
-    const certificates = readJSON(certificatesPath, []);
-    const companies = readJSON(companiesPath, []);
-    
-    const index = certificates.findIndex(c => c.id === id);
-    if (index === -1) {
+    const certificate = await Certificate.findByPk(id);
+    if (!certificate) {
       return res.json({ success: false, message: '证书不存在' });
     }
     
-    console.log("正在更新证书，原始数据:", certificates[index]);
+    console.log("正在更新证书，原始数据:", certificate.toJSON());
     
     // 处理新图片
     console.log("---------------------------------------");
@@ -651,7 +573,7 @@ app.put('/api/certificates/:id', (req, res) => {
     if (imageBase64) {
       console.log("进入文件处理逻辑");
       
-      // 【第一步修改】确保文件夹一定存在
+      // 确保文件夹一定存在
       const dir = certificatesUploadPath;
       if (!fs.existsSync(dir)) {
         console.log("文件夹不存在，正在创建:", dir);
@@ -659,17 +581,17 @@ app.put('/api/certificates/:id', (req, res) => {
       }
       
       // 删除旧图片
-      if (certificates[index].imagePath && fs.existsSync(certificates[index].imagePath)) {
-        console.log("删除旧文件:", certificates[index].imagePath);
+      if (certificate.imagePath && fs.existsSync(certificate.imagePath)) {
+        console.log("删除旧文件:", certificate.imagePath);
         try {
-          fs.unlinkSync(certificates[index].imagePath);
+          fs.unlinkSync(certificate.imagePath);
           console.log("旧文件删除成功");
         } catch (err) {
           console.error("删除旧文件失败:", err);
         }
       }
       
-      // 1. 获取 MIME 类型 (比如 image/png 或 application/pdf)
+      // 1. 获取 MIME 类型
       const matches = imageBase64.match(/^data:([A-Za-z-+\/]+);base64,/);
       const mimeType = matches ? matches[1] : 'image/png';
       console.log("检测到的文件类型:", mimeType);
@@ -688,21 +610,21 @@ app.put('/api/certificates/:id', (req, res) => {
       // 3. 使用正确的后缀名
       const base64Data = imageBase64.replace(/^data:([A-Za-z-+\/]+);base64,/, '');
       const buffer = Buffer.from(base64Data, 'base64');
-      const fileName = `cert_${generateId()}${ext}`; // 动态扩展名
+      const fileName = `cert_${generateId()}${ext}`;
       const filePath = path.join(certificatesUploadPath, fileName);
       
       console.log("certificatesUploadPath:", certificatesUploadPath);
       console.log("准备保存的完整路径:", filePath);
       console.log("Buffer大小:", buffer.length, "字节");
       
-      // 【第一步修改】写入文件，带完整错误处理
+      // 写入文件，带完整错误处理
       try {
         fs.writeFileSync(filePath, buffer);
         console.log("文件物理写入成功，路径:", filePath);
         
-        certificates[index].imagePath = filePath;
-        certificates[index].imageUrl = `/uploads/certificates/${fileName}`;
-        console.log("更新 imageUrl 为:", certificates[index].imageUrl);
+        certificate.imagePath = filePath;
+        certificate.imageUrl = `/uploads/certificates/${fileName}`;
+        console.log("更新 imageUrl 为:", certificate.imageUrl);
       } catch (err) {
         console.error("文件写入硬盘失败:", err);
         return res.status(500).json({ success: false, message: '文件保存到服务器失败' });
@@ -713,28 +635,28 @@ app.put('/api/certificates/:id', (req, res) => {
     console.log("---------------------------------------");
     
     // 更新其他字段
-    if (name) certificates[index].name = name;
-    if (standard) certificates[index].standard = standard;
-    if (issueDate) certificates[index].issueDate = issueDate;
-    if (expiryDate) certificates[index].expiryDate = expiryDate;
-    if (issuingAuthority) certificates[index].issuingAuthority = issuingAuthority;
-    if (description !== undefined) certificates[index].description = description;
-    if (category) certificates[index].category = category;
-    if (status) certificates[index].status = status;
-    if (originalName) certificates[index].originalName = originalName;
+    if (name) certificate.name = name;
+    if (standard) certificate.standard = standard;
+    if (issueDate) certificate.issueDate = new Date(issueDate);
+    if (expiryDate) certificate.expiryDate = new Date(expiryDate);
+    if (issuingAuthority) certificate.issuingAuthority = issuingAuthority;
+    if (description !== undefined) certificate.notes = description;
+    if (category) certificate.type = category;
+    if (status) certificate.status = status;
+    if (originalName) certificate.originalName = originalName;
     
-    certificates[index].updatedAt = Date.now();
+    certificate.updatedAt = new Date();
     
-    console.log("更新后的证书数据:", certificates[index]);
+    console.log("更新后的证书数据:", certificate.toJSON());
     
-    writeJSON(certificatesPath, certificates);
+    await certificate.save();
     
-    const company = companies.find(c => c.id === certificates[index].companyId);
+    const company = await Company.findByPk(certificate.companyId);
     
     res.json({ 
       success: true, 
       certificate: {
-        ...certificates[index],
+        ...certificate.toJSON(),
         companyName: company ? company.name : '未知公司'
       }
     });
@@ -745,13 +667,11 @@ app.put('/api/certificates/:id', (req, res) => {
 });
 
 // 删除证书
-app.delete('/api/certificates/:id', (req, res) => {
+app.delete('/api/certificates/:id', async (req, res) => {
   const { id } = req.params;
   
   try {
-    let certificates = readJSON(certificatesPath, []);
-    
-    const certificate = certificates.find(c => c.id === id);
+    const certificate = await Certificate.findByPk(id);
     if (!certificate) {
       return res.json({ success: false, message: '证书不存在' });
     }
@@ -761,8 +681,7 @@ app.delete('/api/certificates/:id', (req, res) => {
       fs.unlinkSync(certificate.imagePath);
     }
     
-    certificates = certificates.filter(c => c.id !== id);
-    writeJSON(certificatesPath, certificates);
+    await certificate.destroy();
     
     res.json({ success: true });
   } catch (error) {
@@ -771,14 +690,12 @@ app.delete('/api/certificates/:id', (req, res) => {
   }
 });
 
-
-
 // ==================== 报价单 API ====================
 
 // 获取所有报价单
-app.get('/api/quotations', (req, res) => {
+app.get('/api/quotations', async (req, res) => {
   try {
-    const quotations = readJSON(quotationsPath, []);
+    const quotations = await Quotation.findAll();
     res.json({ success: true, quotations });
   } catch (error) {
     console.error('获取报价单错误:', error);
@@ -787,11 +704,10 @@ app.get('/api/quotations', (req, res) => {
 });
 
 // 获取单个报价单
-app.get('/api/quotations/:id', (req, res) => {
+app.get('/api/quotations/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const quotations = readJSON(quotationsPath, []);
-    const quotation = quotations.find(q => q.id === id);
+    const quotation = await Quotation.findByPk(id);
     if (!quotation) {
       return res.json({ success: false, message: '报价单不存在' });
     }
@@ -803,13 +719,11 @@ app.get('/api/quotations/:id', (req, res) => {
 });
 
 // 创建报价单
-app.post('/api/quotations', (req, res) => {
+app.post('/api/quotations', async (req, res) => {
   const { customerName, standard, standardRate, items, totalAmount, status, notes } = req.body;
   
   try {
-    const quotations = readJSON(quotationsPath, []);
-    
-    const newQuotation = {
+    const newQuotation = await Quotation.create({
       id: generateId(),
       customerName,
       standard: standard || '国标',
@@ -818,12 +732,9 @@ app.post('/api/quotations', (req, res) => {
       totalAmount: totalAmount || 0,
       status: status || 'draft',
       notes: notes || '',
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    };
-    
-    quotations.push(newQuotation);
-    writeJSON(quotationsPath, quotations);
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
     
     res.json({ success: true, quotation: newQuotation });
   } catch (error) {
@@ -833,30 +744,28 @@ app.post('/api/quotations', (req, res) => {
 });
 
 // 更新报价单
-app.put('/api/quotations/:id', (req, res) => {
+app.put('/api/quotations/:id', async (req, res) => {
   const { id } = req.params;
   const { customerName, standard, standardRate, items, totalAmount, status, notes } = req.body;
   
   try {
-    const quotations = readJSON(quotationsPath, []);
-    const index = quotations.findIndex(q => q.id === id);
-    
-    if (index === -1) {
+    const quotation = await Quotation.findByPk(id);
+    if (!quotation) {
       return res.json({ success: false, message: '报价单不存在' });
     }
     
-    if (customerName !== undefined) quotations[index].customerName = customerName;
-    if (standard !== undefined) quotations[index].standard = standard;
-    if (standardRate !== undefined) quotations[index].standardRate = standardRate;
-    if (items !== undefined) quotations[index].items = items;
-    if (totalAmount !== undefined) quotations[index].totalAmount = totalAmount;
-    if (status !== undefined) quotations[index].status = status;
-    if (notes !== undefined) quotations[index].notes = notes;
-    quotations[index].updatedAt = Date.now();
+    if (customerName !== undefined) quotation.customerName = customerName;
+    if (standard !== undefined) quotation.standard = standard;
+    if (standardRate !== undefined) quotation.standardRate = standardRate;
+    if (items !== undefined) quotation.items = items;
+    if (totalAmount !== undefined) quotation.totalAmount = totalAmount;
+    if (status !== undefined) quotation.status = status;
+    if (notes !== undefined) quotation.notes = notes;
+    quotation.updatedAt = new Date();
     
-    writeJSON(quotationsPath, quotations);
+    await quotation.save();
     
-    res.json({ success: true, quotation: quotations[index] });
+    res.json({ success: true, quotation });
   } catch (error) {
     console.error('更新报价单错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
@@ -864,19 +773,22 @@ app.put('/api/quotations/:id', (req, res) => {
 });
 
 // 删除报价单
-app.delete('/api/quotations/:id', (req, res) => {
+app.delete('/api/quotations/:id', async (req, res) => {
   const { id } = req.params;
   
   try {
-    let quotations = readJSON(quotationsPath, []);
-    quotations = quotations.filter(q => q.id !== id);
-    writeJSON(quotationsPath, quotations);
+    await Quotation.destroy({ where: { id } });
     
     res.json({ success: true });
   } catch (error) {
     console.error('删除报价单错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
+});
+
+// 3. 让所有其他的路径都指向 index.html (支持 React 路由)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 app.listen(PORT, () => {

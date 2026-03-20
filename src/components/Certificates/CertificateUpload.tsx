@@ -200,7 +200,7 @@ const CertificateUpload: React.FC = () => {
         </div>
       );
     }
-    return <Image src={`http://localhost:3001${url}`} width={80} height={60} style={{ objectFit: 'cover', borderRadius: 4 }} />;
+    return <Image src={`${url}`} width={80} height={60} style={{ objectFit: 'cover', borderRadius: 4 }} />;
   };
 
   // 其他辅助函数保持原有逻辑

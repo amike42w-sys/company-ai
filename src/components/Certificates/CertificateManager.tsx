@@ -77,7 +77,7 @@ const SupplierCertificateManager: React.FC = () => {
   const getBlobUrl = (record: Certificate) => {
     // 如果后端有返回路径，优先使用 (推荐)
     if (record.imageUrl) {
-      return `http://localhost:3001${record.imageUrl}`;
+      return `${record.imageUrl}`;
     }
     // 如果必须用 Base64
     if (record.imageBase64) {
@@ -272,7 +272,7 @@ const SupplierCertificateManager: React.FC = () => {
   // 放在组件内部的其他 const 函数旁边
   const getPdfUrl = (record: Certificate) =>  {
     if  (record.imageUrl) {
-      return `http://localhost:3001${record.imageUrl}`;
+      return `${record.imageUrl}`;
     }
     if  (record.imageBase64) {
       const base64Data = record.imageBase64.includes('base64,')
@@ -395,7 +395,7 @@ const SupplierCertificateManager: React.FC = () => {
                       <div style={{ marginTop: 16 }}>
                         <p><strong>文件预览：</strong></p>
                         {(() => {
-                          const fullImageUrl = record.imageUrl ? `http://localhost:3001${record.imageUrl}` : '';
+                          const fullImageUrl = record.imageUrl ? `${record.imageUrl}` : '';
                           const displaySrc = record.imageBase64 || fullImageUrl;
                           const isPdf = displaySrc.includes('data:application/pdf') || (record.imageUrl && record.imageUrl.toLowerCase().endsWith('.pdf'));
                           

@@ -446,7 +446,7 @@ const SupplierCertificateManager: React.FC = () => {
   const getBlobUrl = (record: Certificate) => {
     // 如果后端有返回路径，优先使用 (推荐)
     if (record.imageUrl) {
-      return `http://localhost:3001${record.imageUrl}`;
+      return `${record.imageUrl}`;
     }
     // 如果必须用 Base64
     if (record.imageBase64) {
@@ -611,7 +611,7 @@ const SupplierCertificateManager: React.FC = () => {
                           {record.imageUrl && record.imageUrl.toLowerCase().endsWith('.pdf') ? (
                             // 如果是 PDF，使用 iframe 预览
                             <iframe 
-                              src={`http://localhost:3001${record.imageUrl}`} 
+                              src={`${record.imageUrl}`} 
                               width="100%" 
                               height="500px" 
                               title="PDF Preview"
@@ -621,7 +621,7 @@ const SupplierCertificateManager: React.FC = () => {
                           ) : (
                             // 如果是图片，才使用 Image 组件
                             <Image
-                              src={record.imageBase64 || `http://localhost:3001${record.imageUrl}`}
+                              src={record.imageBase64 || `${record.imageUrl}`}
                               style={{ maxWidth: '100%' }}
                               fallback="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
                               preview={{ 
