@@ -27,10 +27,6 @@ const Certificate = sequelize.define('Certificate', {
     type: DataTypes.STRING,
     allowNull: true
   },
-  imageUrl: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
   imagePath: {
     type: DataTypes.STRING,
     allowNull: true

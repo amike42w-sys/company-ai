@@ -476,9 +476,33 @@ app.get('/api/certificates/:id', async (req, res) => {
 
 // 添加证书（支持FormData和Base64）
 app.post('/api/certificates', upload.single('file'), async (req, res) => {
-  // 从 req.body 获取表单数据（FormData）或 req.body 获取 JSON 数据
+  // 打印所有接收到的东西
+  console.log("=== 收到上传请求 ===");
+  console.log("Body内容:", req.body);
   const rawId = req.body.companyId;
   const companyId = typeof rawId === 'string' ? rawId.trim() : rawId;
+  
+  // 用最原始的 SQL 查一下试试
+  const [results] = await sequelize.query(`SELECT * FROM companies WHERE id = '${companyId}'`);
+  console.log("原始SQL查询结果:", results.length > 0 ? "找到了公司" : "没找到公司");
+
+  // 2. 打印诊断日志
+  console.log("---------------------------------------");
+  console.log("【诊断】收到的原始 ID:", `"${rawId}"`);
+  console.log("【诊断】去空格后的 ID:", `"${companyId}"`);
+  console.log("【诊断】ID 长度:", companyId ? companyId.length : 0);
+
+  // 3. 执行查询
+  const company = await Company.findByPk(companyId);
+  console.log("【诊断】数据库查询结果:", company ? `✅ 成功：${company.name}` : "❌ 失败：返回 null");
+  console.log("---------------------------------------");
+
+  if (!company) {
+    // 即使失败，也把 ID 传回去看看
+    return res.json({ success: false, message: `公司不存在 (查询ID: ${companyId})` });
+  }
+  
+  // 从 req.body 获取其他表单数据
   const name = req.body.name;
   const standard = req.body.standard;
   const issueDate = req.body.issueDate;
@@ -491,21 +515,6 @@ app.post('/api/certificates', upload.single('file'), async (req, res) => {
   const originalName = req.body.originalName;
 
   try {
-    // 2. 打印诊断日志
-    console.log("---------------------------------------");
-    console.log("【诊断】收到的原始 ID:", `"${rawId}"`);
-    console.log("【诊断】去空格后的 ID:", `"${companyId}"`);
-    console.log("【诊断】ID 长度:", companyId ? companyId.length : 0);
-
-    // 3. 执行查询
-    const company = await Company.findByPk(companyId);
-    console.log("【诊断】数据库查询结果:", company ? `✅ 成功：${company.name}` : "❌ 失败：返回 null");
-    console.log("---------------------------------------");
-
-    if (!company) {
-      // 即使失败，也把 ID 传回去看看
-      return res.json({ success: false, message: `公司不存在 (查询ID: ${companyId})` });
-    }
 
     let imagePath = null;
     let imageUrl = null;
