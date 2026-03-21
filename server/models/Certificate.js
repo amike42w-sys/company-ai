@@ -24,20 +24,15 @@ const Certificate = sequelize.define('Certificate', {
     allowNull: true
   },
   expiryDate: {
-    type: DataTypes.DATE,
+    type: DataTypes.STRING,
     allowNull: true
   },
   imageUrl: {
     type: DataTypes.STRING,
     allowNull: true
   },
-  // 【新增】这一行必须有，否则你没法删除物理文件！
   imagePath: {
     type: DataTypes.STRING,
-    allowNull: true
-  },
-  imageBase64: {
-    type: DataTypes.TEXT('long'),
     allowNull: true
   },
   status: {
@@ -48,7 +43,7 @@ const Certificate = sequelize.define('Certificate', {
     type: DataTypes.TEXT('long'),
     allowNull: true
   },
-  originalName: { // 顺便把你之前代码里用到的 originalName 也加上
+  originalName: { 
     type: DataTypes.STRING,
     allowNull: true
   },

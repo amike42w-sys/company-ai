@@ -1,10 +1,10 @@
 const { Sequelize } = require('sequelize');
 
 // 创建数据库连接
-const sequelize = new Sequelize('certificate_db', 'root', '050309', {
+const sequelize = new Sequelize('certificate_db', 'certificate_db', '050309', {
   host: '127.0.0.1',
   dialect: 'mysql',
-  logging: false,
+  logging: console.log,
   pool: {
     max: 5,
     min: 0,

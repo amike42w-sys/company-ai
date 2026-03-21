@@ -477,7 +477,8 @@ app.get('/api/certificates/:id', async (req, res) => {
 // 添加证书（支持FormData和Base64）
 app.post('/api/certificates', upload.single('file'), async (req, res) => {
   // 从 req.body 获取表单数据（FormData）或 req.body 获取 JSON 数据
-  const companyId = req.body.companyId;
+  const rawId = req.body.companyId;
+  const companyId = typeof rawId === 'string' ? rawId.trim() : rawId;
   const name = req.body.name;
   const standard = req.body.standard;
   const issueDate = req.body.issueDate;
@@ -490,17 +491,24 @@ app.post('/api/certificates', upload.single('file'), async (req, res) => {
   const originalName = req.body.originalName;
 
   try {
-    // 验证公司是否存在
+    // 2. 打印诊断日志
+    console.log("---------------------------------------");
+    console.log("【诊断】收到的原始 ID:", `"${rawId}"`);
+    console.log("【诊断】去空格后的 ID:", `"${companyId}"`);
+    console.log("【诊断】ID 长度:", companyId ? companyId.length : 0);
+
+    // 3. 执行查询
     const company = await Company.findByPk(companyId);
+    console.log("【诊断】数据库查询结果:", company ? `✅ 成功：${company.name}` : "❌ 失败：返回 null");
+    console.log("---------------------------------------");
+
     if (!company) {
-      return res.json({ success: false, message: '公司不存在' });
+      // 即使失败，也把 ID 传回去看看
+      return res.json({ success: false, message: `公司不存在 (查询ID: ${companyId})` });
     }
 
     let imagePath = null;
     let imageUrl = null;
-
-    console.log("---------------------------------------");
-    console.log("POST 添加证书");
 
     if (req.file) {
       console.log("使用 FormData 上传文件:", req.file.originalname);
@@ -558,7 +566,6 @@ app.post('/api/certificates', upload.single('file'), async (req, res) => {
     } else {
       console.log("没有上传文件");
     }
-    console.log("---------------------------------------");
 
     // 使用安全的日期转换逻辑
     const safeIssueDate = (issueDate && !isNaN(new Date(issueDate).getTime())) ? new Date(issueDate) : null;
