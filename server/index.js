@@ -1,10 +1,29 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 // 导入你的数据库模型和同步函数
 const { User, Company, Certificate, Quotation, Message, Session, syncDatabase } = require('./models');
 const { Op } = require('sequelize');
 const { certificatesUploadPath } = require('./database');
+
+// 配置 multer 中间件
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = certificatesUploadPath;
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const fileName = `cert_${Date.now().toString() + Math.random().toString(36).substr(2, 9)}${ext}`;
+    cb(null, fileName);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 // 打印后端使用的文件存储目录
 console.log("后端使用的文件存储目录是:", certificatesUploadPath);
@@ -455,9 +474,20 @@ app.get('/api/certificates/:id', async (req, res) => {
   }
 });
 
-// 添加证书（支持Base64图片）
-app.post('/api/certificates', async (req, res) => {
-  const { companyId, name, standard, issueDate, expiryDate, issuingAuthority, description, category, status, imageBase64, originalName } = req.body;
+// 添加证书（支持FormData和Base64）
+app.post('/api/certificates', upload.single('file'), async (req, res) => {
+  // 从 req.body 获取表单数据（FormData）或 req.body 获取 JSON 数据
+  const companyId = req.body.companyId;
+  const name = req.body.name;
+  const standard = req.body.standard;
+  const issueDate = req.body.issueDate;
+  const expiryDate = req.body.expiryDate;
+  const issuingAuthority = req.body.issuingAuthority;
+  const description = req.body.description;
+  const category = req.body.category;
+  const status = req.body.status;
+  const imageBase64 = req.body.imageBase64;
+  const originalName = req.body.originalName;
 
   try {
     // 验证公司是否存在
@@ -469,13 +499,18 @@ app.post('/api/certificates', async (req, res) => {
     let imagePath = null;
     let imageUrl = null;
 
-    // 处理Base64图片
     console.log("---------------------------------------");
-    console.log("POST 添加证书 - imageBase64 是否有值:", !!imageBase64);
+    console.log("POST 添加证书");
 
-    if (imageBase64) {
-      console.log("进入文件处理逻辑");
-
+    if (req.file) {
+      console.log("使用 FormData 上传文件:", req.file.originalname);
+      imagePath = req.file.path;
+      imageUrl = `/uploads/certificates/${req.file.filename}`;
+      console.log("文件已保存到:", imagePath);
+      console.log("设置 imageUrl 为:", imageUrl);
+    } else if (imageBase64) {
+      console.log("使用 Base64 上传");
+      
       // 确保文件夹一定存在
       const dir = certificatesUploadPath;
       if (!fs.existsSync(dir)) {
@@ -558,10 +593,19 @@ app.post('/api/certificates', async (req, res) => {
   }
 });
 
-// 更新证书
-app.put('/api/certificates/:id', async (req, res) => {
+// 更新证书（支持FormData和Base64）
+app.put('/api/certificates/:id', upload.single('file'), async (req, res) => {
   const { id } = req.params;
-  const { name, standard, issueDate, expiryDate, issuingAuthority, description, category, status, imageBase64, originalName } = req.body;
+  const name = req.body.name;
+  const standard = req.body.standard;
+  const issueDate = req.body.issueDate;
+  const expiryDate = req.body.expiryDate;
+  const issuingAuthority = req.body.issuingAuthority;
+  const description = req.body.description;
+  const category = req.body.category;
+  const status = req.body.status;
+  const imageBase64 = req.body.imageBase64;
+  const originalName = req.body.originalName;
 
   try {
     const certificate = await Certificate.findByPk(id);
@@ -573,18 +617,11 @@ app.put('/api/certificates/:id', async (req, res) => {
 
     // 处理新图片
     console.log("---------------------------------------");
-    console.log("PUT 更新开始 - imageBase64 是否有值:", !!imageBase64);
+    console.log("PUT 更新开始");
 
-    if (imageBase64) {
-      console.log("进入文件处理逻辑");
-
-      // 确保文件夹一定存在
-      const dir = certificatesUploadPath;
-      if (!fs.existsSync(dir)) {
-        console.log("文件夹不存在，正在创建:", dir);
-        fs.mkdirSync(dir, { recursive: true });
-      }
-
+    if (req.file) {
+      console.log("使用 FormData 上传文件:", req.file.originalname);
+      
       // 删除旧图片
       if (certificate.imagePath && fs.existsSync(certificate.imagePath)) {
         console.log("删除旧文件:", certificate.imagePath);
@@ -594,6 +631,32 @@ app.put('/api/certificates/:id', async (req, res) => {
         } catch (err) {
           console.error("删除旧文件失败:", err);
         }
+      }
+      
+      certificate.imagePath = req.file.path;
+      certificate.imageUrl = `/uploads/certificates/${req.file.filename}`;
+      certificate.imageBase64 = null;
+      console.log("文件已保存到:", req.file.path);
+      console.log("设置 imageUrl 为:", certificate.imageUrl);
+    } else if (imageBase64) {
+      console.log("使用 Base64 上传");
+      
+      // 删除旧图片
+      if (certificate.imagePath && fs.existsSync(certificate.imagePath)) {
+        console.log("删除旧文件:", certificate.imagePath);
+        try {
+          fs.unlinkSync(certificate.imagePath);
+          console.log("旧文件删除成功");
+        } catch (err) {
+          console.error("删除旧文件失败:", err);
+        }
+      }
+
+      // 确保文件夹一定存在
+      const dir = certificatesUploadPath;
+      if (!fs.existsSync(dir)) {
+        console.log("文件夹不存在，正在创建:", dir);
+        fs.mkdirSync(dir, { recursive: true });
       }
 
       // 1. 获取 MIME 类型

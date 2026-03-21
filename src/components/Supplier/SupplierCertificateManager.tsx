@@ -208,41 +208,45 @@ const SupplierCertificateManager: React.FC = () => {
   };
 
   const handleQuickUploadSubmit = async () => {
-    if (!quickUploadImage) {
+    // 快速上传校验
+    if (!quickUploadFileRef.current && !quickUploadImage) {
       message.error('请上传证书文件');
       return;
     }
-
     if (!quickUploadCompanyId) {
       message.error('请选择供应商');
       return;
     }
-
     if (!quickUploadName.trim()) {
       message.error('请输入证书名称');
       return;
     }
 
     try {
-      const certData = {
-        companyId: quickUploadCompanyId,
-        name: quickUploadName.trim(),
-        standard: '未分类', // API期望字符串
-        category: '其他',
-        issueDate: new Date().toISOString().split('T')[0],
-        expiryDate: '长期有效',
-        issuingAuthority: '未知',
-        status: 'valid',
-        imageBase64: quickUploadImage
-      };
+      // 核心修改：使用 FormData 发送真实文件流
+      const formData = new FormData();
+      formData.append('companyId', quickUploadCompanyId);
+      formData.append('name', quickUploadName.trim());
+      formData.append('standard', '未分类');
+      formData.append('category', '其他');
+      formData.append('issueDate', new Date().toISOString().split('T')[0]);
+      formData.append('expiryDate', '长期有效');
+      formData.append('issuingAuthority', '未知');
+      formData.append('status', 'valid');
+      
+      // 提取保存在 ref 中的原生 File 对象
+      if (quickUploadFileRef.current) {
+        formData.append('file', quickUploadFileRef.current);
+      }
 
-      const result = await api.addCertificate(certData);
+      const result = await api.addCertificate(formData);
+      
       if (result.success) {
         const newCert: Certificate = {
           id: result.certificate.id,
           companyName: result.certificate.companyName,
-          ...certData,
-          standard: [certData.standard] // 转换为数组以符合Certificate接口
+          ...result.certificate,
+          standard: Array.isArray(result.certificate.standard) ? result.certificate.standard : [result.certificate.standard]
         };
         setCertificates([...certificates, newCert]);
         message.success('证书文件上传成功，后续可编辑补充详细信息');
@@ -250,7 +254,10 @@ const SupplierCertificateManager: React.FC = () => {
         setQuickUploadImage(null);
         setQuickUploadCompanyId('');
         setQuickUploadName('');
-        setQuickUploadFileName(''); // 重置文件名
+        setQuickUploadFileName('');
+        quickUploadFileRef.current = null; // 清空文件引用
+      } else {
+        message.error(result.message || '上传失败');
       }
     } catch (error) {
       console.error('快速上传失败:', error);
@@ -360,64 +367,43 @@ const SupplierCertificateManager: React.FC = () => {
   };
 
   const handleSubmit = async (values: any) => {
-    // 【第二步修改：新增校验逻辑】
-    // 如果没有 fileName (文件名) 且没有 imageBase64 (新上传内容)
-    // 说明用户删除了文件且没传新文件
-    if (!fileName && !imageBase64) {
+    if (!fileName && !imageBase64 && !fileRef.current) {
       message.error('请先上传证书文件');
-      return; // 阻止后续提交
+      return;
     }
 
     try {
-      console.log("---------------------------------------");
-      console.log("前端 handleSubmit 开始");
-      console.log("imageBase64 是否有值:", !!imageBase64);
-      console.log("fileName:", fileName);
-      console.log("editingCertificate:", editingCertificate);
-      
-      // 准备API调用数据，确保standard是字符串
-      const apiCertData: any = {
-        companyId: values.companyId,
-        name: values.name,
-        standard: Array.isArray(values.standard) ? values.standard[0] : values.standard,
-        category: values.category,
-        issueDate: values.issueDate ? values.issueDate.format('YYYY-MM-DD') : '',
-        expiryDate: typeof values.expiryDate === 'string' ? values.expiryDate : (values.expiryDate ? values.expiryDate.format('YYYY-MM-DD') : ''),
-        issuingAuthority: values.issuingAuthority,
-        description: values.description,
-        status: values.status || 'valid',
-        originalName: fileName,
-      };
+      // 核心修改：使用 FormData 组装表单和文件
+      const formData = new FormData();
+      formData.append('companyId', values.companyId);
+      formData.append('name', values.name);
+      formData.append('standard', Array.isArray(values.standard) ? values.standard[0] : values.standard);
+      formData.append('category', values.category);
+      formData.append('issueDate', values.issueDate ? values.issueDate.format('YYYY-MM-DD') : '');
+      formData.append('expiryDate', typeof values.expiryDate === 'string' ? values.expiryDate : (values.expiryDate ? values.expiryDate.format('YYYY-MM-DD') : ''));
+      formData.append('issuingAuthority', values.issuingAuthority || '');
+      formData.append('description', values.description || '');
+      formData.append('status', values.status || 'valid');
+      formData.append('originalName', fileName || '');
 
-      // 只有当imageBase64不为null时才添加到数据中
-      if (imageBase64) {
-        apiCertData.imageBase64 = imageBase64;
-        console.log("添加 imageBase64 到请求数据");
-      } else {
-        console.log("没有 imageBase64，不添加到请求数据");
+      // 如果有新选择的文件，则追加文件本身，而不是 base64
+      if (fileRef.current) {
+        formData.append('file', fileRef.current);
       }
-      
-      console.log("准备发送的 apiCertData:", apiCertData);
-      console.log("---------------------------------------");
 
       if (editingCertificate) {
-        const result = await api.updateCertificate(editingCertificate.id, apiCertData);
+        const result = await api.updateCertificate(editingCertificate.id, formData);
         if (result.success) {
-          // 【关键修复】直接使用后端返回的完整证书对象，确保包含新的imageUrl
           const updatedCert: Certificate = {
             ...result.certificate,
             standard: Array.isArray(result.certificate.standard) ? result.certificate.standard : [result.certificate.standard]
           };
-          const updatedCerts = certificates.map(c =>
-            c.id === editingCertificate.id ? updatedCert : c
-          );
-          setCertificates(updatedCerts);
+          setCertificates(certificates.map(c => c.id === editingCertificate.id ? updatedCert : c));
           message.success('证书更新成功');
         }
       } else {
-        const result = await api.addCertificate(apiCertData);
+        const result = await api.addCertificate(formData);
         if (result.success) {
-          // 准备新证书数据，确保standard是数组
           const newCert: Certificate = {
             ...result.certificate,
             standard: Array.isArray(result.certificate.standard) ? result.certificate.standard : [result.certificate.standard]
@@ -426,10 +412,12 @@ const SupplierCertificateManager: React.FC = () => {
           message.success('证书添加成功');
         }
       }
+      
       setIsModalVisible(false);
       setEditingCertificate(null);
       setImageBase64(null);
-      setFileName(''); // 重置文件名
+      setFileName('');
+      fileRef.current = null; // 清空文件引用
       form.resetFields();
     } catch (error) {
       console.error('操作失败:', error);

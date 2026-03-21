@@ -137,44 +137,34 @@ export const api = {
     return response.json();
   },
 
-  // 添加证书
-  async addCertificate(data: {
-    companyId: string;
-    name: string;
-    standard: string;
-    issueDate: string;
-    expiryDate: string;
-    issuingAuthority: string;
-    description?: string;
-    category: string;
-    status?: string;
-    imageBase64?: string;
-  }) {
-    const response = await fetch(`${API_BASE}/certificates`, {
+  // 添加证书 (支持传入 JSON 或 FormData)
+  async addCertificate(data: any) {
+    const isFormData = data instanceof FormData;
+    const options: RequestInit = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+      body: isFormData ? data : JSON.stringify(data),
+    };
+    // 只有当不是 FormData 时，才手动设置 Content-Type 为 json
+    if (!isFormData) {
+      options.headers = { 'Content-Type': 'application/json' };
+    }
+    
+    const response = await fetch(`${API_BASE}/certificates`, options);
     return response.json();
   },
 
-  // 更新证书
-  async updateCertificate(certificateId: string, data: {
-    name?: string;
-    standard?: string;
-    issueDate?: string;
-    expiryDate?: string;
-    issuingAuthority?: string;
-    description?: string;
-    category?: string;
-    status?: string;
-    imageBase64?: string;
-  }) {
-    const response = await fetch(`${API_BASE}/certificates/${certificateId}`, {
+  // 更新证书 (支持传入 JSON 或 FormData)
+  async updateCertificate(certificateId: string, data: any) {
+    const isFormData = data instanceof FormData;
+    const options: RequestInit = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+      body: isFormData ? data : JSON.stringify(data),
+    };
+    if (!isFormData) {
+      options.headers = { 'Content-Type': 'application/json' };
+    }
+
+    const response = await fetch(`${API_BASE}/certificates/${certificateId}`, options);
     return response.json();
   },
 
