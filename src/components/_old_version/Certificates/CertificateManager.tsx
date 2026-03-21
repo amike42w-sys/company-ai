@@ -29,8 +29,8 @@ import {
   UploadOutlined,
   EyeOutlined,
 } from '@ant-design/icons';
-import { useAuthStore } from '../../store/authStore';
-import { api } from '../../services/api';
+import { useAuthStore } from '../../../store/authStore';
+import { api } from '../../../services/api';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;

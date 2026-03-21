@@ -26,8 +26,8 @@ import {
   SafetyCertificateOutlined,
   FilePdfOutlined
 } from '@ant-design/icons';
-import { api } from '../../services/api';
-import { useAuthStore } from '../../store/authStore';
+import { api } from '../../../services/api';
+import { useAuthStore } from '../../../store/authStore';
 import dayjs from 'dayjs';
 
 const { Option } = Select;

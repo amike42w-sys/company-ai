@@ -5,7 +5,7 @@ const multer = require('multer');
 // 导入你的数据库模型和同步函数
 const { User, Company, Certificate, Quotation, Message, Session, syncDatabase } = require('./models');
 const { Op } = require('sequelize');
-const { certificatesUploadPath } = require('./database');
+const { certificatesUploadPath } = require('./config/database');
 
 // 配置 multer 中间件
 const storage = multer.diskStorage({
@@ -99,239 +99,35 @@ app.post('/api/login', async (req, res) => {
     // 登录成功，返回用户信息
     res.json({ success: true, user: { id: user.id, username: user.username, role: user.role } });
   } catch (error) {
-    console.error('登录数据库错误:', error);
+    console.error('登录错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
-// 注册接口重构
+// 注册接口
 app.post('/api/register', async (req, res) => {
-  const { username, password, email, phone } = req.body;
+  const { username, password, role } = req.body;
   try {
     const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
       return res.json({ success: false, message: '用户名已存在' });
     }
-
     const newUser = await User.create({
-      id: Date.now().toString(), // 简单的ID生成
+      id: generateId(),
       username,
       password,
-      email,
-      phone,
-      role: 'external'
+      role: role || 'user'
     });
-
-    res.json({ success: true, user: newUser });
+    res.json({ success: true, user: { id: newUser.id, username: newUser.username, role: newUser.role } });
   } catch (error) {
-    console.error('注册数据库错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-app.get('/api/user/:id', async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.id);
-
-    if (!user) {
-      return res.json({ success: false, message: '用户不存在' });
-    }
-
-    const userData = user.toJSON();
-    delete userData.password;
-
-    res.json({ success: true, user: userData });
-  } catch (error) {
-    console.error('获取用户错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-app.put('/api/user/:id', async (req, res) => {
-  const { email, phone, password } = req.body;
-  const userId = req.params.id;
-
-  try {
-    const user = await User.findByPk(userId);
-
-    if (!user) {
-      return res.json({ success: false, message: '用户不存在' });
-    }
-
-    if (email) user.email = email;
-    if (phone) user.phone = phone;
-    if (password) {
-      user.password = password;
-    }
-
-    await user.save();
-
-    const userData = user.toJSON();
-    delete userData.password;
-
-    res.json({ success: true, user: userData });
-  } catch (error) {
-    console.error('更新用户错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-// ==================== 会话 API ====================
-
-app.post('/api/sessions', async (req, res) => {
-  const { userId, type, title } = req.body;
-
-  try {
-    const id = generateId();
-    const now = Date.now();
-
-    const newSession = await Session.create({
-      id,
-      userId,
-      token: generateId(),
-      createdAt: new Date(now),
-      expiresAt: new Date(now + 7 * 24 * 60 * 60 * 1000) // 7天过期
-    });
-
-    res.json({ success: true, sessionId: id });
-  } catch (error) {
-    console.error('创建会话错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-app.get('/api/sessions/:userId', async (req, res) => {
-  const { userId } = req.params;
-  const { type } = req.query;
-
-  try {
-    let sessions = await Session.findAll({ where: { userId } });
-
-    if (type) {
-      sessions = sessions.filter(s => s.type === type);
-    }
-
-    sessions.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
-
-    res.json({ success: true, sessions });
-  } catch (error) {
-    console.error('获取会话列表错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-app.delete('/api/sessions/:sessionId', async (req, res) => {
-  const { sessionId } = req.params;
-
-  try {
-    await Session.destroy({ where: { id: sessionId } });
-    await Message.destroy({ where: { sessionId } });
-
-    res.json({ success: true });
-  } catch (error) {
-    console.error('删除会话错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-app.delete('/api/sessions/user/:userId', async (req, res) => {
-  const { userId } = req.params;
-  const { type } = req.query;
-
-  try {
-    let sessions = await Session.findAll({ where: { userId } });
-    if (type) {
-      sessions = sessions.filter(s => s.type === type);
-    }
-
-    const sessionIds = sessions.map(s => s.id);
-
-    await Session.destroy({ where: { id: sessionIds } });
-    await Message.destroy({ where: { sessionId: sessionIds } });
-
-    res.json({ success: true });
-  } catch (error) {
-    console.error('清空会话错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-// ==================== 消息 API ====================
-
-app.post('/api/messages', async (req, res) => {
-  const { sessionId, userId, role, content, type } = req.body;
-
-  try {
-    const id = generateId();
-    const timestamp = Date.now();
-
-    const newMessage = await Message.create({
-      id,
-      userId,
-      content,
-      type,
-      createdAt: new Date(timestamp)
-    });
-
-    if (sessionId) {
-      const session = await Session.findByPk(sessionId);
-      if (session) {
-        session.updatedAt = new Date(timestamp);
-        await session.save();
-      }
-    }
-
-    res.json({ success: true, messageId: id });
-  } catch (error) {
-    console.error('保存消息错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-app.get('/api/messages/:sessionId', async (req, res) => {
-  const { sessionId } = req.params;
-
-  try {
-    const messages = await Message.findAll({
-      where: { sessionId },
-      order: [['createdAt', 'ASC']]
-    });
-
-    res.json({ success: true, messages });
-  } catch (error) {
-    console.error('获取消息错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-app.get('/api/messages/user/:userId', async (req, res) => {
-  const { userId } = req.params;
-  const { type } = req.query;
-
-  try {
-    const sessions = await Session.findAll({ where: { userId } });
-
-    if (type) {
-      sessions = sessions.filter(s => s.type === type);
-    }
-
-    const sessionIds = sessions.map(s => s.id);
-
-    const messages = await Message.findAll({
-      where: { sessionId: sessionIds },
-      order: [['createdAt', 'ASC']]
-    });
-
-    res.json({ success: true, messages });
-  } catch (error) {
-    console.error('获取用户消息错误:', error);
+    console.error('注册错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
 // ==================== 公司 API ====================
 
-// 获取所有公司列表
+// 获取所有公司
 app.get('/api/companies', async (req, res) => {
   try {
     const companies = await Company.findAll();
@@ -342,22 +138,21 @@ app.get('/api/companies', async (req, res) => {
   }
 });
 
-// 添加新公司
+// 添加公司
 app.post('/api/companies', async (req, res) => {
-  const { name, description } = req.body;
-
+  const { name, contact, phone, address, industry, notes } = req.body;
   try {
-    const existingCompany = await Company.findOne({ where: { name } });
-    if (existingCompany) {
-      return res.json({ success: false, message: '公司已存在' });
-    }
-
     const newCompany = await Company.create({
       id: generateId(),
       name,
-      description: description || ''
+      contact,
+      phone,
+      address,
+      industry,
+      notes,
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
-
     res.json({ success: true, company: newCompany });
   } catch (error) {
     console.error('添加公司错误:', error);
@@ -368,28 +163,20 @@ app.post('/api/companies', async (req, res) => {
 // 更新公司
 app.put('/api/companies/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, description } = req.body;
-
+  const { name, contact, phone, address, industry, notes } = req.body;
   try {
     const company = await Company.findByPk(id);
     if (!company) {
       return res.json({ success: false, message: '公司不存在' });
     }
-
-    // 检查新名称是否与其他公司重复
-    if (name && name !== company.name) {
-      const existingCompany = await Company.findOne({ where: { name, id: { [Op.ne]: id } } });
-      if (existingCompany) {
-        return res.json({ success: false, message: '公司名称已存在' });
-      }
-    }
-
-    // 更新公司信息
-    if (name) company.name = name;
-    if (description !== undefined) company.description = description;
-
+    company.name = name;
+    company.contact = contact;
+    company.phone = phone;
+    company.address = address;
+    company.industry = industry;
+    company.notes = notes;
+    company.updatedAt = new Date();
     await company.save();
-
     res.json({ success: true, company });
   } catch (error) {
     console.error('更新公司错误:', error);
@@ -400,24 +187,12 @@ app.put('/api/companies/:id', async (req, res) => {
 // 删除公司
 app.delete('/api/companies/:id', async (req, res) => {
   const { id } = req.params;
-
   try {
-    // 删除公司相关的所有证书
-    const certificates = await Certificate.findAll({ where: { companyId: id } });
-
-    // 删除证书图片文件
-    certificates.forEach(cert => {
-      if (cert.imagePath && fs.existsSync(cert.imagePath)) {
-        fs.unlinkSync(cert.imagePath);
-      }
-    });
-
-    // 删除证书
-    await Certificate.destroy({ where: { companyId: id } });
-
-    // 删除公司
-    await Company.destroy({ where: { id } });
-
+    const company = await Company.findByPk(id);
+    if (!company) {
+      return res.json({ success: false, message: '公司不存在' });
+    }
+    await company.destroy();
     res.json({ success: true });
   } catch (error) {
     console.error('删除公司错误:', error);
@@ -427,20 +202,22 @@ app.delete('/api/companies/:id', async (req, res) => {
 
 // ==================== 证书 API ====================
 
-// 获取所有证书列表
+// 获取所有证书
 app.get('/api/certificates', async (req, res) => {
   try {
     const certificates = await Certificate.findAll();
+    // 获取所有公司信息用于关联
     const companies = await Company.findAll();
-
-    // 添加公司信息到证书数据
-    const certificatesWithCompany = certificates.map(cert => {
-      const company = companies.find(c => c.id === cert.companyId);
-      return {
-        ...cert.toJSON(),
-        companyName: company ? company.name : '未知公司'
-      };
+    const companyMap = {};
+    companies.forEach(c => {
+      companyMap[c.id] = c.name;
     });
+
+    // 为每个证书添加公司名称
+    const certificatesWithCompany = certificates.map(cert => ({
+      ...cert.toJSON(),
+      companyName: companyMap[cert.companyId] || '未知公司'
+    }));
 
     res.json({ success: true, certificates: certificatesWithCompany });
   } catch (error) {
@@ -758,20 +535,23 @@ app.put('/api/certificates/:id', upload.single('file'), async (req, res) => {
 // 删除证书
 app.delete('/api/certificates/:id', async (req, res) => {
   const { id } = req.params;
-
   try {
     const certificate = await Certificate.findByPk(id);
     if (!certificate) {
       return res.json({ success: false, message: '证书不存在' });
     }
 
-    // 删除图片文件
+    // 删除关联的文件
     if (certificate.imagePath && fs.existsSync(certificate.imagePath)) {
-      fs.unlinkSync(certificate.imagePath);
+      try {
+        fs.unlinkSync(certificate.imagePath);
+        console.log("删除证书文件:", certificate.imagePath);
+      } catch (err) {
+        console.error("删除证书文件失败:", err);
+      }
     }
 
     await certificate.destroy();
-
     res.json({ success: true });
   } catch (error) {
     console.error('删除证书错误:', error);
@@ -787,47 +567,28 @@ app.get('/api/quotations', async (req, res) => {
     const quotations = await Quotation.findAll();
     res.json({ success: true, quotations });
   } catch (error) {
-    console.error('获取报价单错误:', error);
+    console.error('获取报价单列表错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
 
-// 获取单个报价单
-app.get('/api/quotations/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const quotation = await Quotation.findByPk(id);
-    if (!quotation) {
-      return res.json({ success: false, message: '报价单不存在' });
-    }
-    res.json({ success: true, quotation });
-  } catch (error) {
-    console.error('获取报价单错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
-  }
-});
-
-// 创建报价单
+// 添加报价单
 app.post('/api/quotations', async (req, res) => {
-  const { customerName, standard, standardRate, items, totalAmount, status, notes } = req.body;
-
+  const { customerName, productName, quantity, price, notes } = req.body;
   try {
     const newQuotation = await Quotation.create({
       id: generateId(),
       customerName,
-      standard: standard || '国标',
-      standardRate: standardRate || 1.0,
-      items: items || [],
-      totalAmount: totalAmount || 0,
-      status: status || 'draft',
-      notes: notes || '',
+      productName,
+      quantity,
+      price,
+      notes,
       createdAt: new Date(),
       updatedAt: new Date()
     });
-
     res.json({ success: true, quotation: newQuotation });
   } catch (error) {
-    console.error('创建报价单错误:', error);
+    console.error('添加报价单错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });
@@ -835,25 +596,19 @@ app.post('/api/quotations', async (req, res) => {
 // 更新报价单
 app.put('/api/quotations/:id', async (req, res) => {
   const { id } = req.params;
-  const { customerName, standard, standardRate, items, totalAmount, status, notes } = req.body;
-
+  const { customerName, productName, quantity, price, notes } = req.body;
   try {
     const quotation = await Quotation.findByPk(id);
     if (!quotation) {
       return res.json({ success: false, message: '报价单不存在' });
     }
-
-    if (customerName !== undefined) quotation.customerName = customerName;
-    if (standard !== undefined) quotation.standard = standard;
-    if (standardRate !== undefined) quotation.standardRate = standardRate;
-    if (items !== undefined) quotation.items = items;
-    if (totalAmount !== undefined) quotation.totalAmount = totalAmount;
-    if (status !== undefined) quotation.status = status;
-    if (notes !== undefined) quotation.notes = notes;
+    quotation.customerName = customerName;
+    quotation.productName = productName;
+    quotation.quantity = quantity;
+    quotation.price = price;
+    quotation.notes = notes;
     quotation.updatedAt = new Date();
-
     await quotation.save();
-
     res.json({ success: true, quotation });
   } catch (error) {
     console.error('更新报价单错误:', error);
@@ -864,10 +619,12 @@ app.put('/api/quotations/:id', async (req, res) => {
 // 删除报价单
 app.delete('/api/quotations/:id', async (req, res) => {
   const { id } = req.params;
-
   try {
-    await Quotation.destroy({ where: { id } });
-
+    const quotation = await Quotation.findByPk(id);
+    if (!quotation) {
+      return res.json({ success: false, message: '报价单不存在' });
+    }
+    await quotation.destroy();
     res.json({ success: true });
   } catch (error) {
     console.error('删除报价单错误:', error);
@@ -875,11 +632,41 @@ app.delete('/api/quotations/:id', async (req, res) => {
   }
 });
 
-// 3. 让所有其他的路径都指向 index.html (支持 React 路由)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+// ==================== 聊天 API ====================
+
+// 获取所有消息
+app.get('/api/messages', async (req, res) => {
+  try {
+    const messages = await Message.findAll({
+      order: [['createdAt', 'ASC']]
+    });
+    res.json({ success: true, messages });
+  } catch (error) {
+    console.error('获取消息列表错误:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
 });
 
+// 添加消息
+app.post('/api/messages', async (req, res) => {
+  const { content, sender, type } = req.body;
+  try {
+    const newMessage = await Message.create({
+      id: generateId(),
+      content,
+      sender,
+      type: type || 'text',
+      createdAt: new Date()
+    });
+    res.json({ success: true, message: newMessage });
+  } catch (error) {
+    console.error('添加消息错误:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
+// ==================== 启动服务器 ====================
+
 app.listen(PORT, () => {
-  console.log(`后端服务器运行在 http://localhost:${PORT}`);
+  console.log(`服务器运行在 http://localhost:${PORT}`);
 });

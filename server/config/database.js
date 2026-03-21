@@ -1,25 +1,13 @@
 const { Sequelize } = require('sequelize');
+const path = require('path');
 
-// 创建数据库连接
 const sequelize = new Sequelize('certificate_db', 'certificate_db', '050309', {
   host: '127.0.0.1',
   dialect: 'mysql',
-  logging: console.log,
-  pool: {
-    max: 5,
-    min: 0,
-    acquire: 30000,
-    idle: 10000
-  }
+  logging: console.log, // 【必须开启】我们要看 SQL 日志
 });
 
-// 测试数据库连接
-sequelize.authenticate()
-  .then(() => {
-    console.log('数据库连接成功');
-  })
-  .catch(err => {
-    console.error('数据库连接失败:', err);
-  });
+// 还要加上这一行，因为 index.js 需要它
+const certificatesUploadPath = path.join(__dirname, '../../uploads/certificates');
 
-module.exports = sequelize;
+module.exports = { sequelize, certificatesUploadPath };
