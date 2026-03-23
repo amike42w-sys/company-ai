@@ -5,6 +5,7 @@ const Certificate = require('./Certificate');
 const Quotation = require('./Quotation');
 const Message = require('./Message');
 const Session = require('./Session');
+const Customer = require('./Customer');
 
 // 定义关联关系
 User.belongsTo(Company, { foreignKey: 'companyId' });
@@ -31,5 +32,6 @@ module.exports = {
   Quotation,
   Message,
   Session,
+  Customer,
   syncDatabase
 };

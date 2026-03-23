@@ -110,101 +110,31 @@ const CustomerManager: React.FC = () => {
 
   const fetchCustomers = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setCustomers([
-        {
-          id: '1',
-          customerLevel: 'S',
-          date: '4月12日',
-          region: '横琴',
-          constructionType: 'ACU项目',
-          productType: '集装箱房屋',
-          customerName: 'Jack Lee',
-          progress: '已下单',
-          notes: '客户已支付定金',
-          requirement: '客户需要10套集装箱房屋，用于工地临时办公和住宿，要求防火等级A级，配备空调和基本家具',
-          completionDate: '4月28日',
-          personInCharge: '张经理',
-          createdAt: '2024-04-10',
-        },
-        {
-          id: '2',
-          customerLevel: 'A',
-          date: '4月17日',
-          region: '佛山',
-          constructionType: '公共建筑',
-          productType: '集装箱办公室',
-          customerName: '佛山市政',
-          progress: '方案已发送',
-          notes: '客户对方案比较满意，正在走审批流程',
-          requirement: '市政部门需要5套集装箱办公室，用于临时办公场所',
-          completionDate: '5月5日',
-          personInCharge: '李工程师',
-          createdAt: '2024-04-15',
-        },
-        {
-          id: '3',
-          customerLevel: 'B',
-          date: '4月20日',
-          region: '深圳',
-          constructionType: '循环建筑',
-          productType: '定制集装箱',
-          customerName: '深圳华瑞',
-          progress: '沟通中',
-          notes: '客户还在比较价格',
-          requirement: '需要定制化集装箱房屋，用于高端临时办公',
-          completionDate: '5月10日',
-          personInCharge: '王主管',
-          createdAt: '2024-04-18',
-        },
-        {
-          id: '4',
-          customerLevel: 'C',
-          date: '4月21日',
-          region: '广州',
-          constructionType: '商业',
-          productType: '集装箱展厅',
-          customerName: '广州商茂',
-          progress: '初步联系',
-          notes: '可能是同行试探，先保持联系',
-          requirement: '商业广场需要临时展厅，展示新产品',
-          completionDate: '5月15日',
-          personInCharge: '陈经理',
-          createdAt: '2024-04-20',
-        },
-        {
-          id: '5',
-          customerLevel: 'B',
-          date: '4月23日',
-          region: '珠海',
-          constructionType: '住宅',
-          productType: '集装箱宿舍',
-          customerName: '珠海酒店管理公司',
-          progress: '需求确认中',
-          notes: '客户正在考虑宿舍数量',
-          requirement: '酒店需要临时员工宿舍，解决人员住宿问题',
-          completionDate: '5月20日',
-          personInCharge: '刘主管',
-          createdAt: '2024-04-22',
-        },
-        {
-          id: '6',
-          customerLevel: 'C',
-          date: '4月25日',
-          region: '中山',
-          constructionType: '工业',
-          productType: '集装箱仓库',
-          customerName: '中山物流公司',
-          progress: '初步联系',
-          notes: '刚打电话来问问价格',
-          requirement: '想了解集装箱仓库的价格',
-          completionDate: '待定',
-          personInCharge: '张经理',
-          createdAt: '2024-04-25',
-        },
-      ]);
+    try {
+      const result = await api.getCustomers();
+      if (result.success) {
+        const formattedCustomers = result.customers.map((c: any) => ({
+          id: c.id,
+          customerLevel: c.level as CustomerLevel,
+          date: c.date ? new Date(c.date).toISOString().split('T')[0] : '',
+          region: c.region || '',
+          constructionType: c.buildingType || '',
+          productType: c.productType || '',
+          customerName: c.name || '',
+          progress: c.status || '',
+          notes: c.notes || '',
+          requirement: '',
+          completionDate: '',
+          personInCharge: c.manager || '',
+          createdAt: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
+        }));
+        setCustomers(formattedCustomers);
+      }
+    } catch (error) {
+      console.error('获取客户列表失败:', error);
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   const fetchQuotations = async () => {
@@ -258,10 +188,26 @@ const CustomerManager: React.FC = () => {
     fetchCustomers();
   };
 
-  const handleSubmit = async (_values: any) => {
-    message.success(editingCustomer ? '客户更新成功' : '客户添加成功');
-    setIsModalVisible(false);
-    fetchCustomers();
+  const handleSubmit = async (values: any) => {
+    try {
+      const customerData = {
+        level: values.customerLevel,
+        name: values.customerName,
+        region: values.region,
+        buildingType: values.constructionType,
+        productType: values.productType,
+        status: values.progress,
+        manager: values.personInCharge,
+        date: values.date,
+      };
+      await api.addCustomer(customerData);
+      message.success(editingCustomer ? '客户更新成功' : '客户添加成功');
+      setIsModalVisible(false);
+      fetchCustomers();
+    } catch (error) {
+      console.error('添加客户失败:', error);
+      message.error('添加客户失败，请重试');
+    }
   };
 
   const filteredCustomers = customers.filter(

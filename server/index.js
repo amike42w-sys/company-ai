@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 // 导入你的数据库模型和同步函数
-const { User, Company, Certificate, Quotation, Message, Session, syncDatabase } = require('./models');
+const { User, Company, Certificate, Quotation, Message, Session, Customer, syncDatabase } = require('./models');
 const { Op } = require('sequelize');
 const { sequelize, certificatesUploadPath } = require('./config/database');
 
@@ -627,6 +627,43 @@ app.delete('/api/quotations/:id', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('删除报价单错误:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
+// ==================== 客户 API ====================
+
+// 获取所有客户
+app.get('/api/customers', async (req, res) => {
+  try {
+    const customers = await Customer.findAll();
+    res.json({ success: true, customers });
+  } catch (error) {
+    console.error('获取客户列表错误:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
+// 添加客户
+app.post('/api/customers', async (req, res) => {
+  const { level, name, region, buildingType, productType, status, manager, date } = req.body;
+  try {
+    const newCustomer = await Customer.create({
+      id: generateId(),
+      level,
+      name,
+      region,
+      buildingType,
+      productType,
+      status,
+      manager,
+      date: date ? new Date(date) : null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    res.json({ success: true, customer: newCustomer });
+  } catch (error) {
+    console.error('添加客户错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });

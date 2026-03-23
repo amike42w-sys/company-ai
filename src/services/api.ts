@@ -233,4 +233,31 @@ export const api = {
     });
     return response.json();
   },
-};
+
+  // ==================== 客户管理 API ====================
+
+  // 获取所有客户
+  async getCustomers() {
+    const response = await fetch(`${API_BASE}/customers`);
+    return response.json();
+  },
+
+  // 添加客户
+  async addCustomer(data: {
+    level: string;
+    name: string;
+    region: string;
+    buildingType: string;
+    productType: string;
+    status: string;
+    manager: string;
+    date: string;
+  }) {
+    const response = await fetch(`${API_BASE}/customers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+};  
