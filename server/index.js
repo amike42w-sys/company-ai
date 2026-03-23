@@ -5,7 +5,7 @@ const multer = require('multer');
 // 导入你的数据库模型和同步函数
 const { User, Company, Certificate, Quotation, Message, Session, syncDatabase } = require('./models');
 const { Op } = require('sequelize');
-const { certificatesUploadPath } = require('./config/database');
+const { sequelize, certificatesUploadPath } = require('./config/database');
 
 // 配置 multer 中间件
 const storage = multer.diskStorage({
