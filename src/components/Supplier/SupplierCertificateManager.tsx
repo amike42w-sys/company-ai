@@ -516,6 +516,7 @@ const SupplierCertificateManager: React.FC = () => {
       title: '发证日期',
       dataIndex: 'issueDate',
       key: 'issueDate',
+      render: (date: string) => date ? dayjs(date).format('YYYY-MM-DD') : '-',
     },
     {
       title: '有效期至',
@@ -523,9 +524,17 @@ const SupplierCertificateManager: React.FC = () => {
       key: 'expiryDate',
       render: (date: string) => {
         const expired = isExpired(date);
+        let displayDate = '-';
+        if (date) {
+          if (date === '长期有效') {
+            displayDate = '长期有效';
+          } else {
+            displayDate = dayjs(date).format('YYYY-MM-DD');
+          }
+        }
         return (
           <Text type={expired ? 'danger' : undefined}>
-            {date}
+            {displayDate}
             {expired && (
               <Tooltip title="证书已过期">
                 <ExclamationCircleOutlined style={{ marginLeft: 8, color: '#ff4d4f' }} />
@@ -580,8 +589,8 @@ const SupplierCertificateManager: React.FC = () => {
                         })()}
                       </p>
                       <p><strong>证书类别：</strong>{record.category}</p>
-                      <p><strong>发证日期：</strong>{record.issueDate ? record.issueDate.split('T')[0] : '-'}</p>
-                      <p><strong>有效期至：</strong>{record.expiryDate ? record.expiryDate.split('T')[0] : '长期有效'}</p>
+                      <p><strong>发证日期：</strong>{record.issueDate ? dayjs(record.issueDate).format('YYYY-MM-DD') : '-'}</p>
+                      <p><strong>有效期至：</strong>{record.expiryDate && record.expiryDate !== '长期有效' ? dayjs(record.expiryDate).format('YYYY-MM-DD') : '长期有效'}</p>
                       <p><strong>发证机构：</strong>{record.issuingAuthority}</p>
                       <p><strong>状态：</strong>
                         {isExpired(record.expiryDate) ? '已过期' :
