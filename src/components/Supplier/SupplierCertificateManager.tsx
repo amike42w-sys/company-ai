@@ -35,6 +35,7 @@ import dayjs from 'dayjs';
 
 // 服务器基础地址
 const serverBase = 'http://106.52.31.237:3001';
+const API_BASE = 'http://106.52.31.237:3001';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -602,7 +603,7 @@ const SupplierCertificateManager: React.FC = () => {
                           {record.imageUrl && record.imageUrl.toLowerCase().endsWith('.pdf') ? (
                             // 如果是 PDF，使用 iframe 预览
                             <iframe 
-                              src={`${serverBase}${record.imageUrl}`} 
+                              src={`${API_BASE}${record.imageUrl}`} 
                               width="100%" 
                               height="500px" 
                               title="PDF Preview"
@@ -612,7 +613,7 @@ const SupplierCertificateManager: React.FC = () => {
                           ) : (
                             // 如果是图片，才使用 Image 组件
                             <Image
-                              src={record.imageBase64 || `${serverBase}${record.imageUrl}`}
+                              src={record.imageBase64 || `${API_BASE}${record.imageUrl}`}
                               style={{ maxWidth: '100%' }}
                               fallback="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
                               preview={{ 
