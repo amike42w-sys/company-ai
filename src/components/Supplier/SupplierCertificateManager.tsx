@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Card,
   Table,
@@ -32,6 +32,9 @@ import {
 import { useAuthStore } from '../../store/authStore';
 import { api } from '../../services/api';
 import dayjs from 'dayjs';
+
+// 服务器基础地址
+const serverBase = 'http://106.52.31.237:3001';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -285,7 +288,7 @@ const SupplierCertificateManager: React.FC = () => {
       const parts = record.imageUrl.split('/');
       displayName = parts[parts.length - 1]; // 截取文件名
     }
-    setFileName(displayName || '未上传文件');
+    setFileName(displayName || ''); // 不要给默认值"未上传"，否则无法判断
 
     // 2. 修复图片/PDF预览：确保这里传入的是最新的 record
     setImageBase64(null); // 清空旧的内存预览
@@ -576,8 +579,8 @@ const SupplierCertificateManager: React.FC = () => {
                         })()}
                       </p>
                       <p><strong>证书类别：</strong>{record.category}</p>
-                      <p><strong>发证日期：</strong>{record.issueDate}</p>
-                      <p><strong>有效期至：</strong>{record.expiryDate}</p>
+                      <p><strong>发证日期：</strong>{record.issueDate ? record.issueDate.split('T')[0] : '-'}</p>
+                      <p><strong>有效期至：</strong>{record.expiryDate ? record.expiryDate.split('T')[0] : '长期有效'}</p>
                       <p><strong>发证机构：</strong>{record.issuingAuthority}</p>
                       <p><strong>状态：</strong>
                         {isExpired(record.expiryDate) ? '已过期' :
@@ -599,7 +602,7 @@ const SupplierCertificateManager: React.FC = () => {
                           {record.imageUrl && record.imageUrl.toLowerCase().endsWith('.pdf') ? (
                             // 如果是 PDF，使用 iframe 预览
                             <iframe 
-                              src={`${record.imageUrl}`} 
+                              src={`${serverBase}${record.imageUrl}`} 
                               width="100%" 
                               height="500px" 
                               title="PDF Preview"
@@ -609,7 +612,7 @@ const SupplierCertificateManager: React.FC = () => {
                           ) : (
                             // 如果是图片，才使用 Image 组件
                             <Image
-                              src={record.imageBase64 || `${record.imageUrl}`}
+                              src={record.imageBase64 || `${serverBase}${record.imageUrl}`}
                               style={{ maxWidth: '100%' }}
                               fallback="https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg"
                               preview={{ 
