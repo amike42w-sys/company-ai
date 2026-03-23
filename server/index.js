@@ -355,7 +355,6 @@ app.post('/api/certificates', upload.single('file'), async (req, res) => {
 
     // 使用安全的日期转换逻辑
     const safeIssueDate = (issueDate && !isNaN(new Date(issueDate).getTime())) ? new Date(issueDate) : null;
-    const safeExpiryDate = (expiryDate && !isNaN(new Date(expiryDate).getTime())) ? new Date(expiryDate) : null;
     
     const newCertificate = await Certificate.create({
       id: generateId(),
@@ -363,12 +362,12 @@ app.post('/api/certificates', upload.single('file'), async (req, res) => {
       name,
       type: category,
       issueDate: safeIssueDate,
-      expiryDate: safeExpiryDate,
-      imageUrl,
-      imagePath,
-      imageBase64: null, // 【关键】不要把这几百万个字符存入数据库！设为 null
+      expiryDate: expiryDate || '长期有效', // 直接存入字符串
+      imageUrl: imageUrl,    // <--- 核心：确认这行没漏！值应该是 "/uploads/certificates/cert_xxx.jpg"
+      imagePath: imagePath,  // <--- 核心：确认这行也没漏！
       status: status || 'valid',
       notes: description || '',
+      originalName: originalName || '',
       createdAt: new Date(),
       updatedAt: new Date()
     });
