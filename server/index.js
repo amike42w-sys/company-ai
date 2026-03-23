@@ -667,6 +667,13 @@ app.post('/api/messages', async (req, res) => {
 
 // ==================== 启动服务器 ====================
 
+// 【关键修复】处理 React 路由刷新问题
+// 必须放在所有 API 接口之后！
+app.get('*', (req, res) => {
+  // 确保路径指向你打包后的 index.html
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`服务器运行在 http://localhost:${PORT}`);
 });
