@@ -1131,23 +1131,14 @@ const SupplierCertificateManager: React.FC = () => {
                       backgroundColor: '#fafafa',
                       cursor: 'pointer'
                     }} onClick={() => {
-                      // 为快速上传创建临时记录
-                      const tempRecord: Certificate = {
-                        id: '',
-                        companyId: '',
-                        companyName: '',
-                        name: quickUploadName,
-                        standard: [''], // 改为数组以符合Certificate接口
-                        category: '',
-                        issueDate: '',
-                        expiryDate: '',
-                        issuingAuthority: '',
-                        status: 'valid',
-                        imageBase64: quickUploadImage || undefined
-                      };
-                      const blobUrl = getBlobUrl(tempRecord);
-                      setPdfPreviewUrl(blobUrl);
-                      setIsPdfPreviewVisible(true);
+                      // 关键：如果已经选择了本地文件，直接生成预览链接，不要用 Base64 转
+                      if (quickUploadFileRef.current) {
+                        const localUrl = URL.createObjectURL(quickUploadFileRef.current);
+                        setPdfPreviewUrl(localUrl);
+                        setIsPdfPreviewVisible(true);
+                      } else {
+                        message.error("文件获取失败，请尝试重新选择文件");
+                      }
                     }}>
                       <div style={{ fontSize: 48, marginBottom: 8 }}>📄</div>
                       <Text type="secondary">PDF 文件 - 点击预览</Text>
