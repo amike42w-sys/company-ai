@@ -633,10 +633,10 @@ app.delete('/api/quotations/:id', async (req, res) => {
 
 // ==================== 客户 API ====================
 
-// 获取所有客户
+// 1. 获取所有客户
 app.get('/api/customers', async (req, res) => {
   try {
-    const customers = await Customer.findAll();
+    const customers = await Customer.findAll({ order: [['createdAt', 'DESC']] });
     res.json({ success: true, customers });
   } catch (error) {
     console.error('获取客户列表错误:', error);
@@ -644,26 +644,51 @@ app.get('/api/customers', async (req, res) => {
   }
 });
 
-// 添加客户
+// 2. 添加客户（完善了字段接收）
 app.post('/api/customers', async (req, res) => {
-  const { level, name, region, buildingType, productType, status, manager, date } = req.body;
   try {
     const newCustomer = await Customer.create({
+      ...req.body, // 直接使用解构，可以接收前端传来的所有字段（包括 requirement 和 completionDate）
       id: generateId(),
-      level,
-      name,
-      region,
-      buildingType,
-      productType,
-      status,
-      manager,
-      date: date ? new Date(date) : null,
       createdAt: new Date(),
       updatedAt: new Date()
     });
     res.json({ success: true, customer: newCustomer });
   } catch (error) {
     console.error('添加客户错误:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
+// 3. 修改客户（修复编辑无效的核心逻辑）
+app.put('/api/customers/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const customer = await Customer.findByPk(id);
+    if (!customer) {
+      return res.json({ success: false, message: '找不到该客户记录' });
+    }
+    
+    // 更新数据
+    await customer.update(req.body);
+    res.json({ success: true, customer });
+  } catch (error) {
+    console.error('更新客户错误:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
+// 4. 删除客户（修复删除无效的核心逻辑）
+app.delete('/api/customers/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await Customer.destroy({ where: { id } });
+    if (result === 0) {
+      return res.json({ success: false, message: '删除失败，记录不存在' });
+    }
+    res.json({ success: true });
+  } catch (error) {
+    console.error('删除客户错误:', error);
     res.status(500).json({ success: false, message: '服务器错误' });
   }
 });

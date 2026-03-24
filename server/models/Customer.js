@@ -42,6 +42,16 @@ const Customer = sequelize.define('Customer', {
     allowNull: true,
     comment: '负责人'
   },
+  requirement: { 
+    type: DataTypes.TEXT,
+    allowNull: false, 
+    comment: '客户需求'
+  },        
+  completionDate: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    comment: '完成时间'
+  },
   date: {
     type: DataTypes.DATE,
     allowNull: true,
