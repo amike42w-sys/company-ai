@@ -19,6 +19,7 @@ import {
   Tabs,
   Descriptions,
   Badge,
+  DatePicker
 } from 'antd';
 import {
   PlusOutlined,
@@ -110,34 +111,34 @@ const CustomerManager: React.FC = () => {
   }, []);
 
   const fetchCustomers = async () => {
-  setLoading(true);
-  try {
-    const result = await api.getCustomers();
-    if (result.success) {
-      const formattedCustomers = result.customers.map((c: any) => ({
-        id: c.id,
-        customerLevel: c.level as CustomerLevel,
-        date: c.date || '',
-        region: c.region || '',
-        constructionType: c.buildingType || '',
-        productType: c.productType || '',
-        customerName: c.name || '',
-        progress: c.status || '',
-        notes: c.notes || '',
-        // 【核心改动】确保这两个字段从后端拿到了数据
-        requirement: c.requirement || '', 
-        completionDate: c.completionDate || '', 
-        personInCharge: c.manager || '',
-        createdAt: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
-      }));
-      setCustomers(formattedCustomers);
+    setLoading(true);
+    try {
+      const result = await api.getCustomers();
+      if (result.success) {
+        const formattedCustomers = result.customers.map((c: any) => ({
+          id: c.id,
+          customerLevel: c.level as CustomerLevel,
+          date: c.date || '',
+          region: c.region || '',
+          constructionType: c.buildingType || '',
+          productType: c.productType || '',
+          customerName: c.name || '',
+          progress: c.status || '',
+          notes: c.notes || '',
+          // 【核心改动】确保这两个字段从后端拿到了数据
+          requirement: c.requirement || '',
+          completionDate: c.completionDate || '',
+          personInCharge: c.manager || '',
+          createdAt: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
+        }));
+        setCustomers(formattedCustomers);
+      }
+    } catch (error) {
+      console.error('获取客户列表失败:', error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('获取客户列表失败:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const fetchQuotations = async () => {
     try {
@@ -174,7 +175,10 @@ const CustomerManager: React.FC = () => {
 
   const handleEdit = (record: Customer) => {
     setEditingCustomer(record);
-    form.setFieldsValue(record);
+    form.setFieldsValue({
+      ...record,
+      date: record.date ? dayjs(record.date) : null
+    });
     setIsModalVisible(true);
   };
 
@@ -186,28 +190,28 @@ const CustomerManager: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-  // 增加确认框，防止误删
-  Modal.confirm({
-    title: '确认删除',
-    content: '确定要删除这位客户吗？删除后数据无法恢复。',
-    okText: '确定',
-    okType: 'danger',
-    cancelText: '取消',
-    onOk: async () => {
-      try {
-        const result = await api.deleteCustomer(id); // 【核心改动】调用接口
-        if (result.success) {
-          message.success('客户删除成功');
-          fetchCustomers(); // 刷新列表
-        } else {
-          message.error(result.message || '删除失败');
+    // 增加确认框，防止误删
+    Modal.confirm({
+      title: '确认删除',
+      content: '确定要删除这位客户吗？删除后数据无法恢复。',
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const result = await api.deleteCustomer(id); // 【核心改动】调用接口
+          if (result.success) {
+            message.success('客户删除成功');
+            fetchCustomers(); // 刷新列表
+          } else {
+            message.error(result.message || '删除失败');
+          }
+        } catch (error) {
+          message.error('删除失败，请稍后重试');
         }
-      } catch (error) {
-        message.error('删除失败，请稍后重试');
       }
-    }
-  });
-};
+    });
+  };
 
   const handleSubmit = async (values: any) => {
     setLoading(true);
@@ -220,34 +224,34 @@ const CustomerManager: React.FC = () => {
         productType: values.productType,
         status: values.progress,
         manager: values.personInCharge,
-        date: values.date,
+        date: values.date ? values.date.format('YYYY-MM-DD') : '',
         notes: values.notes,
-        requirement: values.requirement,      
+        requirement: values.requirement,
         completionDate: values.completionDate,
       };
       let result;
-    if (editingCustomer) {
-      // 【核心改动】如果是编辑模式，调用更新接口
-      result = await api.updateCustomer(editingCustomer.id, customerData);
-    } else {
-      // 如果是新增模式，调用添加接口
-      result = await api.addCustomer(customerData);
-    }
+      if (editingCustomer) {
+        // 【核心改动】如果是编辑模式，调用更新接口
+        result = await api.updateCustomer(editingCustomer.id, customerData);
+      } else {
+        // 如果是新增模式，调用添加接口
+        result = await api.addCustomer(customerData);
+      }
 
-    if (result.success) {
-      message.success(editingCustomer ? '客户更新成功' : '客户添加成功');
-      setIsModalVisible(false);
-      fetchCustomers(); // 成功后立即重新抓取数据库最新数据
-    } else {
-      message.error(result.message || '操作失败');
+      if (result.success) {
+        message.success(editingCustomer ? '客户更新成功' : '客户添加成功');
+        setIsModalVisible(false);
+        fetchCustomers(); // 成功后立即重新抓取数据库最新数据
+      } else {
+        message.error(result.message || '操作失败');
+      }
+    } catch (error) {
+      console.error('提交失败:', error);
+      message.error('提交失败，请检查后端服务');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('提交失败:', error);
-    message.error('提交失败，请检查后端服务');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const filteredCustomers = customers.filter(
     (customer) =>
@@ -323,7 +327,7 @@ const CustomerManager: React.FC = () => {
       key: 'date',
       width: 150,
       render: (date: string) => {
-        return dayjs(date).format('YYYY-MM-DD') ; '-';
+        return dayjs(date).format('YYYY-MM-DD'); '-';
       },
     },
     {
@@ -576,9 +580,14 @@ const CustomerManager: React.FC = () => {
               <Form.Item
                 name="date"
                 label="时间"
-                rules={[{ required: true, message: '请输入时间' }]}
+                rules={[{ required: true, message: '请选择或输入时间' }]}
               >
-                <Input placeholder="如：4月12日" />
+                <DatePicker
+                  style={{ width: '100%' }}
+                  placeholder="YYYY-MM-DD (支持手动输入)"
+                  format="YYYY-MM-DD" // 指定显示格式
+                  allowClear
+                />
               </Form.Item>
             </Col>
           </Row>
