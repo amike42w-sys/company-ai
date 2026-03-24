@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import dayjs from 'dayjs';
 import {
   Card,
   Table,
@@ -109,33 +110,34 @@ const CustomerManager: React.FC = () => {
   }, []);
 
   const fetchCustomers = async () => {
-    setLoading(true);
-    try {
-      const result = await api.getCustomers();
-      if (result.success) {
-        const formattedCustomers = result.customers.map((c: any) => ({
-          id: c.id,
-          customerLevel: c.level as CustomerLevel,
-          date: c.date ? new Date(c.date).toISOString().split('T')[0] : '',
-          region: c.region || '',
-          constructionType: c.buildingType || '',
-          productType: c.productType || '',
-          customerName: c.name || '',
-          progress: c.status || '',
-          notes: c.notes || '',
-          requirement: '',
-          completionDate: '',
-          personInCharge: c.manager || '',
-          createdAt: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
-        }));
-        setCustomers(formattedCustomers);
-      }
-    } catch (error) {
-      console.error('获取客户列表失败:', error);
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    const result = await api.getCustomers();
+    if (result.success) {
+      const formattedCustomers = result.customers.map((c: any) => ({
+        id: c.id,
+        customerLevel: c.level as CustomerLevel,
+        date: c.date || '',
+        region: c.region || '',
+        constructionType: c.buildingType || '',
+        productType: c.productType || '',
+        customerName: c.name || '',
+        progress: c.status || '',
+        notes: c.notes || '',
+        // 【核心改动】确保这两个字段从后端拿到了数据
+        requirement: c.requirement || '', 
+        completionDate: c.completionDate || '', 
+        personInCharge: c.manager || '',
+        createdAt: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
+      }));
+      setCustomers(formattedCustomers);
     }
-  };
+  } catch (error) {
+    console.error('获取客户列表失败:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const fetchQuotations = async () => {
     try {
@@ -183,12 +185,32 @@ const CustomerManager: React.FC = () => {
     setIsDetailModalVisible(true);
   };
 
-  const handleDelete = async (_id: string) => {
-    message.success('客户删除成功');
-    fetchCustomers();
-  };
+  const handleDelete = async (id: string) => {
+  // 增加确认框，防止误删
+  Modal.confirm({
+    title: '确认删除',
+    content: '确定要删除这位客户吗？删除后数据无法恢复。',
+    okText: '确定',
+    okType: 'danger',
+    cancelText: '取消',
+    onOk: async () => {
+      try {
+        const result = await api.deleteCustomer(id); // 【核心改动】调用接口
+        if (result.success) {
+          message.success('客户删除成功');
+          fetchCustomers(); // 刷新列表
+        } else {
+          message.error(result.message || '删除失败');
+        }
+      } catch (error) {
+        message.error('删除失败，请稍后重试');
+      }
+    }
+  });
+};
 
   const handleSubmit = async (values: any) => {
+    setLoading(true);
     try {
       const customerData = {
         level: values.customerLevel,
@@ -199,16 +221,33 @@ const CustomerManager: React.FC = () => {
         status: values.progress,
         manager: values.personInCharge,
         date: values.date,
+        notes: values.notes,
+        requirement: values.requirement,      
+        completionDate: values.completionDate,
       };
-      await api.addCustomer(customerData);
+      let result;
+    if (editingCustomer) {
+      // 【核心改动】如果是编辑模式，调用更新接口
+      result = await api.updateCustomer(editingCustomer.id, customerData);
+    } else {
+      // 如果是新增模式，调用添加接口
+      result = await api.addCustomer(customerData);
+    }
+
+    if (result.success) {
       message.success(editingCustomer ? '客户更新成功' : '客户添加成功');
       setIsModalVisible(false);
-      fetchCustomers();
-    } catch (error) {
-      console.error('添加客户失败:', error);
-      message.error('添加客户失败，请重试');
+      fetchCustomers(); // 成功后立即重新抓取数据库最新数据
+    } else {
+      message.error(result.message || '操作失败');
     }
-  };
+  } catch (error) {
+    console.error('提交失败:', error);
+    message.error('提交失败，请检查后端服务');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const filteredCustomers = customers.filter(
     (customer) =>
@@ -282,7 +321,10 @@ const CustomerManager: React.FC = () => {
       title: '时间',
       dataIndex: 'date',
       key: 'date',
-      width: 100,
+      width: 150,
+      render: (date: string) => {
+        return dayjs(date).format('YYYY-MM-DD') ; '-';
+      },
     },
     {
       title: '地区',
@@ -655,13 +697,13 @@ const CustomerManager: React.FC = () => {
             >
               <Descriptions bordered column={2}>
                 <Descriptions.Item label="客户等级">
-                  <Tag color={selectedCustomer.customerLevel === 'S' ? 'red' : 
-                    selectedCustomer.customerLevel === 'A' ? 'gold' : 
-                    selectedCustomer.customerLevel === 'B' ? 'blue' : 'default'}>
+                  <Tag color={selectedCustomer.customerLevel === 'S' ? 'red' :
+                    selectedCustomer.customerLevel === 'A' ? 'gold' :
+                      selectedCustomer.customerLevel === 'B' ? 'blue' : 'default'}>
                     {selectedCustomer.customerLevel}级
                   </Tag>
                 </Descriptions.Item>
-                <Descriptions.Item label="时间">{selectedCustomer.date}</Descriptions.Item>
+                <Descriptions.Item label="时间">{selectedCustomer.date ? dayjs(selectedCustomer.date).format('YYYY-MM-DD') : '-'}</Descriptions.Item>
                 <Descriptions.Item label="地区">{selectedCustomer.region}</Descriptions.Item>
                 <Descriptions.Item label="建筑类型">{selectedCustomer.constructionType}</Descriptions.Item>
                 <Descriptions.Item label="产品种类">{selectedCustomer.productType}</Descriptions.Item>

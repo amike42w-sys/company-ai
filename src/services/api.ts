@@ -236,13 +236,13 @@ export const api = {
 
   // ==================== 客户管理 API ====================
 
-  // 获取所有客户
+  // 1. 获取所有客户
   async getCustomers() {
     const response = await fetch(`${API_BASE}/customers`);
     return response.json();
   },
 
-  // 添加客户
+  // 2. 添加客户 (增加了 requirement 和 completionDate 字段定义)
   async addCustomer(data: {
     level: string;
     name: string;
@@ -252,6 +252,8 @@ export const api = {
     status: string;
     manager: string;
     date: string;
+    requirement?: string;      // 【新增】
+    completionDate?: string;   // 【新增】
   }) {
     const response = await fetch(`${API_BASE}/customers`, {
       method: 'POST',
@@ -260,4 +262,25 @@ export const api = {
     });
     return response.json();
   },
-};  
+
+  // 3. 【新增：修改客户接口】解决 TS2551 报错
+  async updateCustomer(id: string, data: any) {
+    const response = await fetch(`${API_BASE}/customers/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  // 4. 【新增：删除客户接口】解决 TS2339 报错
+  async deleteCustomer(id: string) {
+    const response = await fetch(`${API_BASE}/customers/${id}`, {
+      method: 'DELETE',
+    });
+    return response.json();
+  }
+}
+
+
+

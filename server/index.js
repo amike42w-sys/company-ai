@@ -646,6 +646,7 @@ app.get('/api/customers', async (req, res) => {
 
 // 2. 添加客户（完善了字段接收）
 app.post('/api/customers', async (req, res) => {
+  console.log("=== 收到添加客户请求 ===", req.body); // 加上这行日志，你能看到所有传来的数
   try {
     const newCustomer = await Customer.create({
       ...req.body, // 直接使用解构，可以接收前端传来的所有字段（包括 requirement 和 completionDate）
@@ -656,7 +657,7 @@ app.post('/api/customers', async (req, res) => {
     res.json({ success: true, customer: newCustomer });
   } catch (error) {
     console.error('添加客户错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
+    res.status(500).json({ success: false, message: '服务器错误', error: error.message });
   }
 });
 
