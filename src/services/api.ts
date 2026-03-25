@@ -252,6 +252,7 @@ export const api = {
     status: string;
     manager: string;
     date: string;
+    phone?: string;            // 【新增】
     requirement?: string;      // 【新增】
     completionDate?: string;   // 【新增】
   }) {
@@ -264,7 +265,19 @@ export const api = {
   },
 
   // 3. 【新增：修改客户接口】解决 TS2551 报错
-  async updateCustomer(id: string, data: any) {
+  async updateCustomer(id: string, data: {
+    level: string;
+    name: string;
+    region: string;
+    buildingType: string;
+    productType: string;
+    status: string;
+    manager: string;
+    date: string;
+    phone?: string;
+    requirement?: string;
+    completionDate?: string;
+  }) {
     const response = await fetch(`${API_BASE}/customers/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

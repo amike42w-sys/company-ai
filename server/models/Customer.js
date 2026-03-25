@@ -37,6 +37,11 @@ const Customer = sequelize.define('Customer', {
     allowNull: true,
     comment: '进度/状态'
   },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    comment: '客户电话'
+  },
   manager: {
     type: DataTypes.STRING,
     allowNull: true,

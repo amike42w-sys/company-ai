@@ -71,6 +71,7 @@ interface Customer {
   requirement: string;
   completionDate: string;
   personInCharge: string;
+  phone: string;
   createdAt: string;
 }
 
@@ -118,17 +119,17 @@ const CustomerManager: React.FC = () => {
         const formattedCustomers = result.customers.map((c: any) => ({
           id: c.id,
           customerLevel: c.level as CustomerLevel,
-          date: c.date || '',
+          date: c.date ? new Date(c.date).toISOString().split('T')[0] : '',
           region: c.region || '',
           constructionType: c.buildingType || '',
           productType: c.productType || '',
           customerName: c.name || '',
           progress: c.status || '',
           notes: c.notes || '',
-          // 【核心改动】确保这两个字段从后端拿到了数据
-          requirement: c.requirement || '',
-          completionDate: c.completionDate || '',
+          requirement: '',
+          completionDate: '',
           personInCharge: c.manager || '',
+          phone: c.phone || '',
           createdAt: c.createdAt ? new Date(c.createdAt).toISOString().split('T')[0] : '',
         }));
         setCustomers(formattedCustomers);
@@ -225,6 +226,7 @@ const CustomerManager: React.FC = () => {
         status: values.progress,
         manager: values.personInCharge,
         date: values.date ? values.date.format('YYYY-MM-DD') : '',
+        phone: values.phone,
         notes: values.notes,
         requirement: values.requirement,
         completionDate: values.completionDate,
@@ -616,9 +618,13 @@ const CustomerManager: React.FC = () => {
               <Form.Item
                 name="productType"
                 label="产品种类"
-                rules={[{ required: true, message: '请输入产品种类' }]}
+                rules={[{ required: true, message: '请选择产品种类' }]}
               >
-                <Input placeholder="请输入产品种类" />
+                <Select placeholder="请选择产品种类">
+                  <Option value="MIC">MIC</Option>
+                  <Option value="轻钢龙骨墙体">轻钢龙骨墙体</Option>
+                  <Option value="DFMA">DFMA</Option>
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -654,6 +660,17 @@ const CustomerManager: React.FC = () => {
                 rules={[{ required: true, message: '请输入负责人' }]}
               >
                 <Input placeholder="请输入负责人" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="phone"
+                label="客户电话"
+                rules={[{ required: true, message: '请输入客户电话' }]}
+              >
+                <Input placeholder="请输入客户电话" />
               </Form.Item>
             </Col>
           </Row>
@@ -706,13 +723,13 @@ const CustomerManager: React.FC = () => {
             >
               <Descriptions bordered column={2}>
                 <Descriptions.Item label="客户等级">
-                  <Tag color={selectedCustomer.customerLevel === 'S' ? 'red' :
-                    selectedCustomer.customerLevel === 'A' ? 'gold' :
-                      selectedCustomer.customerLevel === 'B' ? 'blue' : 'default'}>
+                  <Tag color={selectedCustomer.customerLevel === 'S' ? 'red' : 
+                    selectedCustomer.customerLevel === 'A' ? 'gold' : 
+                    selectedCustomer.customerLevel === 'B' ? 'blue' : 'default'}>
                     {selectedCustomer.customerLevel}级
                   </Tag>
                 </Descriptions.Item>
-                <Descriptions.Item label="时间">{selectedCustomer.date ? dayjs(selectedCustomer.date).format('YYYY-MM-DD') : '-'}</Descriptions.Item>
+                <Descriptions.Item label="时间">{selectedCustomer.date}</Descriptions.Item>
                 <Descriptions.Item label="地区">{selectedCustomer.region}</Descriptions.Item>
                 <Descriptions.Item label="建筑类型">{selectedCustomer.constructionType}</Descriptions.Item>
                 <Descriptions.Item label="产品种类">{selectedCustomer.productType}</Descriptions.Item>
@@ -722,6 +739,7 @@ const CustomerManager: React.FC = () => {
                   </Tag>
                 </Descriptions.Item>
                 <Descriptions.Item label="负责人">{selectedCustomer.personInCharge}</Descriptions.Item>
+                <Descriptions.Item label="客户电话">{selectedCustomer.phone || '无'}</Descriptions.Item>
                 <Descriptions.Item label="完成时间">{selectedCustomer.completionDate}</Descriptions.Item>
                 <Descriptions.Item label="客户需求" span={2}>
                   {selectedCustomer.requirement}
