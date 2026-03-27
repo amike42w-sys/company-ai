@@ -664,16 +664,7 @@ const Login: React.FC = () => {
               </Form.Item>
             </Form>
 
-            <div className={styles.demoAccounts}>
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                测试账号：
-              </Text>
-              <Space direction="vertical" size="small" style={{ marginTop: 8 }}>
-                <Text code style={{ fontSize: 11 }}>admin / admin123</Text>
-                <Text code style={{ fontSize: 11 }}>analyst / analyst123</Text>
-                <Text code style={{ fontSize: 11 }}>engineer / engineer123</Text>
-              </Space>
-            </div>
+
           </TabPane>
         </Tabs>
 
