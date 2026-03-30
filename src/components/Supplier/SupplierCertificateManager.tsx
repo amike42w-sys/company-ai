@@ -19,6 +19,7 @@ import {
   Upload,
   Image,
 } from 'antd';
+import type { TableColumnsType } from 'antd';
 import {
   PlusOutlined,
   EditOutlined,
@@ -160,7 +161,12 @@ const SupplierCertificateManager: React.FC = () => {
     try {
       const result = await api.getCertificates();
       if (result.success) {
-        const filteredCerts = result.certificates.filter(
+        const formattedCerts = result.certificates.map((cert: any) => ({
+          ...cert,
+          category: cert.type || '其他',
+          standard: Array.isArray(cert.standard) ? cert.standard : (cert.standard ? [cert.standard] : [])
+        }));
+        const filteredCerts = formattedCerts.filter(
           (cert: Certificate) => cert.companyId === companyId
         );
         setCertificates(filteredCerts);
@@ -177,7 +183,12 @@ const SupplierCertificateManager: React.FC = () => {
     try {
       const result = await api.getCertificates();
       if (result.success) {
-        setCertificates(result.certificates);
+        const formattedCerts = result.certificates.map((cert: any) => ({
+          ...cert,
+          category: cert.type || '其他',
+          standard: Array.isArray(cert.standard) ? cert.standard : (cert.standard ? [cert.standard] : [])
+        }));
+        setCertificates(formattedCerts);
       }
     } catch (error) {
       console.error('获取证书失败:', error);
@@ -487,7 +498,7 @@ const SupplierCertificateManager: React.FC = () => {
     }
   );
 
-  const columns = [
+  const columns: TableColumnsType<Certificate> = [
     {
       title: '证书名称',
       dataIndex: 'name',
@@ -737,6 +748,7 @@ const SupplierCertificateManager: React.FC = () => {
           rowKey="id"
           loading={loading}
           pagination={{ pageSize: 10 }}
+          scroll={{ x: 'max-content' }}
           rowSelection={isAdmin ? {
             selectedRowKeys: selectedCertificates,
             onChange: (selectedRowKeys: any[]) => {
@@ -767,7 +779,8 @@ const SupplierCertificateManager: React.FC = () => {
           form.resetFields();
         }}
         onOk={() => form.submit()}
-        width={700}
+        width={window.innerWidth < 768 ? '95%' : 700}
+        style={{ top: 20 }}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit} preserve={true}>
           <Form.Item
@@ -795,7 +808,7 @@ const SupplierCertificateManager: React.FC = () => {
             <Input placeholder="请输入证书名称" />
           </Form.Item>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="standard"
                 label="标准类型"
@@ -819,7 +832,7 @@ const SupplierCertificateManager: React.FC = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="category"
                 label="证书类别"
@@ -843,12 +856,12 @@ const SupplierCertificateManager: React.FC = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item name="issueDate" label="发证日期">
                 <DatePicker style={{ width: '100%' }} />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item name="expiryDate" label="有效期至">
                 <DatePicker style={{ width: '100%' }} />
               </Form.Item>

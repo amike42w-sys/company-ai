@@ -21,6 +21,7 @@ import {
   Badge,
   DatePicker
 } from 'antd';
+import type { TableColumnsType } from 'antd';
 import {
   PlusOutlined,
   EditOutlined,
@@ -292,7 +293,7 @@ const CustomerManager: React.FC = () => {
     return new Date(expiryDate) < new Date();
   };
 
-  const columns = [
+  const columns: TableColumnsType<Customer> = [
     {
       title: '客户等级',
       dataIndex: 'customerLevel',
@@ -328,6 +329,7 @@ const CustomerManager: React.FC = () => {
       dataIndex: 'date',
       key: 'date',
       width: 150,
+      responsive: ['md'],
       render: (date: string) => {
         return dayjs(date).format('YYYY-MM-DD'); '-';
       },
@@ -337,24 +339,28 @@ const CustomerManager: React.FC = () => {
       dataIndex: 'region',
       key: 'region',
       width: 100,
+      responsive: ['md'],
     },
     {
       title: '建筑类型',
       dataIndex: 'constructionType',
       key: 'constructionType',
       width: 120,
+      responsive: ['md'],
     },
     {
       title: '产品种类',
       dataIndex: 'productType',
       key: 'productType',
       width: 120,
+      responsive: ['md'],
     },
     {
       title: '客户名称',
       dataIndex: 'customerName',
       key: 'customerName',
       width: 150,
+      fixed: 'left',
     },
     {
       title: '进度',
@@ -373,6 +379,7 @@ const CustomerManager: React.FC = () => {
       title: '报价/订单',
       key: 'quotations',
       width: 100,
+      responsive: ['md'],
       render: (_: any, record: Customer) => {
         const relatedQuotations = quotations.filter(q => q.customerName === record.customerName);
         const orderCount = relatedQuotations.filter(q => q.status === 'ordered').length;
@@ -435,7 +442,7 @@ const CustomerManager: React.FC = () => {
     },
   ];
 
-  const quotationColumns = [
+  const quotationColumns: TableColumnsType<any> = [
     {
       title: '报价单号',
       dataIndex: 'id',
@@ -472,7 +479,7 @@ const CustomerManager: React.FC = () => {
     },
   ];
 
-  const certificateColumns = [
+  const certificateColumns: TableColumnsType<any> = [
     {
       title: '证书名称',
       dataIndex: 'name',
@@ -551,7 +558,7 @@ const CustomerManager: React.FC = () => {
           rowKey="id"
           loading={loading}
           pagination={{ pageSize: 10 }}
-          scroll={{ x: 1400 }}
+          scroll={{ x: 'max-content' }}
         />
       </Card>
 
@@ -560,11 +567,12 @@ const CustomerManager: React.FC = () => {
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
-        width={700}
+        width={window.innerWidth < 768 ? '95%' : 700}
+        style={{ top: 20 }}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="customerLevel"
                 label="客户等级"
@@ -578,7 +586,7 @@ const CustomerManager: React.FC = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="date"
                 label="时间"
@@ -594,7 +602,7 @@ const CustomerManager: React.FC = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="region"
                 label="地区"
@@ -603,7 +611,7 @@ const CustomerManager: React.FC = () => {
                 <Input placeholder="请输入地区" />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="constructionType"
                 label="建筑类型"
@@ -614,7 +622,7 @@ const CustomerManager: React.FC = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="productType"
                 label="产品种类"
@@ -627,7 +635,7 @@ const CustomerManager: React.FC = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="customerName"
                 label="客户名称"
@@ -638,7 +646,7 @@ const CustomerManager: React.FC = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="progress"
                 label="进度"
@@ -653,7 +661,7 @@ const CustomerManager: React.FC = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="personInCharge"
                 label="负责人"
@@ -664,7 +672,7 @@ const CustomerManager: React.FC = () => {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item
                 name="phone"
                 label="客户电话"
@@ -685,7 +693,7 @@ const CustomerManager: React.FC = () => {
             <Input.TextArea rows={3} placeholder="请输入客户需求" />
           </Form.Item>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
               <Form.Item name="completionDate" label="完成时间">
                 <Input placeholder="如：4月28日" />
               </Form.Item>

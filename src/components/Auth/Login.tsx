@@ -663,8 +663,6 @@ const Login: React.FC = () => {
                 </div>
               </Form.Item>
             </Form>
-
-
           </TabPane>
         </Tabs>
 

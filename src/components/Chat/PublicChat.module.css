@@ -164,3 +164,53 @@
   background: #e6f7ff !important;
   border: 1px solid #1890ff;
 }
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .container {
+    height: calc(100vh - 80px);
+  }
+  
+  .chatCard {
+    border-radius: 0;
+  }
+  
+  .messagesArea {
+    padding: 10px;
+  }
+  
+  .messageContent {
+    max-width: 90%;
+  }
+  
+  .messageBubble {
+    max-width: calc(100% - 40px);
+    font-size: 16px;
+  }
+  
+  .inputArea {
+    padding: 12px 10px 20px;
+    gap: 8px;
+  }
+  
+  .inputArea :global(.ant-input) {
+    min-height: 70px !important;
+  }
+  
+  .sendButton {
+    min-height: 70px;
+    padding: 8px 16px;
+  }
+  
+  .suggestionTag {
+    font-size: 14px;
+    padding: 4px 12px;
+  }
+  
+  .guestBanner {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
