@@ -330,9 +330,7 @@ const CustomerManager: React.FC = () => {
       key: 'date',
       width: 150,
       responsive: ['md'],
-      render: (date: string) => {
-        return dayjs(date).format('YYYY-MM-DD'); '-';
-      },
+      render: (date: string) =>date ? dayjs(date).format('YYYY-MM-DD'): '-',
     },
     {
       title: '地区',
@@ -737,7 +735,7 @@ const CustomerManager: React.FC = () => {
                     {selectedCustomer.customerLevel}级
                   </Tag>
                 </Descriptions.Item>
-                <Descriptions.Item label="时间">{selectedCustomer.date}</Descriptions.Item>
+                <Descriptions.Item label="时间">{selectedCustomer.date ? dayjs(selectedCustomer.date).format('YYYY-MM-DD') : '-'}</Descriptions.Item>
                 <Descriptions.Item label="地区">{selectedCustomer.region}</Descriptions.Item>
                 <Descriptions.Item label="建筑类型">{selectedCustomer.constructionType}</Descriptions.Item>
                 <Descriptions.Item label="产品种类">{selectedCustomer.productType}</Descriptions.Item>
@@ -748,7 +746,7 @@ const CustomerManager: React.FC = () => {
                 </Descriptions.Item>
                 <Descriptions.Item label="负责人">{selectedCustomer.personInCharge}</Descriptions.Item>
                 <Descriptions.Item label="客户电话">{selectedCustomer.phone || '无'}</Descriptions.Item>
-                <Descriptions.Item label="完成时间">{selectedCustomer.completionDate}</Descriptions.Item>
+                <Descriptions.Item label="完成时间">{selectedCustomer.completionDate || '无'}</Descriptions.Item>
                 <Descriptions.Item label="客户需求" span={2}>
                   {selectedCustomer.requirement}
                 </Descriptions.Item>
