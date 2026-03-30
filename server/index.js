@@ -360,6 +360,7 @@ app.post('/api/certificates', upload.single('file'), async (req, res) => {
       id: generateId(),
       companyId,
       name,
+      standard: standard,
       type: category,
       issueDate: safeIssueDate,
       expiryDate: expiryDate || '长期有效', // 直接存入字符串
