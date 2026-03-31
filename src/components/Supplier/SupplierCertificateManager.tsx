@@ -67,6 +67,16 @@ interface Company {
   description?: string;
 }
 
+// 定义一个转换函数
+const transformCertificate = (cert: any): Certificate => ({
+  ...cert,
+  category: cert.type || '其他',         // 将 type 转为 category
+  description: cert.notes || '',         // 将 notes 转为 description
+  standard: Array.isArray(cert.standard)
+    ? cert.standard
+    : (cert.standard ? [cert.standard] : [])
+});
+
 const SupplierCertificateManager: React.FC = () => {
   const { role } = useAuthStore();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
@@ -161,12 +171,7 @@ const SupplierCertificateManager: React.FC = () => {
     try {
       const result = await api.getCertificates();
       if (result.success) {
-        const formattedCerts = result.certificates.map((cert: any) => ({
-          ...cert,
-          category: cert.type || '其他',
-          description: cert.notes || '',
-          standard: Array.isArray(cert.standard) ? cert.standard : (cert.standard ? [cert.standard] : [])
-        }));
+        const formattedCerts = result.certificates.map(transformCertificate);
         const filteredCerts = formattedCerts.filter(
           (cert: Certificate) => cert.companyId === companyId
         );
@@ -184,12 +189,7 @@ const SupplierCertificateManager: React.FC = () => {
     try {
       const result = await api.getCertificates();
       if (result.success) {
-        const formattedCerts = result.certificates.map((cert: any) => ({
-          ...cert,
-          category: cert.type || '其他',
-          description: cert.notes || '',
-          standard: Array.isArray(cert.standard) ? cert.standard : (cert.standard ? [cert.standard] : [])
-        }));
+        const formattedCerts = result.certificates.map(transformCertificate);
         setCertificates(formattedCerts);
       }
     } catch (error) {
@@ -259,12 +259,7 @@ const SupplierCertificateManager: React.FC = () => {
       const result = await api.addCertificate(formData);
       
       if (result.success) {
-        const newCert: Certificate = {
-          id: result.certificate.id,
-          companyName: result.certificate.companyName,
-          ...result.certificate,
-          standard: Array.isArray(result.certificate.standard) ? result.certificate.standard : [result.certificate.standard]
-        };
+        const newCert = transformCertificate(result.certificate);
         setCertificates([...certificates, newCert]);
         message.success('证书文件上传成功，后续可编辑补充详细信息');
         setIsQuickUploadModalVisible(false);
@@ -411,20 +406,14 @@ const SupplierCertificateManager: React.FC = () => {
       if (editingCertificate) {
         const result = await api.updateCertificate(editingCertificate.id, formData);
         if (result.success) {
-          const updatedCert: Certificate = {
-            ...result.certificate,
-            standard: Array.isArray(result.certificate.standard) ? result.certificate.standard : [result.certificate.standard]
-          };
+          const updatedCert = transformCertificate(result.certificate);
           setCertificates(certificates.map(c => c.id === editingCertificate.id ? updatedCert : c));
           message.success('证书更新成功');
         }
       } else {
         const result = await api.addCertificate(formData);
         if (result.success) {
-          const newCert: Certificate = {
-            ...result.certificate,
-            standard: Array.isArray(result.certificate.standard) ? result.certificate.standard : [result.certificate.standard]
-          };
+          const newCert = transformCertificate(result.certificate);
           setCertificates([...certificates, newCert]);
           message.success('证书添加成功');
         }
@@ -529,7 +518,7 @@ const SupplierCertificateManager: React.FC = () => {
       title: '发证日期',
       dataIndex: 'issueDate',
       key: 'issueDate',
-      render: (date: string) => date ? dayjs(date).format('YYYY-MM-DD') : '-',
+      render: (date: string) => (date && date !== '长期有效') ? dayjs(date).format('YYYY-MM-DD') : (date || '-'),
     },
     {
       title: '有效期至',
@@ -617,7 +606,7 @@ const SupplierCertificateManager: React.FC = () => {
                       {record.description && (
                         <p style={{ marginTop: 8 }}>
                           <strong>证书描述：</strong>
-                          <div style={{ marginTop: 4, padding: '8px', background: '#f5f5f5', borderRadius: '4px' }}>
+                          <div style={{ marginTop: 4, padding: '8px', background: '#f5f5f5', borderRadius: '4px', whiteSpace: 'pre-wrap' }}>
                             {record.description}
                           </div>
                         </p>
