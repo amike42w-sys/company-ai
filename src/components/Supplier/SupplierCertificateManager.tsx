@@ -314,7 +314,7 @@ const SupplierCertificateManager: React.FC = () => {
       standard: record.standard,
       category: record.category,
       issueDate: record.issueDate ? dayjs(record.issueDate) : null,
-      expiryDate: record.expiryDate ? dayjs(record.expiryDate) : null,
+      expiryDate: (record.expiryDate && record.expiryDate !== '长期有效') ? dayjs(record.expiryDate) : null,
       issuingAuthority: record.issuingAuthority,
       status: record.status,
       description: record.description,
@@ -865,12 +865,22 @@ const SupplierCertificateManager: React.FC = () => {
           <Row gutter={16}>
             <Col xs={24} sm={12}>
               <Form.Item name="issueDate" label="发证日期">
-                <DatePicker style={{ width: '100%' }} />
+                <DatePicker 
+                  style={{ width: '100%' }} 
+                  placeholder="请选择或输入(如 2024-05-08)"
+                  format="YYYY-MM-DD"
+                  allowClear
+                />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item name="expiryDate" label="有效期至">
-                <DatePicker style={{ width: '100%' }} />
+                <DatePicker 
+                  style={{ width: '100%' }} 
+                  placeholder="请选择或输入(如 2024-05-08)"
+                  format="YYYY-MM-DD"
+                  allowClear
+                />
               </Form.Item>
             </Col>
           </Row>
