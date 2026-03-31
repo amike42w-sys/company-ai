@@ -90,11 +90,7 @@ const SupplierCertificateManager: React.FC = () => {
   const [supplierId, setSupplierId] = useState<string>('');
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string>('all');
-  const [isQuickUploadModalVisible, setIsQuickUploadModalVisible] = useState(false);
-  const [quickUploadImage, setQuickUploadImage] = useState<string | null>(null);
-  const [quickUploadCompanyId, setQuickUploadCompanyId] = useState<string>('');
-  const [quickUploadName, setQuickUploadName] = useState<string>('');
-  const [quickUploadFileName, setQuickUploadFileName] = useState<string>(''); // 快速上传的文件名
+
   const [isPdfPreviewVisible, setIsPdfPreviewVisible] = useState(false);
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string>('');
   const [fileName, setFileName] = useState<string>(''); // 新增状态
@@ -104,7 +100,6 @@ const SupplierCertificateManager: React.FC = () => {
   const [hasSelectedNewFile, setHasSelectedNewFile] = useState<boolean>(false); // 【关键】是否选择了新文件
   const [selectedCertificates, setSelectedCertificates] = useState<string[]>([]); // 新增：批量选择的证书ID
   const fileRef = React.useRef<File | null>(null); // 【第一步修改】新增文件引用
-  const quickUploadFileRef = React.useRef<File | null>(null); // 快速上传的文件引用
   const isAdmin = role === 'internal' || role === 'certificate_admin';
 
   // 标准类型文件夹分类
@@ -217,65 +212,7 @@ const SupplierCertificateManager: React.FC = () => {
     setIsModalVisible(true);
   };
 
-  const handleQuickUpload = () => {
-    setQuickUploadImage(null);
-    setQuickUploadCompanyId(supplierId || '');
-    setQuickUploadName('');
-    setIsQuickUploadModalVisible(true);
-  };
 
-  const handleQuickUploadSubmit = async () => {
-    // 快速上传校验
-    if (!quickUploadFileRef.current && !quickUploadImage) {
-      message.error('请上传证书文件');
-      return;
-    }
-    if (!quickUploadCompanyId) {
-      message.error('请选择供应商');
-      return;
-    }
-    if (!quickUploadName.trim()) {
-      message.error('请输入证书名称');
-      return;
-    }
-
-    try {
-      // 核心修改：使用 FormData 发送真实文件流
-      const formData = new FormData();
-      formData.append('companyId', quickUploadCompanyId);
-      formData.append('name', quickUploadName.trim());
-      formData.append('standard', '未分类');
-      formData.append('category', '其他');
-      formData.append('issueDate', new Date().toISOString().split('T')[0]);
-      formData.append('expiryDate', '长期有效');
-      formData.append('issuingAuthority', '未知');
-      formData.append('status', 'valid');
-      
-      // 提取保存在 ref 中的原生 File 对象
-      if (quickUploadFileRef.current) {
-        formData.append('file', quickUploadFileRef.current);
-      }
-
-      const result = await api.addCertificate(formData);
-      
-      if (result.success) {
-        const newCert = transformCertificate(result.certificate);
-        setCertificates([...certificates, newCert]);
-        message.success('证书文件上传成功，后续可编辑补充详细信息');
-        setIsQuickUploadModalVisible(false);
-        setQuickUploadImage(null);
-        setQuickUploadCompanyId('');
-        setQuickUploadName('');
-        setQuickUploadFileName('');
-        quickUploadFileRef.current = null; // 清空文件引用
-      } else {
-        message.error(result.message || '上传失败');
-      }
-    } catch (error) {
-      console.error('快速上传失败:', error);
-      message.error('上传失败');
-    }
-  };
 
   const handleEdit = (record: Certificate) => {
     setEditingCertificate(record);
@@ -710,9 +647,6 @@ const SupplierCertificateManager: React.FC = () => {
               <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
                 添加证书
               </Button>
-              <Button type="default" icon={<UploadOutlined />} onClick={handleQuickUpload}>
-                快速上传
-              </Button>
             </Space>
           )}
         </Col>
@@ -750,6 +684,12 @@ const SupplierCertificateManager: React.FC = () => {
             onChange: (selectedRowKeys: any[]) => {
               setSelectedCertificates(selectedRowKeys.map(key => String(key)));
             },
+            selections: [
+              Table.SELECTION_ALL,
+              Table.SELECTION_INVERT,
+              Table.SELECTION_NONE,
+            ],
+            preserveSelectedRowKeys: true,
           } : undefined}
         />
       </Card>
@@ -808,7 +748,6 @@ const SupplierCertificateManager: React.FC = () => {
               <Form.Item
                 name="standard"
                 label="标准类型"
-                rules={[{ required: true, message: '请选择标准类型' }]}
               >
                 <Select placeholder="请选择标准类型" mode="multiple">
                   <Option value="国际标准">国际标准</Option>
@@ -832,7 +771,6 @@ const SupplierCertificateManager: React.FC = () => {
               <Form.Item
                 name="category"
                 label="证书类别"
-                rules={[{ required: true, message: '请选择证书类别' }]}
               >
                 <Select placeholder="请选择证书类别">
                   <Option value="产品证书">产品证书</Option>
@@ -1091,195 +1029,7 @@ const SupplierCertificateManager: React.FC = () => {
         </Form>
       </Modal>
 
-      {/* 快速上传模态框 */}
-      <Modal
-        title="快速上传证书"
-        open={isQuickUploadModalVisible}
-        onCancel={() => {
-          setIsQuickUploadModalVisible(false);
-          setQuickUploadImage(null);
-          setQuickUploadCompanyId('');
-          setQuickUploadName('');
-          setQuickUploadFileName(''); // 重置文件名
-        }}
-        onOk={handleQuickUploadSubmit}
-        width={500}
-      >
-        <div style={{ padding: 16 }}>
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>选择供应商</label>
-            <Select
-              placeholder="请选择供应商"
-              loading={companiesLoading}
-              value={quickUploadCompanyId}
-              onChange={setQuickUploadCompanyId}
-              style={{ width: '100%' }}
-            >
-              {companies.map(company => (
-                <Option key={company.id} value={company.id}>
-                  {company.name}
-                </Option>
-              ))}
-            </Select>
-          </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>证书名称</label>
-            <Input
-              placeholder="请输入证书名称"
-              value={quickUploadName}
-              onChange={(e) => setQuickUploadName(e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>上传证书文件</label>
-            <Space direction="vertical" style={{ width: '100%' }}>
-              {quickUploadImage !== null && (
-                <div style={{ position: 'relative', display: 'inline-block' }}>
-                  {quickUploadImage.includes('data:application/pdf') ? (
-                    <div style={{ 
-                      width: 300, 
-                      height: 200, 
-                      border: '1px dashed #d9d9d9', 
-                      borderRadius: 4,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: '#fafafa',
-                      cursor: 'pointer'
-                    }} onClick={() => {
-                      // 关键：如果已经选择了本地文件，直接生成预览链接，不要用 Base64 转
-                      if (quickUploadFileRef.current) {
-                        const localUrl = URL.createObjectURL(quickUploadFileRef.current);
-                        setPdfPreviewUrl(localUrl);
-                        setIsPdfPreviewVisible(true);
-                      } else {
-                        message.error("文件获取失败，请尝试重新选择文件");
-                      }
-                    }}>
-                      <div style={{ fontSize: 48, marginBottom: 8 }}>📄</div>
-                      <Text type="secondary">PDF 文件 - 点击预览</Text>
-                    </div>
-                  ) : (
-                    <Image
-                      src={quickUploadImage}
-                      width={300}
-                      alt="证书图片"
-                      preview={{
-                        maskClosable: true,
-                        mask: (
-                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.5)', color: 'white', padding: 8, textAlign: 'center' }}>
-                            预览
-                          </div>
-                        ),
-                        icons: {
-                          zoomIn: '预览',
-                          zoomOut: '缩小',
-                          rotateLeft: '向左旋转',
-                          rotateRight: '向右旋转',
-                          flipX: '水平翻转',
-                          flipY: '垂直翻转'
-                        }
-                      }}
-                    />
-                  )}
-                  <div
-                    onClick={() => setQuickUploadImage(null)}
-                    style={{
-                      position: 'absolute',
-                      top: 8,
-                      right: 8,
-                      width: 28,
-                      height: 28,
-                      backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      color: 'white',
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                      e.currentTarget.style.transform = 'scale(1.1)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }}
-                  >
-                    ×
-                  </div>
-                </div>
-              )}
-              {/* 在更换文件按钮上方显示文件名 */}
-              {quickUploadFileName && (
-                <div style={{ marginBottom: 8, color: '#1890ff' }}>
-                  当前选择: <strong>{quickUploadFileName}</strong>
-                </div>
-              )}
-              <Upload
-                name="image"
-                accept="image/*,application/pdf"
-                showUploadList={false}
-                beforeUpload={(file) => {
-                  // 设置文件名显示
-                  setQuickUploadFileName(file.name);
-                  
-                  // 验证文件大小
-                  const isLt100M = file.size / 1024 / 1024 < 100;
-                  if (!isLt100M) {
-                    message.error('文件大小不能超过 100MB!');
-                    return false;
-                  }
-                  
-                  // 保存文件引用
-                  quickUploadFileRef.current = file;
-                  
-                  // 读取文件并更新状态（使用切片读取，避免内存溢出）
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    try {
-                      const base64String = e.target?.result as string;
-                      setQuickUploadImage(base64String);
-                      console.log('文件读取成功，大小:', file.size, '字节');
-                    } catch (error) {
-                      console.error('文件读取失败:', error);
-                      message.error('文件读取失败，请检查文件是否损坏');
-                      setQuickUploadImage(null);
-                      setQuickUploadFileName('');
-                      quickUploadFileRef.current = null;
-                    }
-                  };
-                  reader.onerror = () => {
-                    console.error('文件读取错误');
-                    message.error('文件读取失败，请检查文件是否损坏');
-                    setQuickUploadImage(null);
-                    setQuickUploadFileName('');
-                    quickUploadFileRef.current = null;
-                  };
-                  reader.readAsDataURL(file);
-                  return false;
-                }}
-              >
-                <Button icon={<UploadOutlined />}>{quickUploadImage || quickUploadFileName ? '更换文件' : '上传图片或PDF'}</Button>
-              </Upload>
-              <Text type="secondary">支持 JPG、PNG、GIF、PDF 格式，最大 100MB</Text>
-            </Space>
-          </div>
-
-          <div style={{ marginTop: 16, padding: 12, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
-            <Text type="secondary">
-              快速上传后，您可以后续编辑补充更多详细信息。
-            </Text>
-          </div>
-        </div>
-      </Modal>
 
       {/* PDF 预览模态框 */}
       <Modal

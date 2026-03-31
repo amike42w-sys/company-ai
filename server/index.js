@@ -353,23 +353,19 @@ app.post('/api/certificates', upload.single('file'), async (req, res) => {
       console.log("没有上传文件");
     }
 
-    // 使用安全的日期转换逻辑
-    const safeIssueDate = (issueDate && !isNaN(new Date(issueDate).getTime())) ? new Date(issueDate) : null;
-    
     const newCertificate = await Certificate.create({
       id: generateId(),
       companyId,
       name,
-      standard: standard,
-      type: category,
+      standard: standard || '未分类',
+      type: category || '其他',
       issuingAuthority: issuingAuthority || '',
-      issueDate: safeIssueDate,
-      expiryDate: expiryDate || '长期有效', // 直接存入字符串
-      imageUrl: imageUrl,    // <--- 核心：确认这行没漏！值应该是 "/uploads/certificates/cert_xxx.jpg"
-      imagePath: imagePath,  // <--- 核心：确认这行也没漏！
-      status: status || 'valid',
+      issueDate: issueDate || null,
+      expiryDate: expiryDate || '长期有效',
+      imageUrl: req.file ? `/uploads/certificates/${req.file.filename}` : null,
+      imagePath: req.file ? req.file.path : null,
+      status: 'valid',
       notes: description || '',
-      originalName: originalName || '',
       createdAt: new Date(),
       updatedAt: new Date()
     });
