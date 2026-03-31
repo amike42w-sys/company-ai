@@ -164,6 +164,7 @@ const SupplierCertificateManager: React.FC = () => {
         const formattedCerts = result.certificates.map((cert: any) => ({
           ...cert,
           category: cert.type || '其他',
+          description: cert.notes || '',
           standard: Array.isArray(cert.standard) ? cert.standard : (cert.standard ? [cert.standard] : [])
         }));
         const filteredCerts = formattedCerts.filter(
@@ -186,6 +187,7 @@ const SupplierCertificateManager: React.FC = () => {
         const formattedCerts = result.certificates.map((cert: any) => ({
           ...cert,
           category: cert.type || '其他',
+          description: cert.notes || '',
           standard: Array.isArray(cert.standard) ? cert.standard : (cert.standard ? [cert.standard] : [])
         }));
         setCertificates(formattedCerts);
@@ -601,8 +603,8 @@ const SupplierCertificateManager: React.FC = () => {
                       </p>
                       <p><strong>证书类别：</strong>{record.category}</p>
                       <p><strong>发证日期：</strong>{record.issueDate ? dayjs(record.issueDate).format('YYYY-MM-DD') : '-'}</p>
-                      <p><strong>有效期至：</strong>{record.expiryDate && record.expiryDate !== '长期有效' ? dayjs(record.expiryDate).format('YYYY-MM-DD') : '长期有效'}</p>
-                      <p><strong>发证机构：</strong>{record.issuingAuthority}</p>
+                      <p><strong>有效期至：</strong>{record.expiryDate === '长期有效' ? '长期有效' : (record.expiryDate ? dayjs(record.expiryDate).format('YYYY-MM-DD') : '-')}</p>
+                      <p><strong>发证机构：</strong>{record.issuingAuthority || '-'}</p>
                       <p><strong>状态：</strong>
                         {isExpired(record.expiryDate) ? '已过期' :
                           ({
@@ -613,7 +615,12 @@ const SupplierCertificateManager: React.FC = () => {
                         }
                       </p>
                       {record.description && (
-                        <p><strong>描述：</strong>{record.description}</p>
+                        <p style={{ marginTop: 8 }}>
+                          <strong>证书描述：</strong>
+                          <div style={{ marginTop: 4, padding: '8px', background: '#f5f5f5', borderRadius: '4px' }}>
+                            {record.description}
+                          </div>
+                        </p>
                       )}
                       {(record.imageBase64 || record.imageUrl) && (
                         <div style={{ marginTop: 16 }}>
