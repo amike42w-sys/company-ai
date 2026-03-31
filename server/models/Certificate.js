@@ -23,6 +23,10 @@ const Certificate = sequelize.define('Certificate', {
     type: DataTypes.STRING,
     allowNull: true
   },
+  issuingAuthority: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   issueDate: {
     type: DataTypes.DATE,
     allowNull: true

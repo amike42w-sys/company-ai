@@ -362,6 +362,7 @@ app.post('/api/certificates', upload.single('file'), async (req, res) => {
       name,
       standard: standard,
       type: category,
+      issuingAuthority: issuingAuthority || '',
       issueDate: safeIssueDate,
       expiryDate: expiryDate || '长期有效', // 直接存入字符串
       imageUrl: imageUrl,    // <--- 核心：确认这行没漏！值应该是 "/uploads/certificates/cert_xxx.jpg"
@@ -497,25 +498,21 @@ app.put('/api/certificates/:id', upload.single('file'), async (req, res) => {
     }
     console.log("---------------------------------------");
 
-    // 更新其他字段
-    if (name) certificate.name = name;
-    if (standard) certificate.standard = standard;
-    
-    // 使用这个安全的日期转换逻辑
-    certificate.issueDate = (issueDate && !isNaN(new Date(issueDate).getTime())) ? new Date(issueDate) : null;
-    certificate.expiryDate = (expiryDate && !isNaN(new Date(expiryDate).getTime())) ? new Date(expiryDate) : null;
-    
-    if (issuingAuthority) certificate.issuingAuthority = issuingAuthority;
-    if (description !== undefined) certificate.notes = description;
-    if (category) certificate.type = category;
-    if (status) certificate.status = status;
-    if (originalName) certificate.originalName = originalName;
-
-    certificate.updatedAt = new Date();
+    // 使用 update 方法更新所有字段
+    await certificate.update({
+      name: name,
+      standard: standard,
+      type: category,
+      issuingAuthority: issuingAuthority,
+      issueDate: (issueDate && !isNaN(new Date(issueDate).getTime())) ? new Date(issueDate) : null,
+      expiryDate: (expiryDate && !isNaN(new Date(expiryDate).getTime())) ? new Date(expiryDate) : null,
+      status: status,
+      notes: description,
+      originalName: originalName,
+      updatedAt: new Date()
+    });
 
     console.log("更新后的证书数据:", certificate.toJSON());
-
-    await certificate.save();
 
     const company = await Company.findByPk(certificate.companyId);
 
