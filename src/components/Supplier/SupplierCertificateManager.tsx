@@ -115,6 +115,7 @@ const SupplierCertificateManager: React.FC = () => {
 
   // 标准类型映射到文件夹
   const standardToFolder: Record<string, string> = {
+    '中国标准': '中国标准',
     '中华人民共和国商标法': '中国标准',
     '中华人民共和国环境保护法': '中国标准',
     '中华人民共和国大气污染防治法': '中国标准',
@@ -751,6 +752,7 @@ const SupplierCertificateManager: React.FC = () => {
               >
                 <Select placeholder="请选择标准类型" mode="multiple">
                   <Option value="国际标准">国际标准</Option>
+                  <Option value="中国标准">中国标准</Option>
                   <Option value="澳标">澳标</Option>
                   <Option value="港标">港标</Option>
                   <Option value="欧标">欧标</Option>
@@ -784,6 +786,7 @@ const SupplierCertificateManager: React.FC = () => {
                   <Option value="企业资质类">企业资质类</Option>
                   <Option value="安全生产资质类">安全生产资质类</Option>
                   <Option value="焊接工艺资质类">焊接工艺资质类</Option>
+                  <Option value="焊工资格证书类">焊工资格证书类</Option>
                   <Option value="其他">其他</Option>
                 </Select>
               </Form.Item>
