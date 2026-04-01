@@ -785,6 +785,7 @@ const SupplierCertificateManager: React.FC = () => {
                   <Option value="体系证书">体系证书</Option>
                   <Option value="CE证书">CE证书</Option>
                   <Option value="知识产权类 - 商标注册证书">知识产权类 - 商标注册证书</Option>
+                  <Option value="知识产权类 - 专利证书">知识产权类 - 专利证书</Option>
                   <Option value="企业荣誉类">企业荣誉类</Option>
                   <Option value="会员资质类">会员资质类</Option>
                   <Option value="环保合规类">环保合规类</Option>
