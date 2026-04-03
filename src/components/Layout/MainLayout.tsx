@@ -121,12 +121,16 @@ const MainLayout: React.FC = () => {
       <Header className={styles.header}>
         <div className={styles.logo}>
           <SafetyOutlined className={styles.logoIcon} />
-          <span className={styles.logoText}>公司AI智能助手</span>
+          <span className={styles.logoText}>
+            <span className={styles.fullText}>公司AI智能助手</span>
+            <span className={styles.shortText}>公司AI</span>
+          </span>
           {(role === 'internal' || role === 'certificate_admin' || role === 'certificate_viewer') && (
             <Badge 
               count="内部版" 
-              color="#2f54eb" // 标签颜色也换成高级的蓝色
-              style={{ marginLeft: 8, boxShadow: 'none' }}
+              color="#2f54eb" 
+              className={styles.internalBadge} 
+              style={{ marginLeft: 4, boxShadow: 'none', scale: '0.8' }}
             />
           )}
         </div>
@@ -139,20 +143,22 @@ const MainLayout: React.FC = () => {
               </div>
             </Dropdown>
           ) : (
-            <Space>
+            <Space size={window.innerWidth < 768 ? 4 : 8}>
               <Button 
-                type="default"
-                icon={<CustomerServiceOutlined />}
-                onClick={() => navigate('/login')}
+                type="default" 
+                icon={<CustomerServiceOutlined />} 
+                onClick={() => navigate('/login')} 
+                className={styles.navBtn} 
               >
-                客户登录
+                <span className={styles.btnText}>客户登录</span>
               </Button>
               <Button 
                 type="primary" 
-                icon={<LoginOutlined />}
-                onClick={() => navigate('/login?tab=internal')}
+                icon={<LoginOutlined />} 
+                onClick={() => navigate('/login?tab=internal')} 
+                className={styles.navBtn} 
               >
-                内部登录
+                <span className={styles.btnText}>内部登录</span>
               </Button>
             </Space>
           )}

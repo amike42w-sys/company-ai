@@ -228,3 +228,28 @@
     padding: 0 20px;
   }
 }
+
+/* 专门针对手机端的样式修正 */
+@media (max-width: 768px) {
+  .bannerContainer {
+    height: 250px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .slideContent {
+    padding: 0 15px !important;
+  }
+
+  .iconWrapper {
+    margin-bottom: 8px !important;
+  }
+
+  .headerButtons {
+    scale: 0.9;
+    transform-origin: right;
+  }
+  
+  .cardContent {
+    padding: 16px !important;
+  }
+}

@@ -19,7 +19,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0; /* 防止标题被按钮挤扁 */
 }
+
+/* 默认显示长名，隐藏短名 */
+.fullText { display: inline; }
+.shortText { display: none; }
 
 .logoIcon {
   font-size: 28px;
@@ -89,5 +94,67 @@
   
   .content {
     margin: 16px;
+  }
+}
+
+/* 专门针对手机端的样式修正 */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 12px; /* 缩小边距 */
+    height: 56px;    /* 稍微减低高度 */
+  }
+
+  .logo {
+    gap: 6px; /* 缩小图标和文字的间距 */
+  }
+
+  .logoIcon {
+    font-size: 20px; /* 缩小 Logo 图标 */
+  }
+
+  /* 切换为短标题 */
+  .fullText { display: none; }
+  .shortText { 
+    display: inline;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  /* 隐藏内部版 Badge，手机端太挤了 */
+  .internalBadge {
+    display: none;
+  }
+
+  .headerRight {
+    gap: 8px; /* 缩小右侧按钮间距 */
+  }
+
+  /* 手机端只显示图标，隐藏按钮文字 */
+  .btnText {
+    display: none;
+  }
+
+  /* 调整按钮样式，让它更像一个小图标按钮 */
+  .navBtn {
+    padding: 0 8px !important;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 如果已登录，缩小用户名显示 */
+  .username {
+    display: none; /* 手机端只显示头像即可，点开 Dropdown 再看名字 */
+  }
+
+  .userInfo {
+    padding: 4px 0;
+  }
+
+  /* 内容区域间距调整 */
+  .content {
+    margin: 12px; /* 减小手机端页面四周的留白 */
   }
 }

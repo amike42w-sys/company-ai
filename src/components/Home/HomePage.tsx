@@ -18,6 +18,7 @@ const { Title, Paragraph } = Typography
 const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
+  const isMobile = window.innerWidth < 768;
 
   const bannerImages = [
     { src: '/images/banner/exterior.jpg', title: '公司外观' },
@@ -65,13 +66,27 @@ const HomePage: React.FC = () => {
                 <div className={styles.iconWrapper}>
                   <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
                 </div>
-                <Title level={1} style={{ color: '#fff', margin: '16px 0' }}>
+                <Title 
+                  level={isMobile ? 3 : 1} 
+                  style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0', fontSize: isMobile ? '20px' : '' }}
+                >
                   欢迎来到 {companyInfo.name}
                 </Title>
-                <Title level={3} style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal' }}>
+                <Title 
+                  level={isMobile ? 5 : 3} 
+                  style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal', fontSize: isMobile ? '14px' : '' }}
+                >
                   {companyInfo.slogan}
                 </Title>
-                <Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: '18px', display: 'block', marginBottom: 24 }}>
+                <Paragraph 
+                  style={{ 
+                    color: 'rgba(255,255,255,0.8)', 
+                    fontSize: isMobile ? '12px' : '18px', 
+                    display: 'block', 
+                    marginBottom: isMobile ? 12 : 24, 
+                    lineHeight: 1.4 
+                  }}
+                >
                   {companyInfo.description}
                 </Paragraph>
                 {role === 'internal' && (
