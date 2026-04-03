@@ -1,11 +1,12 @@
 import React from 'react'
-import { Card, Row, Col, Typography, Button, Tag } from 'antd'
+import { Card, Row, Col, Typography, Button, Tag, Carousel } from 'antd'
 import {
   RocketOutlined,
   SafetyOutlined,
   MessageOutlined,
   ExperimentOutlined,
   ArrowRightOutlined,
+  CheckCircleOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { companyInfo } from '../../data/companyInfo'
@@ -17,6 +18,16 @@ const { Title, Paragraph } = Typography
 const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
+
+  const bannerImages = [
+    { src: '/images/banner/exterior.jpg', title: '公司外观' },
+    { src: '/images/banner/factory1.jpg', title: '生产车间' },
+    { src: '/images/banner/factory2.jpg', title: '加工细节' },
+    { src: '/images/banner/factory3.jpg', title: '组装流水线' },
+    { src: '/images/banner/aerial1.jpg', title: '工厂全景' },
+    { src: '/images/banner/aerial2.jpg', title: '园区俯拍' },
+    { src: '/images/banner/aerial3.jpg', title: '现代化生产基地' },
+  ]
 
   const features = [
     {
@@ -39,24 +50,39 @@ const HomePage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {/* Hero Section */}
-      <div className={styles.hero}>
-        <RocketOutlined className={styles.heroIcon} />
-        <Title level={2} className={styles.heroTitle}>
-          欢迎来到 {companyInfo.name}
-        </Title>
-        <Paragraph className={styles.heroSubtitle}>
-          {companyInfo.slogan}
-        </Paragraph>
-        <Paragraph className={styles.heroDesc}>
-          {companyInfo.description}
-        </Paragraph>
-        
-        {role === 'internal' && (
-          <Tag color="success" icon={<SafetyOutlined />} className={styles.internalTag}>
-            已登录内部账号
-          </Tag>
-        )}
+      {/* Hero Section with Carousel */}
+      <div className={styles.bannerContainer}>
+        <Carousel autoplay effect="fade" autoplaySpeed={5000}>
+          {bannerImages.map((img, index) => (
+            <div key={index} className={styles.slideItem}>
+              {/* 背景图片层 */}
+              <div
+                className={styles.slideImage}
+                style={{ backgroundImage: `url(${img.src})` }}
+              />
+              {/* 文字遮罩层 - 保证文字清晰可见 */}
+              <div className={styles.slideContent}>
+                <div className={styles.iconWrapper}>
+                  <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
+                </div>
+                <Title level={1} style={{ color: '#fff', margin: '16px 0' }}>
+                  欢迎来到 {companyInfo.name}
+                </Title>
+                <Title level={3} style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal' }}>
+                  {companyInfo.slogan}
+                </Title>
+                <Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: '18px', display: 'block', marginBottom: 24 }}>
+                  {companyInfo.description}
+                </Paragraph>
+                {role === 'internal' && (
+                  <Tag color="success" icon={<CheckCircleOutlined />}>
+                    已登录内部账号
+                  </Tag>
+                )}
+              </div>
+            </div>
+          ))}
+        </Carousel>
       </div>
 
       {/* Features Section */}
