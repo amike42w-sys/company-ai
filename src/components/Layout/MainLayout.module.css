@@ -44,6 +44,11 @@
   gap: 16px;
 }
 
+/* --- PC端默认隐藏短标签 --- */
+.mobileBtnLabel {
+  display: none;
+}
+
 .userInfo {
   display: flex;
   align-items: center;
@@ -131,17 +136,26 @@
 
   /* 手机端只显示图标，隐藏按钮文字 */
   .btnText {
-    display: none;
+    display: none; /* 隐藏长文字 */
   }
 
-  /* 调整按钮样式，让它更像一个小图标按钮 */
+  .mobileBtnLabel {
+    display: inline; /* 显示短文字 */
+    font-size: 12px;
+    margin-left: 2px;
+  }
+
   .navBtn {
-    padding: 0 8px !important;
-    width: 36px;
-    height: 36px;
+    width: auto !important; /* 宽度自适应文字长度 */
+    padding: 0 6px !important;
+    height: 32px !important;
     display: flex;
     align-items: center;
-    justify-content: center;
+    border-radius: 4px;
+  }
+
+  .headerRight {
+    gap: 4px; /* 缩小按钮组之间的间距 */
   }
 
   /* 如果已登录，缩小用户名显示 */

@@ -151,6 +151,7 @@ const MainLayout: React.FC = () => {
                 className={styles.navBtn} 
               >
                 <span className={styles.btnText}>客户登录</span>
+                <span className={styles.mobileBtnLabel}>客户</span>
               </Button>
               <Button 
                 type="primary" 
@@ -159,6 +160,7 @@ const MainLayout: React.FC = () => {
                 className={styles.navBtn} 
               >
                 <span className={styles.btnText}>内部登录</span>
+                <span className={styles.mobileBtnLabel}>内部</span>
               </Button>
             </Space>
           )}
