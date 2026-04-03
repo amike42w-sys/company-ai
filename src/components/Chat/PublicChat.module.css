@@ -2,6 +2,55 @@
   height: calc(100vh - 160px);
 }
 
+/* 基础容器增加间距，防止被顶栏遮挡 */
+.chatContainer {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* 头部操作区适配 */
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.titleText {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btnText {
+  font-size: 14px;
+}
+
+.mobileHide {
+  display: inline-block;
+}
+
 .chatCard {
   height: 100%;
   display: flex;
@@ -195,6 +244,49 @@
   
   .inputArea :global(.ant-input) {
     min-height: 70px !important;
+  }
+  
+  /* 头部操作区适配 */
+  .chatHeader {
+    flex-direction: column; /* 手机端标题和按钮分两行 */
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .headerActions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* 隐藏 PC 端的长文字，让按钮更紧凑 */
+  .btnText {
+    display: none;
+  }
+
+  /* 既然顶栏有了登录，这里重复的按钮直接隐藏 */
+  .mobileHide {
+    display: none;
+  }
+
+  /* 调整引导卡片的边距 */
+  .guideCard {
+    margin-top: 10px !important;
+    padding: 12px !important;
+  }
+
+  /* 引导问题按钮适配 */
+  .suggestions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important; /* 强制两列排列 */
+    gap: 8px !important;
+  }
+
+  .suggestionTag {
+    font-size: 13px !important;
+    padding: 8px 4px !important;
+    height: auto !important;
+    white-space: normal; /* 允许换行 */
   }
   
   .sendButton {

@@ -154,61 +154,65 @@ const PublicChat: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Card
-        className={styles.chatCard}
-        title={
-          <Space>
-            <GlobalOutlined />
-            <span>公司信息咨询</span>
-            <Tag color="blue">公开访问</Tag>
-            {isAuthenticated && role === 'external' && (
-              <Badge dot color="green">
-                <Tag color="success">已登录</Tag>
-              </Badge>
-            )}
-          </Space>
-        }
-        extra={
-          <Space>
-            {isAuthenticated && (
-              <Tooltip title="历史记录">
-                <Button
-                  icon={<HistoryOutlined />}
-                  onClick={() => setHistoryDrawerOpen(true)}
-                >
-                  历史
-                </Button>
-              </Tooltip>
-            )}
-            <Tooltip title="新对话">
+      <div className={styles.chatHeader}>
+        <div className={styles.headerTitle}>
+          <GlobalOutlined />
+          <span className={styles.titleText}>公司信息咨询</span>
+          <Tag color="blue">公开访问</Tag>
+          {isAuthenticated && role === 'external' && (
+            <Badge dot color="green">
+              <Tag color="success">已登录</Tag>
+            </Badge>
+          )}
+        </div>
+        
+        <div className={styles.headerActions}>
+          {isAuthenticated && (
+            <Tooltip title="历史记录">
               <Button
-                icon={<PlusOutlined />}
-                onClick={handleNewSession}
+                icon={<HistoryOutlined />}
+                onClick={() => setHistoryDrawerOpen(true)}
+                className={styles.actionBtn}
               >
-                新对话
+                <span className={styles.btnText}>历史</span>
               </Button>
             </Tooltip>
-            {publicMessages.length > 0 && (
-              <Tooltip title="清空对话">
-                <Button
-                  icon={<ClearOutlined />}
-                  onClick={clearMessages}
-                >
-                  清空
-                </Button>
-              </Tooltip>
-            )}
-            {!isAuthenticated && (
+          )}
+          <Tooltip title="新对话">
+            <Button
+              icon={<PlusOutlined />}
+              onClick={handleNewSession}
+              className={styles.actionBtn}
+            >
+              <span className={styles.btnText}>新对话</span>
+            </Button>
+          </Tooltip>
+          {publicMessages.length > 0 && (
+            <Tooltip title="清空对话">
               <Button
-                type="primary"
-                icon={<LoginOutlined />}
-                onClick={() => navigate('/login')}
+                icon={<ClearOutlined />}
+                onClick={clearMessages}
+                className={styles.actionBtn}
               >
-                登录/注册
+                <span className={styles.btnText}>清空</span>
               </Button>
-            )}
-          </Space>
-        }
+            </Tooltip>
+          )}
+          {!isAuthenticated && (
+            <Button
+              type="primary"
+              icon={<LoginOutlined />}
+              onClick={() => navigate('/login')}
+              className={styles.mobileHide}
+            >
+              登录/注册
+            </Button>
+          )}
+        </div>
+      </div>
+      
+      <Card
+        className={styles.chatCard}
       >
         {/* Messages Area */}
         <div className={styles.messagesArea}>
