@@ -29,7 +29,7 @@ const HomePage: React.FC = () => {
     { src: '/images/banner/factory2.jpg', title: '加工细节' },
     { src: '/images/banner/factory3.jpg', title: '组装流水线' },
     { src: '/images/banner/aerial1.jpg', title: '工厂全景' },
-    { src: '/images/banner/aerial2.png', title: '园区俯拍' },
+    { src: '/images/banner/aerial2.jpg', title: '园区俯拍' },
     { src: '/images/banner/aerial3.jpg', title: '现代化生产基地' },
   ]
 

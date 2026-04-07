@@ -35,8 +35,8 @@ import { api } from '../../services/api';
 import dayjs from 'dayjs';
 
 // 服务器基础地址
-const serverBase = 'http://106.52.31.237:3001';
-const API_BASE = 'http://106.52.31.237:3001';
+const serverBase = 'https://ai.matrixliving.com';
+const API_BASE = 'https://ai.matrixliving.com';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
