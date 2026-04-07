@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Card, Row, Col, Typography, Button, Tag, Carousel } from 'antd'
 import {
   RocketOutlined,
@@ -7,6 +7,8 @@ import {
   ExperimentOutlined,
   ArrowRightOutlined,
   CheckCircleOutlined,
+  LeftOutlined,
+  RightOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { companyInfo } from '../../data/companyInfo'
@@ -19,6 +21,7 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
   const isMobile = window.innerWidth < 768;
+  const carouselRef = useRef<any>(null);
 
   const bannerImages = [
     { src: '/images/banner/exterior.jpg', title: '公司外观' },
@@ -53,7 +56,21 @@ const HomePage: React.FC = () => {
     <div className={styles.container}>
       {/* Hero Section with Carousel */}
       <div className={styles.bannerContainer}>
-        <Carousel autoplay effect="fade" autoplaySpeed={5000}>
+        {/* 左箭头按钮 */}
+        <Button
+          className={`${styles.arrowBtn} ${styles.arrowLeft}`}
+          icon={<LeftOutlined />}
+          shape="circle"
+          onClick={() => carouselRef.current.prev()}
+        />
+
+        {/* 绑定 ref 到 Carousel */}
+        <Carousel
+          ref={carouselRef}
+          autoplay
+          effect="fade"
+          autoplaySpeed={5000}
+        >
           {bannerImages.map((img, index) => (
             <div key={index} className={styles.slideItem}>
               {/* 背景图片层 */}
@@ -98,6 +115,14 @@ const HomePage: React.FC = () => {
             </div>
           ))}
         </Carousel>
+
+        {/* 右箭头按钮 */}
+        <Button
+          className={`${styles.arrowBtn} ${styles.arrowRight}`}
+          icon={<RightOutlined />}
+          shape="circle"
+          onClick={() => carouselRef.current.next()}
+        />
       </div>
 
       {/* Features Section */}

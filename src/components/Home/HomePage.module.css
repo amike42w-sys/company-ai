@@ -253,3 +253,42 @@
     padding: 16px !important;
   }
 }
+
+/* 左右按钮公用样式 */
+.arrowBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: #fff !important;
+  transition: all 0.3s ease !important;
+}
+
+.arrowBtn:hover {
+  background: rgba(255, 255, 255, 0.4) !important;
+  scale: 1.1;
+}
+
+/* 左箭头位置 */
+.arrowLeft {
+  left: 20px;
+}
+
+/* 右箭头位置 */
+.arrowRight {
+  right: 20px;
+}
+
+/* 手机端适配：缩小按钮或隐藏 */
+@media (max-width: 768px) {
+  .arrowBtn {
+    width: 30px;
+    height: 30px;
+  }
+  .arrowLeft { left: 10px; }
+  .arrowRight { right: 10px; }
+}
