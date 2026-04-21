@@ -125,7 +125,8 @@ export class AIService {
     
     // 关键词匹配
     if (lowerQuestion.includes('产品') || lowerQuestion.includes('服务')) {
-      return `我们提供以下核心产品和配套定制服务：
+      if (isChinese) {
+        return `我们提供以下核心产品和配套定制服务：
 
 **核心产品**：
 ${companyInfo.products.map(p => `• ${p.name}：${p.slogan}`).join('\n')}
@@ -136,12 +137,30 @@ ${companyInfo.supportingServices?.map(s => `• ${s.name}：${s.description}`).j
 以及${companyInfo.services.join('、')}等服务。
 
 想了解更多具体产品的信息吗？比如集装箱房屋、钢结构别墅等。`
+      } else {
+        return `We provide the following core products and customized supporting services:
+
+**Core Products**:
+• Container House: Modular integration, 7-day quick delivery
+• Prefabricated House: Flexible combination, economical and practical
+• Steel Structure Villa: Light steel structure luxury, earthquake-resistant and livable, customizable
+• Mobile岗亭: Customized design, flexible and efficient deployment
+
+**Supporting and Customized Services**:
+• Industrial Equipment Case: Customized cabinets, distribution boxes, inverter boxes, etc.
+• Steel Structure Processing and Full-chain Services: Customized steel structure parts, production of ultra-wide boxes/special size modules
+
+And services such as ${companyInfo.services.join(', ')}.
+
+Would you like to know more about specific products? For example, Container House, Steel Structure Villa, etc.`
+      }
     }
     
     if (lowerQuestion.includes('集装箱')) {
       const product = companyInfo.products.find(p => p.name.includes('集装箱'))
       if (product) {
-        return `**${product.name}** - ${product.slogan}
+        if (isChinese) {
+          return `**${product.name}** - ${product.slogan}
 
 ${product.description}
 
@@ -149,13 +168,24 @@ ${product.description}
 **优势**：工厂预制率高，交付周期短，7天即可快速交付
 
 您是想了解集装箱房屋的价格、定制选项，还是应用案例呢？`
+        } else {
+          return `**Container House** - Modular integration, 7-day quick delivery
+
+Modular design, quick construction, sturdy and durable, can be used for temporary dormitories, offices, homestays and other scenarios, with high factory prefabrication rate and short delivery cycle.
+
+**Applicable scenarios**: Temporary dormitories, offices, homestays, etc.
+**Advantages**: High factory prefabrication rate, short delivery cycle, 7-day quick delivery
+
+Would you like to know about Container House prices, customization options, or application cases?`
+        }
       }
     }
     
     if (lowerQuestion.includes('钢结构') || lowerQuestion.includes('别墅')) {
       const product = companyInfo.products.find(p => p.name.includes('钢结构'))
       if (product) {
-        return `**${product.name}** - ${product.slogan}
+        if (isChinese) {
+          return `**${product.name}** - ${product.slogan}
 
 ${product.description}
 
@@ -166,30 +196,61 @@ ${product.description}
 • 适合高端住宅、度假民宿
 
 您对钢结构别墅的哪个方面感兴趣？设计、价格还是施工周期？`
+        } else {
+          return `**Steel Structure Villa** - Light steel structure luxury, earthquake-resistant and livable, customizable
+
+Light steel structure main body, earthquake-resistant and wind-resistant, comfortable and livable, meets European building standards, can be customized as high-end residential, vacation homestay.
+
+**Advantages**:
+• Light steel structure main body, earthquake-resistant and wind-resistant
+• Meets European building standards
+• Customizable design
+• Suitable for high-end residential, vacation homestay
+
+Which aspect of Steel Structure Villa are you interested in? Design, price, or construction cycle?`
+        }
       }
     }
     
     // 注册地址 - 只返回地址信息
     if (lowerQuestion.includes('注册地址') || lowerQuestion.includes('注册地')) {
-      return `我们的注册地址是：${companyInfo.contact.address}`
+      if (isChinese) {
+        return `我们的注册地址是：${companyInfo.contact.address}`
+      } else {
+        return `Our registered address is: ${companyInfo.contact.address}`
+      }
     }
     
     if (lowerQuestion.includes('联系') || lowerQuestion.includes('电话') || lowerQuestion.includes('地址')) {
-      return `联系方式：
+      if (isChinese) {
+        return `联系方式：
 📞 电话：${companyInfo.contact.phone}
 📧 邮箱：${companyInfo.contact.email}
 📍 地址：${companyInfo.contact.address}
 
 欢迎随时联系我们咨询！`
+      } else {
+        return `Contact Information:
+📞 Phone: ${companyInfo.contact.phone}
+📧 Email: ${companyInfo.contact.email}
+📍 Address: ${companyInfo.contact.address}
+
+Welcome to contact us for consultation at any time!`
+      }
     }
     
     // 公司名称相关问题 - 只返回简洁的公司名称
     if (lowerQuestion.includes('公司') && (lowerQuestion.includes('叫啥') || lowerQuestion.includes('叫什么') || lowerQuestion.includes('名字') || lowerQuestion.includes('名称'))) {
-      return `我们公司的名称是${companyInfo.name}。`
+      if (isChinese) {
+        return `我们公司的名称是${companyInfo.name}。`
+      } else {
+        return `Our company name is Matrix Living (Foshan) Modular House Co., Ltd.`
+      }
     }
     
     if (lowerQuestion.includes('公司') || lowerQuestion.includes('介绍') || lowerQuestion.includes('关于')) {
-      return `${companyInfo.name} - ${companyInfo.slogan}
+      if (isChinese) {
+        return `${companyInfo.name} - ${companyInfo.slogan}
 
 ${companyInfo.description}
 
@@ -201,10 +262,25 @@ ${companyInfo.description}
 我们已为超过1000家企业和个人客户提供优质的集成房屋解决方案。
 
 您想了解我们的哪方面信息？产品、服务还是成功案例？`
+      } else {
+        return `Matrix Living (Foshan) Modular House Co., Ltd. - Building the Future, Smart Space Choice
+
+We are a professional international company engaged in the design and production of modular houses, with products exported to markets in Europe, Australia, America, etc. Our factory covers an area of 40,000 square meters.
+
+**Company Overview**:
+• Founded: ${companyInfo.founded}
+• Employees: ${companyInfo.employees}
+• Headquarters: ${companyInfo.contact.address}
+
+We have provided high-quality integrated housing solutions for more than 1,000 corporate and individual clients.
+
+What would you like to know about us? Products, services, or success cases?`
+      }
     }
     
     if (lowerQuestion.includes('价格') || lowerQuestion.includes('多少钱') || lowerQuestion.includes('费用')) {
-      return `关于价格，需要根据您的具体需求来定制报价：
+      if (isChinese) {
+        return `关于价格，需要根据您的具体需求来定制报价：
 
 **影响价格的因素**：
 • 产品类型（集装箱房屋、钢结构别墅等）
@@ -218,10 +294,27 @@ ${companyInfo.description}
 📧 邮箱：${companyInfo.contact.email}
 
 或者告诉我您的具体需求，我可以为您介绍适合的产品方案。`
+      } else {
+        return `Regarding pricing, it needs to be customized based on your specific requirements:
+
+**Factors affecting price**:
+• Product type (Container House, Steel Structure, etc.)
+• Specifications and dimensions
+• Customization requirements
+• Quantity
+• Transportation distance
+
+We recommend contacting our sales team directly for detailed pricing:
+📞 Phone: ${companyInfo.contact.phone}
+📧 Email: ${companyInfo.contact.email}
+
+Or tell me your specific needs, and I can introduce suitable product solutions for you.`
+      }
     }
     
     if (lowerQuestion.includes('定制') || lowerQuestion.includes('定做')) {
-      return `我们提供全面的定制服务：
+      if (isChinese) {
+        return `我们提供全面的定制服务：
 
 **工业级设备箱定制**：
 • 机柜、配电箱、逆变箱等
@@ -233,6 +326,20 @@ ${companyInfo.description}
 • 可配套家具、跑步板等一体化交付
 
 请告诉我您的具体需求，我们会为您提供专业的定制方案。`
+      } else {
+        return `We provide comprehensive customization services:
+
+**Industrial Equipment Case Customization**:
+• Cabinets, distribution boxes, inverter boxes, etc.
+• Suitable for field camps, event support, industrial equipment scenarios
+
+**Steel Structure Processing and Full-chain Services**:
+• Steel structure parts customization
+• Ultra-wide box/special size module production
+• Integrated delivery with furniture, running boards, etc.
+
+Please tell me your specific needs, and we will provide you with professional customization solutions.`
+      }
     }
     
     // 建筑/项目咨询 - 检测是否提到建筑面积、配置、项目等关键词
@@ -271,12 +378,12 @@ ${companyInfo.description}
 
 请问您对哪方面感兴趣？`
     } else {
-      return `Thank you for your interest in ${companyInfo.name}!
+      return `Thank you for your interest in Matrix Living (Foshan) Modular House Co., Ltd.!
 
 We are a professional international company engaged in the design and production of modular houses, with products exported to markets in Europe, Australia, America, etc. Our factory covers an area of 40,000 square meters.
 
 I can introduce to you:
-• Our core products (Container House, Steel Structure Villa, etc.)
+• Our core products (MIC - Modular Integrated Construction, Container House, Steel Structure, etc.)
 • Customized supporting services
 • Company information and contact details
 • Product prices and customized solutions
