@@ -15,17 +15,13 @@ const Session = sequelize.define('Session', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
   expiresAt: {
     type: DataTypes.DATE,
     allowNull: true
   }
 }, {
   tableName: 'sessions',
-  timestamps: false
+  timestamps: true
 });
 
 module.exports = Session;

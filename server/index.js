@@ -726,9 +726,9 @@ app.post('/api/messages', async (req, res) => {
 // 1. 获取所有聊天会话摘要
 app.get('/api/admin/chat-sessions', async (req, res) => {
   try {
-    // 获取所有会话，按更新时间倒序
+    // 获取所有会话，按创建时间倒序
     const sessions = await Session.findAll({
-      order: [['updatedAt', 'DESC']]
+      order: [['createdAt', 'DESC']]
     });
 
     // 格式化数据，处理用户名和最后一条消息
@@ -758,7 +758,7 @@ app.get('/api/admin/chat-sessions', async (req, res) => {
         id: s.id,
         userName: displayName,
         lastMessage: lastMsg ? lastMsg.content : '暂无内容',
-        updatedAt: s.updatedAt || s.createdAt,
+        updatedAt: s.createdAt,
         messageCount: msgCount
       };
     }));
