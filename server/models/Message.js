@@ -9,7 +9,7 @@ const Message = sequelize.define('Message', {
   },
   userId: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   content: {
     type: DataTypes.TEXT,

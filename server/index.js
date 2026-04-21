@@ -705,19 +705,22 @@ app.get('/api/messages', async (req, res) => {
 
 // 添加消息
 app.post('/api/messages', async (req, res) => {
-  const { content, sender, type } = req.body;
+  const { sessionId, userId, role, content, type } = req.body;
+
   try {
     const newMessage = await Message.create({
       id: generateId(),
+      sessionId: sessionId || null,
+      userId: userId || null,
       content,
-      sender,
-      type: type || 'text',
+      type: type || 'company',
       createdAt: new Date()
     });
-    res.json({ success: true, message: newMessage });
+
+    res.json({ success: true, messageId: newMessage.id });
   } catch (error) {
-    console.error('添加消息错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
+    console.error('保存消息失败:', error);
+    res.status(500).json({ success: false, message: '消息保存失败' });
   }
 });
 
