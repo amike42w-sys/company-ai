@@ -723,48 +723,54 @@ app.post('/api/messages', async (req, res) => {
 
 // ==================== 管理员监控 API ====================
 
+// 1. 获取所有聊天会话摘要
 app.get('/api/admin/chat-sessions', async (req, res) => {
   try {
-    // 1. 查询所有会话，并关联用户信息
+    // 获取所有会话，按更新时间倒序
     const sessions = await Session.findAll({
       order: [['updatedAt', 'DESC']]
     });
 
-    // 2. 格式化数据，处理"访客"命名逻辑
-    const formattedSessions = await Promise.all(sessions.map(async (s, index) => {
-      let displayName = `访客 ${s.id.slice(-4)}`; // 默认命名：访客+ID后四位
-
-      if (s.userId) {
+    // 格式化数据，处理用户名和最后一条消息
+    const formattedSessions = await Promise.all(sessions.map(async (s) => {
+      let displayName = `访客 ${s.id.slice(-4)}`;
+      
+      // 如果有 userId，尝试去 User 表查名字
+      if (s.userId && !s.userId.startsWith('guest_')) {
         const user = await User.findByPk(s.userId);
         if (user) {
-          // 如果有手机号优先显示手机号，否则显示用户名
           displayName = user.phone || user.username;
         }
+      } else if (s.userId && s.userId.startsWith('guest_')) {
+        displayName = `匿名访客 (${s.userId.slice(-4)})`;
       }
 
-      // 获取该会话最后一条消息作为预览
-      const lastMessage = await Message.findOne({
+      // 找最后一条消息
+      const lastMsg = await Message.findOne({
         where: { sessionId: s.id },
         order: [['createdAt', 'DESC']]
       });
 
+      // 统计消息数
+      const msgCount = await Message.count({ where: { sessionId: s.id } });
+
       return {
         id: s.id,
         userName: displayName,
-        lastMessage: lastMessage ? lastMessage.content : '无消息',
-        updatedAt: s.updatedAt,
-        messageCount: await Message.count({ where: { sessionId: s.id } })
+        lastMessage: lastMsg ? lastMsg.content : '暂无内容',
+        updatedAt: s.updatedAt || s.createdAt,
+        messageCount: msgCount
       };
     }));
 
     res.json({ success: true, sessions: formattedSessions });
   } catch (error) {
-    console.error('获取监控数据错误:', error);
-    res.status(500).json({ success: false, message: '获取监控数据失败' });
+    console.error('监控列表获取失败:', error);
+    res.status(500).json({ success: false, message: '服务器内部错误' });
   }
 });
 
-// 获取某个会话的详细对话内容
+// 2. 获取具体对话记录
 app.get('/api/admin/chat-messages/:sessionId', async (req, res) => {
   try {
     const messages = await Message.findAll({
@@ -773,8 +779,7 @@ app.get('/api/admin/chat-messages/:sessionId', async (req, res) => {
     });
     res.json({ success: true, messages });
   } catch (error) {
-    console.error('获取对话详情错误:', error);
-    res.status(500).json({ success: false, message: '获取对话详情失败' });
+    res.status(500).json({ success: false, message: '获取消息失败' });
   }
 });
 
