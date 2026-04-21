@@ -15,6 +15,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const [isMsgVisible, setIsMsgVisible] = useState(false)
   const [activeTab, setActiveTab] = useState('external')
   const [subTab, setSubTab] = useState('login')
 
@@ -70,8 +71,11 @@ const Login: React.FC = () => {
 
   // 内部员工登录
   const handleInternalLogin = async (values: { username: string; password: string }) => {
+    if (loading) return; // 防止连击
+    
     setLoading(true)
     setError('')
+    setIsMsgVisible(false)
     
     const success = await login(values.username, values.password)
     
@@ -87,17 +91,13 @@ const Login: React.FC = () => {
     } else {
       const errorMsg = '用户名或密码错误'
       setError(errorMsg)
+      setIsMsgVisible(true)
       // 两秒后自动清除错误消息
       setTimeout(() => {
-        const alertElement = document.querySelector('.ant-alert-error') as HTMLElement
-        if (alertElement) {
-          alertElement.style.opacity = '0'
-          setTimeout(() => {
-            setError('')
-          }, 500)
-        } else {
+        setIsMsgVisible(false)
+        setTimeout(() => {
           setError('')
-        }
+        }, 500)
       }, 2000)
     }
     
@@ -106,8 +106,11 @@ const Login: React.FC = () => {
 
   // 外部用户登录
   const handleExternalLogin = async (values: { username: string; password: string }) => {
+    if (loading) return; // 防止连击
+    
     setLoading(true)
     setError('')
+    setIsMsgVisible(false)
     
     const success = await login(values.username, values.password)
     
@@ -116,17 +119,13 @@ const Login: React.FC = () => {
     } else {
       const errorMsg = '用户名或密码错误'
       setError(errorMsg)
+      setIsMsgVisible(true)
       // 两秒后自动清除错误消息
       setTimeout(() => {
-        const alertElement = document.querySelector('.ant-alert-error') as HTMLElement
-        if (alertElement) {
-          alertElement.style.opacity = '0'
-          setTimeout(() => {
-            setError('')
-          }, 500)
-        } else {
+        setIsMsgVisible(false)
+        setTimeout(() => {
           setError('')
-        }
+        }, 500)
       }, 2000)
     }
     
@@ -135,28 +134,49 @@ const Login: React.FC = () => {
 
   // 外部用户注册
   const handleRegister = async (values: { username: string; password: string; email?: string; phone?: string; confirmPassword?: string }) => {
+    if (loading) return; // 防止连击
+    
     setLoading(true)
     setError('')
     setSuccessMsg('')
+    setIsMsgVisible(false) // 重置透明度
     
     console.log('表单提交值:', values)
     console.log('密码长度:', values.password?.length)
     console.log('确认密码:', values.confirmPassword)
     console.log('密码是否一致:', values.password === values.confirmPassword)
     
-    const result = await register(values.username, values.password, values.email, values.phone)
-    
-    if (result.success) {
-      setSuccessMsg('注册成功！请使用您的账号密码登录')
-      // 清空注册表单
-      registerForm.resetFields()
-      // 切换到登录标签页
-      setSubTab('login')
-    } else {
-      setError(result.message)
+    try {
+      const result = await register(values.username, values.password, values.email, values.phone)
+      
+      if (result.success) {
+        setSuccessMsg('注册成功！请使用您的账号密码登录')
+        setIsMsgVisible(true) // 显示
+        
+        // 一秒后开始消失
+        setTimeout(() => {
+          setIsMsgVisible(false) // 触发 CSS 过渡效果（透明度变0）
+          setTimeout(() => {
+            setSuccessMsg('') // 彻底移除组件
+          }, 500) // 这里的时间要和 CSS 的 transition 时间一致
+        }, 1500) // 1.5秒后开始消失
+
+        // 清空注册表单
+        registerForm.resetFields()
+        // 切换到登录标签页
+        setSubTab('login')
+      } else {
+        setError(result.message)
+        setIsMsgVisible(true)
+        // 错误信息也建议 2 秒后自动消失，避免遮挡
+        setTimeout(() => setIsMsgVisible(false), 2000)
+      }
+    } catch (error) {
+      setError('请求失败，请稍后再试')
+      setIsMsgVisible(true)
+    } finally {
+      setLoading(false)
     }
-    
-    setLoading(false)
   }
 
   // 发送重置密码验证码
@@ -204,13 +224,18 @@ const Login: React.FC = () => {
 
   // 处理密码重置
   const handlePasswordReset = async (values: any) => {
+    if (loading) return; // 防止连击
+    
     setLoading(true)
     setError('')
+    setIsMsgVisible(false)
     
     try {
       // 简单的验证码验证
       if (values.verificationCode !== '123456') {
         setError('验证码错误')
+        setIsMsgVisible(true)
+        setTimeout(() => setIsMsgVisible(false), 2000)
         return
       }
       
@@ -222,6 +247,7 @@ const Login: React.FC = () => {
       setActiveTab('external')
     } catch (error) {
       setError('密码重置失败，请稍后再试')
+      setIsMsgVisible(true)
     } finally {
       setLoading(false)
     }
@@ -237,24 +263,31 @@ const Login: React.FC = () => {
         </div>
 
         {error && (
-          <Alert
-            message={error}
-            type="error"
-            showIcon
-            style={{ 
-              marginBottom: 24,
-              transition: 'opacity 0.5s ease-out'
-            }}
-          />
+          <div style={{ 
+            opacity: isMsgVisible ? 1 : 0, 
+            transition: 'opacity 0.5s ease-out', 
+            marginBottom: 24
+          }}>
+            <Alert
+              message={error}
+              type="error"
+              showIcon
+            />
+          </div>
         )}
 
         {successMsg && (
-          <Alert
-            message={successMsg}
-            type="success"
-            showIcon
-            style={{ marginBottom: 24 }}
-          />
+          <div style={{ 
+            opacity: isMsgVisible ? 1 : 0, 
+            transition: 'opacity 0.5s ease-out', 
+            marginBottom: 24
+          }}>
+            <Alert
+              message={successMsg}
+              type="success"
+              showIcon
+            />
+          </div>
         )}
 
         <Tabs 
