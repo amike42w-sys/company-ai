@@ -39,7 +39,7 @@ const HomePage: React.FC = () => {
       title: '智能咨询',
       desc: '了解公司产品、服务、联系方式等信息',
       action: () => navigate('/public-chat'),
-      btnText: '开始咨询',
+      btnText: '开始咨询 / Start Chat',
       public: true,
     },
     {
@@ -47,7 +47,7 @@ const HomePage: React.FC = () => {
       title: '成分分析',
       desc: 'AI辅助分析物品材料成分（内部专用）',
       action: () => navigate(isAuthenticated ? '/analysis' : '/login?tab=internal'),
-      btnText: isAuthenticated ? '进入分析' : '内部登录',
+      btnText: isAuthenticated ? '成分分析 / Material Analysis' : '内部登录 / Internal Login',
       public: false,
     },
   ]

@@ -16,6 +16,9 @@ export class AIService {
     // 模拟网络延迟
     await new Promise(resolve => setTimeout(resolve, 1000))
     
+    // 检测语言：检查是否包含中文字符
+    const isChinese = /[\u4e00-\u9fa5]/.test(question)
+    
     const lowerQuestion = question.toLowerCase()
     
     // 如果有上下文，尝试理解上下文
@@ -255,7 +258,8 @@ ${companyInfo.description}
     }
     
     // 默认回复
-    return `感谢您对${companyInfo.name}的关注！
+    if (isChinese) {
+      return `感谢您对${companyInfo.name}的关注！
 
 ${companyInfo.description}
 
@@ -266,6 +270,19 @@ ${companyInfo.description}
 • 产品价格和定制方案
 
 请问您对哪方面感兴趣？`
+    } else {
+      return `Thank you for your interest in ${companyInfo.name}!
+
+We are a professional international company engaged in the design and production of modular houses, with products exported to markets in Europe, Australia, America, etc. Our factory covers an area of 40,000 square meters.
+
+I can introduce to you:
+• Our core products (Container House, Steel Structure Villa, etc.)
+• Customized supporting services
+• Company information and contact details
+• Product prices and customized solutions
+
+What are you interested in learning more about?`
+    }
   }
   
   // 从上下文中检测话题
