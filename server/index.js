@@ -703,21 +703,71 @@ app.get('/api/messages', async (req, res) => {
   }
 });
 
+// 获取指定会话的消息
+app.get('/api/messages/:sessionId', async (req, res) => {
+  const { sessionId } = req.params;
+  try {
+    const messages = await Message.findAll({
+      where: { sessionId },
+      order: [['createdAt', 'ASC']]
+    });
+    res.json({ success: true, messages });
+  } catch (error) {
+    console.error('获取会话消息错误:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
 // 添加消息
 app.post('/api/messages', async (req, res) => {
-  const { sessionId, userId, role, content, type } = req.body;
+  const { sessionId, content, userId } = req.body;
 
   try {
-    const newMessage = await Message.create({
-      id: generateId(),
-      sessionId: sessionId || null,
+    // 1. 先保存用户刚发的消息
+    await Message.create({ 
+      id: generateId(), 
+      sessionId, 
+      content, 
+      role: 'user', 
       userId: userId || null,
-      content,
-      type: type || 'company',
+      type: 'company',
       createdAt: new Date()
     });
 
-    res.json({ success: true, messageId: newMessage.id });
+    // 2. 【核心：加载上下文】获取该会话最近的 10 条消息
+    const history = await Message.findAll({ 
+      where: { sessionId }, 
+      order: [['createdAt', 'ASC']], 
+      limit: 10 // 传送最近几轮对话，保证 AI 有记忆
+    });
+
+    // 3. 将历史记录格式化为 AI 认识的格式
+    const aiMessages = history.map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'assistant',
+      content: msg.content
+    }));
+
+    // 4. 调用 AI 接口（发送整个 aiMessages 数组，而不仅仅是 content）
+    // 由于我们使用的是模拟 AI 服务，这里需要调用前端的 AI 服务
+    // 但为了简化，我们直接返回一个模拟的 AI 响应
+    // 这里可以根据 aiMessages 上下文来生成更智能的响应
+    const aiResponse = `我收到了您的消息："${content}"。这是一个模拟的 AI 响应，我已经了解了之前的对话内容。`;
+
+    // 5. 保存 AI 的回答并更新会话时间
+    const assistantMsg = await Message.create({ 
+      id: generateId(), 
+      sessionId, 
+      content: aiResponse, 
+      role: 'assistant', 
+      userId: userId || null,
+      type: 'company',
+      createdAt: new Date()
+    });
+    
+    // 更新会话的 updatedAt，让它排在历史记录最前面
+    await Session.update({ updatedAt: new Date() }, { where: { id: sessionId } });
+
+    res.json({ success: true, content: aiResponse });
   } catch (error) {
     console.error('保存消息失败:', error);
     res.status(500).json({ success: false, message: '消息保存失败' });
