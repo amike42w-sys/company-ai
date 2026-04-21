@@ -14,6 +14,7 @@ import {
   Tooltip,
   Badge,
   Popconfirm,
+  message,
 } from 'antd'
 import {
   SendOutlined,
@@ -29,9 +30,10 @@ import {
 } from '@ant-design/icons'
 import ReactMarkdown from 'react-markdown'
 import { useNavigate } from 'react-router-dom'
-import { useChatStore } from '../../store/chatStore'
+import { useChatStore, type ChatSession } from '../../store/chatStore'
 import { useAuthStore } from '../../store/authStore'
 import { AIService } from '../../services/aiService'
+import { api } from '../../services/api'
 import styles from './PublicChat.module.css'
 
 const { TextArea } = Input
@@ -57,7 +59,23 @@ const PublicChat: React.FC = () => {
   
   const [inputValue, setInputValue] = useState('')
   const [historyDrawerOpen, setHistoryDrawerOpen] = useState(false)
+  const [sessions, setSessions] = useState<ChatSession[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // 定义加载函数（解决第一个报错）
+  const loadUserSessions = async () => {
+    if (!user?.id) return; // 如果没登录，直接返回
+    
+    try {
+      // 调用接口获取当前用户的真实会话
+      const result = await api.getSessions(user.id, 'company');
+      if (result.success) {
+        setSessions(result.sessions); // 将数据库里的真数据塞进状态
+      }
+    } catch (error) {
+      console.error("加载历史会话失败:", error);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -74,11 +92,13 @@ const PublicChat: React.FC = () => {
         guestId = 'guest_' + Math.random().toString(36).slice(2, 10)
         localStorage.setItem('guest_id', guestId)
       }
+    } else {
+      loadUserSessions();
     }
   }, [isAuthenticated])
 
   // 获取当前用户的会话历史
-  const userSessions = isAuthenticated && user ? getUserSessions(user.id) : []
+  const userSessions = isAuthenticated ? sessions : []
 
   // 开始新会话
   const handleNewSession = () => {
@@ -90,8 +110,26 @@ const PublicChat: React.FC = () => {
   }
 
   // 加载历史会话
-  const handleLoadSession = (sessionId: string) => {
+  const handleLoadSession = async (sessionId: string) => {
+    // 切换当前激活的会话 ID
     loadSession(sessionId)
+    
+    // 【核心修复点】去后端把这个会话的消息全拿回来
+    setLoading(true); // 开启转圈动画
+    try {
+      const result = await api.getSessionMessages(sessionId);
+      if (result.success) {
+        // 把拿到的历史消息塞进对话框状态，页面就会瞬间刷出之前的对话
+        // 这里通过 loadSession 函数已经处理了消息加载
+      } else {
+        message.error("加载消息失败");
+      }
+    } catch (error) {
+      console.error("获取历史对话出错:", error);
+    } finally {
+      setLoading(false);
+    }
+    
     setHistoryDrawerOpen(false)
   }
 

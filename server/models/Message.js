@@ -11,6 +11,14 @@ const Message = sequelize.define('Message', {
     type: DataTypes.STRING,
     allowNull: true
   },
+  sessionId: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   content: {
     type: DataTypes.TEXT,
     allowNull: false

@@ -171,7 +171,7 @@ export const useChatStore = create<ChatState>()(
                 id: m.id,
                 role: m.role,
                 content: m.content,
-                timestamp: m.timestamp,
+                timestamp: m.createdAt ? new Date(m.createdAt).getTime() : Date.now(),
                 type: m.type,
                 sessionId: m.sessionId,
               })),

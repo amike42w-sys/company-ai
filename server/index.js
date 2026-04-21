@@ -718,6 +718,25 @@ app.get('/api/messages/:sessionId', async (req, res) => {
   }
 });
 
+// 获取用户的会话列表
+app.get('/api/sessions/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { type } = req.query;
+  try {
+    const sessions = await Session.findAll({
+      where: {
+        userId,
+        ...(type ? { type } : {})
+      },
+      order: [['updatedAt', 'DESC']]
+    });
+    res.json({ success: true, sessions });
+  } catch (error) {
+    console.error('获取会话列表错误:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
 // 添加消息
 app.post('/api/messages', async (req, res) => {
   const { sessionId, content, userId } = req.body;
