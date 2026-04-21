@@ -721,6 +721,63 @@ app.post('/api/messages', async (req, res) => {
   }
 });
 
+// ==================== 管理员监控 API ====================
+
+app.get('/api/admin/chat-sessions', async (req, res) => {
+  try {
+    // 1. 查询所有会话，并关联用户信息
+    const sessions = await Session.findAll({
+      order: [['updatedAt', 'DESC']]
+    });
+
+    // 2. 格式化数据，处理"访客"命名逻辑
+    const formattedSessions = await Promise.all(sessions.map(async (s, index) => {
+      let displayName = `访客 ${s.id.slice(-4)}`; // 默认命名：访客+ID后四位
+
+      if (s.userId) {
+        const user = await User.findByPk(s.userId);
+        if (user) {
+          // 如果有手机号优先显示手机号，否则显示用户名
+          displayName = user.phone || user.username;
+        }
+      }
+
+      // 获取该会话最后一条消息作为预览
+      const lastMessage = await Message.findOne({
+        where: { sessionId: s.id },
+        order: [['createdAt', 'DESC']]
+      });
+
+      return {
+        id: s.id,
+        userName: displayName,
+        lastMessage: lastMessage ? lastMessage.content : '无消息',
+        updatedAt: s.updatedAt,
+        messageCount: await Message.count({ where: { sessionId: s.id } })
+      };
+    }));
+
+    res.json({ success: true, sessions: formattedSessions });
+  } catch (error) {
+    console.error('获取监控数据错误:', error);
+    res.status(500).json({ success: false, message: '获取监控数据失败' });
+  }
+});
+
+// 获取某个会话的详细对话内容
+app.get('/api/admin/chat-messages/:sessionId', async (req, res) => {
+  try {
+    const messages = await Message.findAll({
+      where: { sessionId: req.params.sessionId },
+      order: [['createdAt', 'ASC']]
+    });
+    res.json({ success: true, messages });
+  } catch (error) {
+    console.error('获取对话详情错误:', error);
+    res.status(500).json({ success: false, message: '获取对话详情失败' });
+  }
+});
+
 // ==================== 启动服务器 ====================
 
 // 【关键修复】处理 React 路由刷新问题

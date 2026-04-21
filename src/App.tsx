@@ -9,6 +9,7 @@ import EmployeeManager from './components/Employee/EmployeeManager'
 import QuotationManager from './components/Quotation/QuotationManager'
 import SupplierManager from './components/Supplier/SupplierManager'
 import SupplierCertificateManager from './components/Supplier/SupplierCertificateManager'
+import ChatMonitor from './components/Admin/ChatMonitor'
 import Login from './components/Auth/Login'
 import ProfilePage from './components/Auth/ProfilePage'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
@@ -85,6 +86,14 @@ function App() {
             element={
               <ProtectedRoute requiredRoles={['external', 'internal']}>
                 <ProfilePage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="chat-monitor" 
+            element={
+              <ProtectedRoute requiredRoles={['internal']}>
+                <ChatMonitor />
               </ProtectedRoute>
             } 
           />

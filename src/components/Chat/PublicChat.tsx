@@ -67,6 +67,16 @@ const PublicChat: React.FC = () => {
     scrollToBottom()
   }, [messages])
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      let guestId = localStorage.getItem('guest_id')
+      if (!guestId) {
+        guestId = 'guest_' + Math.random().toString(36).slice(2, 10)
+        localStorage.setItem('guest_id', guestId)
+      }
+    }
+  }, [isAuthenticated])
+
   // 获取当前用户的会话历史
   const userSessions = isAuthenticated && user ? getUserSessions(user.id) : []
 

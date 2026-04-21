@@ -14,6 +14,7 @@ import {
   DollarOutlined,
   BankOutlined,
   SafetyCertificateOutlined,
+  EyeOutlined,
 } from '@ant-design/icons'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
@@ -108,6 +109,11 @@ const MainLayout: React.FC = () => {
         key: '/quotations',
         icon: <DollarOutlined />,
         label: '报价管理',
+      })
+      items.push({ 
+        key: '/chat-monitor',
+        icon: <EyeOutlined />,
+        label: '聊天监控',
       })
     }
 

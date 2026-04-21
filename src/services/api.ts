@@ -289,11 +289,22 @@ export const api = {
   // 4. 【新增：删除客户接口】解决 TS2339 报错
   async deleteCustomer(id: string) {
     const response = await fetch(`${API_BASE}/customers/${id}`, {
-      method: 'DELETE',
+      method: 'DELETE'
     });
     return response.json();
+  },
+
+  // ==================== 管理员监控 API ====================
+  async getAdminChatSessions() {
+    const response = await fetch(`${API_BASE}/admin/chat-sessions`);
+    return response.json();
+  },
+
+  async getAdminChatMessages(sessionId: string) {
+    const response = await fetch(`${API_BASE}/admin/chat-messages/${sessionId}`);
+    return response.json();
   }
-}
+};
 
 
 
