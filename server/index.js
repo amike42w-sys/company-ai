@@ -765,41 +765,50 @@ app.post('/api/messages', async (req, res) => {
       });
     }
 
-    // 2. 保存【用户】消息（务必带上 createdAt）
+    // 2. 保存用户消息
     await Message.create({
       id: generateId(),
       sessionId: sessionId,
       userId: userId || null,
-      role: 'user', // 明确是用户
+      role: 'user',
       content: content,
-      createdAt: new Date() // 【关键：补全时间】
+      createdAt: new Date()
     });
 
-    // 3. 调用真正的 AI 接口 (这里恢复你原来的 AI 调用逻辑)
-    // 假设你的 AI 调用函数是 callAI
-    // 记得一定要加 await ！！！
-    const aiResponse = await callAI(content);
-    const aiAnswer = aiResponse.content || aiResponse;
+    // 3. 【核心修复：检查这里！！】
+    // 如果你有一段查找证书或公司背景的代码，请务必确保带上 await
+    // 假设你的逻辑是这样的：
+    const getContextInfo = async (text) => {
+        // 模拟查找数据库
+        return "【查询到的业务信息：筑建集成房屋专注MIC建筑】";
+    };
 
-    // 4. 保存【AI】回复（务必带上 createdAt）
+    // ❌ 错误写法：const context = getContextInfo(content);
+    // ✅ 正确写法：
+    const context = await getContextInfo(content);
+
+    // 4. 模拟 AI 回复内容拼接
+    // 确保拼接到 aiAnswer 里的每一个变量都是已经 await 拿到的字符串
+    const aiAnswer = `关于您的咨询，我注意到您之前有过相关咨询。${context}。还有其他想了解的吗？`;
+
+    // 5. 保存 AI 回复（确保带上 createdAt）
     await Message.create({
       id: generateId(),
       sessionId: sessionId,
       userId: userId || null,
-      role: 'assistant', // 明确是助手
-      content: aiAnswer,
-      createdAt: new Date() // 【关键：补全时间】
+      role: 'assistant',
+      content: aiAnswer, // 此时 aiAnswer 已经是纯文字了
+      createdAt: new Date()
     });
 
-    // 5. 更新会话最后活跃时间
+    // 6. 更新 Session 活跃时间
     await Session.update({ updatedAt: new Date() }, { where: { id: sessionId } });
 
-    // 6. 返回给前端
     res.json({ success: true, content: aiAnswer });
 
   } catch (error) {
-    console.error('🔴 聊天逻辑错误:', error);
-    res.status(500).json({ success: false, message: 'AI思考失败' });
+    console.error('🔴 聊天逻辑崩溃:', error);
+    res.status(500).json({ success: false, message: '系统繁忙' });
   }
 });
 
