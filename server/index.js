@@ -30,7 +30,19 @@ console.log("后端使用的文件存储目录是:", certificatesUploadPath);
 
 // 简单的ID生成函数
 function generateId() {
-  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+}
+
+// AI 响应函数
+async function getAIResponse(content) {
+  // 模拟 AI 响应，实际项目中可以替换为真实的 AI API 调用
+  return `我收到了您的消息："${content}"。这是一个模拟的 AI 响应。`;
+}
+
+// 调用 AI 接口的函数
+async function callAI(content) {
+  // 模拟 AI 响应，实际项目中可以替换为真实的 AI API 调用
+  return `我收到了您的消息："${content}"。这是一个模拟的 AI 响应。`;
 }
 
 const app = express();
@@ -739,53 +751,55 @@ app.get('/api/sessions/:userId', async (req, res) => {
 
 app.post('/api/messages', async (req, res) => {
   const { sessionId, userId, content } = req.body;
-  
-  console.log("--- 收到聊天请求 ---");
-  console.log("参数:", { sessionId, userId, content });
 
   try {
-    // 1. 自动创建会话（如果不存在）
+    // 1. 确保 Session 存在（补全 title 和时间）
     let session = await Session.findByPk(sessionId);
     if (!session) {
       await Session.create({
         id: sessionId,
         userId: userId || null,
-        token: generateId(), // 【修复：补上缺失的 token】
         title: content.substring(0, 20),
-        type: 'company'     // 【修复：补上刚才加的 type】
+        type: 'company',
+        token: 'token_' + Date.now()
       });
-      console.log("✅ Session 创建成功");
     }
 
-    // 2. 保存用户消息
-    await Message.create({
-      id: generateId(),
-      sessionId: sessionId,
-      userId: userId || null, // 关键：如果是访客，这里传 null
-      role: 'user',
-      content: content
-    });
-    console.log("✅ 用户消息保存成功");
-
-    // 3. 这里是你的 AI 调用逻辑 (请确保这里不报错)
-    const aiAnswer = "这是测试回答，请确认能否看到";
-
-    // 4. 保存 AI 回复
+    // 2. 保存【用户】消息（务必带上 createdAt）
     await Message.create({
       id: generateId(),
       sessionId: sessionId,
       userId: userId || null,
-      role: 'assistant',
-      content: aiAnswer
+      role: 'user', // 明确是用户
+      content: content,
+      createdAt: new Date() // 【关键：补全时间】
     });
-    console.log("✅ AI 回复保存成功");
 
+    // 3. 调用真正的 AI 接口 (这里恢复你原来的 AI 调用逻辑)
+    // 假设你的 AI 调用函数是 callAI
+    // 记得一定要加 await ！！！
+    const aiResponse = await callAI(content);
+    const aiAnswer = aiResponse.content || aiResponse;
+
+    // 4. 保存【AI】回复（务必带上 createdAt）
+    await Message.create({
+      id: generateId(),
+      sessionId: sessionId,
+      userId: userId || null,
+      role: 'assistant', // 明确是助手
+      content: aiAnswer,
+      createdAt: new Date() // 【关键：补全时间】
+    });
+
+    // 5. 更新会话最后活跃时间
+    await Session.update({ updatedAt: new Date() }, { where: { id: sessionId } });
+
+    // 6. 返回给前端
     res.json({ success: true, content: aiAnswer });
 
   } catch (error) {
-    // 这里的错误信息会告诉你到底哪里崩了
-    console.error('🔴 聊天接口崩溃:', error.message);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('🔴 聊天逻辑错误:', error);
+    res.status(500).json({ success: false, message: 'AI思考失败' });
   }
 });
 
