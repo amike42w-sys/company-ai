@@ -25,7 +25,7 @@ export class AIService {
     if (context && context.length > 0) {
       const lastTopic = this.detectTopicFromContext(context)
       if (lastTopic) {
-        return this.generateContextualResponse(question, lastTopic, context)
+        return await this.generateContextualResponse(question, lastTopic, context)
       }
     }
     
@@ -409,11 +409,11 @@ What are you interested in learning more about?`
   }
   
   // 生成上下文相关的回复
-  private static generateContextualResponse(
+  private static async generateContextualResponse(
     question: string, 
     topic: string, 
     _context: ContextMessage[]
-  ): string {
+  ): Promise<string> {
     const lowerQuestion = question.toLowerCase()
     
     // 基于话题的跟进回复
@@ -473,7 +473,7 @@ What are you interested in learning more about?`
     // 通用上下文回复
     return `关于${topic}，我注意到您之前有过相关咨询。
 
-${this.askCompanyQuestion(question)}
+${await this.askCompanyQuestion(question)}
 
 还有其他想了解的吗？`
   }
