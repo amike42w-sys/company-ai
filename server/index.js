@@ -737,59 +737,75 @@ app.get('/api/sessions/:userId', async (req, res) => {
   }
 });
 
-// 添加消息
 app.post('/api/messages', async (req, res) => {
-  const { sessionId, content, userId } = req.body;
+  const { sessionId, userId, content, type } = req.body;
 
   try {
-    // 1. 先保存用户刚发的消息
-    await Message.create({ 
-      id: generateId(), 
-      sessionId, 
-      content, 
-      role: 'user', 
+    // --- 1. 【关键】确保"家"(Session) 存在 ---
+    // 检查这个 sessionId 是否已经在数据库里了
+    let session = await Session.findByPk(sessionId);
+    
+    if (!session) {
+      // 如果不存在（说明是新开的对话），立刻在 sessions 表里创建一个"家"
+      await Session.create({
+        id: sessionId,
+        userId: userId || null, // 如果是游客就存 null
+        title: content.substring(0, 20) || '新对话', // 用第一句话当标题
+        type: type || 'company',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      console.log("已为新对话创建 Session 记录:", sessionId);
+    } else {
+      // 如果已存在，更新它的活跃时间，让它在侧边栏置顶
+      await session.update({ updatedAt: new Date() });
+    }
+
+    // --- 2. 保存用户发的消息 ---
+    await Message.create({
+      id: generateId(),
+      sessionId,
       userId: userId || null,
-      type: 'company',
+      role: 'user',
+      content,
       createdAt: new Date()
     });
 
-    // 2. 【核心：加载上下文】获取该会话最近的 10 条消息
-    const history = await Message.findAll({ 
-      where: { sessionId }, 
-      order: [['createdAt', 'ASC']], 
-      limit: 10 // 传送最近几轮对话，保证 AI 有记忆
+    // --- 3. 【核心】提取上下文记忆 ---
+    // 从数据库拿回这个房间里最近的 10 条对话，喂给 AI
+    const history = await Message.findAll({
+      where: { sessionId },
+      order: [['createdAt', 'ASC']],
+      limit: 15
     });
 
-    // 3. 将历史记录格式化为 AI 认识的格式
+    // 把历史记录转换成 AI 认识的格式 [{role: 'user', content: '...'}, ...]
     const aiMessages = history.map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'assistant',
+      role: msg.role,
       content: msg.content
     }));
 
-    // 4. 调用 AI 接口（发送整个 aiMessages 数组，而不仅仅是 content）
-    // 由于我们使用的是模拟 AI 服务，这里需要调用前端的 AI 服务
-    // 但为了简化，我们直接返回一个模拟的 AI 响应
-    // 这里可以根据 aiMessages 上下文来生成更智能的响应
+    // --- 4. 调用 AI 接口 ---
+    // 注意：这里要把整个 aiMessages 发送给你的 AI API，而不是只发当前一句
+    // 由于我们使用的是模拟 AI 服务，这里直接返回一个模拟的 AI 响应
     const aiResponse = `我收到了您的消息："${content}"。这是一个模拟的 AI 响应，我已经了解了之前的对话内容。`;
+    const aiContent = aiResponse.content || aiResponse;
 
-    // 5. 保存 AI 的回答并更新会话时间
-    const assistantMsg = await Message.create({ 
-      id: generateId(), 
-      sessionId, 
-      content: aiResponse, 
-      role: 'assistant', 
+    // --- 5. 保存 AI 的回话 ---
+    await Message.create({
+      id: generateId(),
+      sessionId,
       userId: userId || null,
-      type: 'company',
+      role: 'assistant',
+      content: aiContent,
       createdAt: new Date()
     });
-    
-    // 更新会话的 updatedAt，让它排在历史记录最前面
-    await Session.update({ updatedAt: new Date() }, { where: { id: sessionId } });
 
-    res.json({ success: true, content: aiResponse });
+    // 6. 返回给前端
+    res.json({ success: true, content: aiContent });
   } catch (error) {
-    console.error('保存消息失败:', error);
-    res.status(500).json({ success: false, message: '消息保存失败' });
+    console.error('聊天逻辑报错:', error);
+    res.status(500).json({ success: false, message: '系统繁忙' });
   }
 });
 
