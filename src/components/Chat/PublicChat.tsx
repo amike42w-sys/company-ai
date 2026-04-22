@@ -111,26 +111,22 @@ const PublicChat: React.FC = () => {
 
   // 加载历史会话
   const handleLoadSession = async (sessionId: string) => {
-    // 切换当前激活的会话 ID
-    loadSession(sessionId)
+    loadSession(sessionId); // 切换 store 里的 ID
     
-    // 【核心修复点】去后端把这个会话的消息全拿回来
-    setLoading(true); // 开启转圈动画
+    setLoading(true);
     try {
       const result = await api.getSessionMessages(sessionId);
       if (result.success) {
-        // 把拿到的历史消息塞进对话框状态，页面就会瞬间刷出之前的对话
-        // 这里通过 loadSession 函数已经处理了消息加载
-      } else {
-        message.error("加载消息失败");
+        // 【关键修复】必须手动把消息同步到聊天状态中
+        useChatStore.setState({ messages: result.messages });
+        loadUserSessions(); // 顺便刷新下侧边栏
       }
     } catch (error) {
-      console.error("获取历史对话出错:", error);
+      console.error("加载失败:", error);
     } finally {
       setLoading(false);
+      setHistoryDrawerOpen(false);
     }
-    
-    setHistoryDrawerOpen(false)
   }
 
   // 删除会话
@@ -185,6 +181,7 @@ const PublicChat: React.FC = () => {
       }, user?.id)
     } finally {
       setLoading(false)
+      loadUserSessions(); // 【新增】发送完后刷一下侧边栏，让新对话标题跳出来
     }
   }
 
@@ -196,9 +193,13 @@ const PublicChat: React.FC = () => {
   }
 
   // 显示当前用户的消息或未登录时的临时消息
-  const publicMessages = isAuthenticated && user
-    ? messages.filter(m => m.type === 'company' && m.sessionId && getUserSessions(user.id).some(session => session.id === m.sessionId))
-    : messages.filter(m => m.type === 'company' && !m.sessionId)
+  const publicMessages = messages.filter(m => {
+    if (m.type !== 'company') return false;
+    // 如果有当前选中的会话，只显示该会话的消息
+    if (currentSessionId) return m.sessionId === currentSessionId;
+    // 如果没登录且没会话，显示临时消息
+    return !m.sessionId;
+  });
 
   return (
     <div className={styles.container}>
