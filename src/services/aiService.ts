@@ -415,8 +415,9 @@ What are you interested in learning more about?`
     _context: ContextMessage[]
   ): Promise<string> {
     const lowerQuestion = question.toLowerCase()
+    const isChinese = /[\u4e00-\u9fa5]/.test(question) // 检测当前提问语言
     
-    // 基于话题的跟进回复
+    // 基于话题的跟进回复 (这部分暂时保留原来的逻辑)
     if (topic === '集装箱房屋') {
       if (lowerQuestion.includes('价格') || lowerQuestion.includes('钱')) {
         return `关于集装箱房屋的价格：
@@ -470,12 +471,35 @@ What are you interested in learning more about?`
 这样我们能给您最准确的报价。`
     }
     
-    // 通用上下文回复
-    return `关于${topic}，我注意到您之前有过相关咨询。
+    // 获取动态回答内容
+    const innerResponse = await this.askCompanyQuestion(question);
 
-${await this.askCompanyQuestion(question)}
+    // 通用上下文回复 - 根据语言返回不同模板
+    if (isChinese) {
+      return `关于${topic}，我注意到您之前有过相关咨询。
+
+${innerResponse}
 
 还有其他想了解的吗？`
+    } else {
+      // 简单的话题中英对照表，防止英文回复里夹杂中文话题词汇
+      const topicEnMap: Record<string, string> = {
+        '集装箱房屋': 'Container Houses',
+        '钢结构别墅': 'Steel Structure Villas',
+        '活动板房': 'Prefabricated Houses',
+        '移动岗亭': 'Mobile Security Booths',
+        '价格咨询': 'Pricing',
+        '定制服务': 'Customization Services',
+        '联系方式': 'Contact Information'
+      }
+      const topicEn = topicEnMap[topic] || topic
+
+      return `Regarding ${topicEn}, I noticed you've inquired about this recently.
+
+${innerResponse}
+
+Is there anything else you would like to know?`
+    }
   }
   
   // 对内：分析物品成分
