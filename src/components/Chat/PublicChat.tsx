@@ -109,26 +109,31 @@ const PublicChat: React.FC = () => {
     }
   }
 
-  // 加载历史会话
+  // 加载历史会话 - 增强版
   const handleLoadSession = async (sessionId: string) => {
+    // 1. 先切换 ID
     loadSession(sessionId);
     
     setLoading(true);
     try {
       const result = await api.getSessionMessages(sessionId);
-      if (result.success) {
-        // 修改点：数据库返回的是 createdAt，前端需要 timestamp
-        const mappedMessages = result.messages.map((m: any) => ({
+      if (result.success && result.messages) {
+        // 2. 【关键】强制校准数据字段，确保它们能通过下面的 filter 检查
+        const calibratedMessages = result.messages.map((m: any) => ({
           ...m,
-          timestamp: m.createdAt || m.timestamp || new Date().getTime(),
-          type: m.type || 'company' // 顺便补齐类型
+          // 强制确保有 sessionId，如果后端返回的是 session_id 也能兼容
+          sessionId: m.sessionId || m.session_id || sessionId,
+          // 强制确保 type 是 company，防止被 filter 过滤掉
+          type: m.type || 'company',
+          // 确保时间戳存在，防止渲染报错
+          timestamp: m.createdAt || m.timestamp || new Date().getTime()
         }));
-        
-        useChatStore.setState({ messages: mappedMessages });
-        loadUserSessions();
+
+        // 3. 更新全局状态
+        useChatStore.setState({ messages: calibratedMessages });
       }
     } catch (error) {
-      console.error("加载失败:", error);
+      console.error("加载会话消息失败:", error);
       message.error("无法加载历史记录");
     } finally {
       setLoading(false);
@@ -199,15 +204,19 @@ const PublicChat: React.FC = () => {
     }
   }
 
-  // 修改：显示当前用户的消息
+  // 显示当前用户的消息 - 宽容模式
   const publicMessages = messages.filter(m => {
-    // 兼容处理：如果数据库里 type 是 null，我们也认为它是 company 类型的消息
-    if (m.type && m.type !== 'company') return false;
+    // 检查1：如果是 null 或者 company，都允许通过
+    const isCorrectType = !m.type || m.type === 'company';
+    if (!isCorrectType) return false;
+
+    // 检查2：如果有当前选中会话，必须 ID 匹配
+    if (currentSessionId) {
+       // 这里加一个强制转换和打印，方便你调试
+       return String(m.sessionId) === String(currentSessionId);
+    }
     
-    // 如果有当前选中的会话，只显示该会话的消息
-    if (currentSessionId) return m.sessionId === currentSessionId;
-    
-    // 如果没登录且没会话，显示临时消息
+    // 检查3：没登录且没会话时，显示临时消息（无 sessionId 的）
     return !m.sessionId;
   });
 
