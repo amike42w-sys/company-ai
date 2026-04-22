@@ -9,11 +9,19 @@ const Session = sequelize.define('Session', {
   },
   userId: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   token: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
+  type: {
+    type: DataTypes.STRING,
+    defaultValue: 'company'
   },
   expiresAt: {
     type: DataTypes.DATE,

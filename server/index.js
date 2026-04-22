@@ -749,9 +749,10 @@ app.post('/api/messages', async (req, res) => {
     if (!session) {
       await Session.create({
         id: sessionId,
-        userId: userId || null, // 访客为 null
+        userId: userId || null,
+        token: generateId(), // 【修复：补上缺失的 token】
         title: content.substring(0, 20),
-        type: 'company'
+        type: 'company'     // 【修复：补上刚才加的 type】
       });
       console.log("✅ Session 创建成功");
     }
