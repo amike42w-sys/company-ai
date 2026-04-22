@@ -730,7 +730,7 @@ app.get('/api/messages/:sessionId', async (req, res) => {
   }
 });
 
-// 获取用户的会话列表
+// 获取用户的会话列表（附带实时消息统计）
 app.get('/api/sessions/:userId', async (req, res) => {
   const { userId } = req.params;
   const { type } = req.query;
@@ -740,12 +740,27 @@ app.get('/api/sessions/:userId', async (req, res) => {
         userId,
         ...(type ? { type } : {})
       },
-      order: [['updatedAt', 'DESC']]
+      order: [['updatedAt', 'DESC']],
+      raw: true
     });
-    res.json({ success: true, sessions });
+
+    // 关键：循环查询每个 session 对应的消息总数
+    const sessionsWithCount = await Promise.all(
+      sessions.map(async (session) => {
+        const count = await Message.count({
+          where: { sessionId: session.id }
+        });
+        return {
+          ...session,
+          messageCount: count // 将统计结果给到前端 messageCount 字段
+        };
+      })
+    );
+
+    res.json({ success: true, sessions: sessionsWithCount });
   } catch (error) {
     console.error('获取会话列表错误:', error);
-    res.status(500).json({ success: false, message: '服务器错误' });
+    res.status(500).json({ success: true, sessions: [] }); // 容错处理
   }
 });
 

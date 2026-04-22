@@ -111,18 +111,25 @@ const PublicChat: React.FC = () => {
 
   // 加载历史会话
   const handleLoadSession = async (sessionId: string) => {
-    loadSession(sessionId); // 切换 store 里的 ID
+    loadSession(sessionId);
     
     setLoading(true);
     try {
       const result = await api.getSessionMessages(sessionId);
       if (result.success) {
-        // 【关键修复】必须手动把消息同步到聊天状态中
-        useChatStore.setState({ messages: result.messages });
-        loadUserSessions(); // 顺便刷新下侧边栏
+        // 修改点：数据库返回的是 createdAt，前端需要 timestamp
+        const mappedMessages = result.messages.map((m: any) => ({
+          ...m,
+          timestamp: m.createdAt || m.timestamp || new Date().getTime(),
+          type: m.type || 'company' // 顺便补齐类型
+        }));
+        
+        useChatStore.setState({ messages: mappedMessages });
+        loadUserSessions();
       }
     } catch (error) {
       console.error("加载失败:", error);
+      message.error("无法加载历史记录");
     } finally {
       setLoading(false);
       setHistoryDrawerOpen(false);
@@ -192,11 +199,14 @@ const PublicChat: React.FC = () => {
     }
   }
 
-  // 显示当前用户的消息或未登录时的临时消息
+  // 修改：显示当前用户的消息
   const publicMessages = messages.filter(m => {
-    if (m.type !== 'company') return false;
+    // 兼容处理：如果数据库里 type 是 null，我们也认为它是 company 类型的消息
+    if (m.type && m.type !== 'company') return false;
+    
     // 如果有当前选中的会话，只显示该会话的消息
     if (currentSessionId) return m.sessionId === currentSessionId;
+    
     // 如果没登录且没会话，显示临时消息
     return !m.sessionId;
   });
