@@ -141,10 +141,27 @@ const PublicChat: React.FC = () => {
     }
   }
 
-  // 删除会话
-  const handleDeleteSession = (sessionId: string) => {
-    if (user) {
-      deleteSession(sessionId, user.id)
+  // 删除单个会话
+  const handleDeleteSession = async (sessionId: string) => {
+    if (!user) return;
+    
+    try {
+      // 1. 调用 API 真正删除数据库数据
+      const result = await api.deleteSession(sessionId);
+      if (result.success) {
+        message.success('对话已删除');
+        
+        // 2. 如果删除的是当前正在看的会话，清空屏幕
+        if (sessionId === currentSessionId) {
+          clearMessages();
+        }
+        
+        // 3. 【关键】重新拉取列表，刷新侧边栏
+        await loadUserSessions();
+      }
+    } catch (error) {
+      console.error("删除失败:", error);
+      message.error('删除失败，请稍后再试');
     }
   }
 
@@ -405,9 +422,19 @@ const PublicChat: React.FC = () => {
         {userSessions.length > 0 && (
           <Popconfirm
             title="确定清空所有对话历史？此操作不可恢复。"
-            onConfirm={() => {
+            onConfirm={async () => { // 加上 async
               if (user) {
-                clearAllSessions(user.id)
+                try {
+                  // 修改这里：由 clearAllSessions 改为 clearSessions
+                  const result = await api.clearSessions(user.id);
+                  if (result.success) {
+                    message.success('所有历史已清空');
+                    clearMessages(); // 清空当前屏幕
+                    await loadUserSessions(); // 【关键】刷新侧边栏
+                  }
+                } catch (error) {
+                  message.error('清空失败');
+                }
               }
             }}
             okText="确定"

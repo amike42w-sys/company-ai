@@ -764,6 +764,42 @@ app.get('/api/sessions/:userId', async (req, res) => {
   }
 });
 
+// 1. 删除单个会话及其所有消息
+app.delete('/api/sessions/:sessionId', async (req, res) => {
+  const { sessionId } = req.params;
+  try {
+    // 先删除该会话下的所有消息（外键约束）
+    await Message.destroy({ where: { sessionId } });
+    // 再删除会话本身
+    await Session.destroy({ where: { id: sessionId } });
+    
+    res.json({ success: true, message: '会话已删除' });
+  } catch (error) {
+    console.error('删除会话失败:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
+// 2. 清空指定用户的所有会话
+app.delete('/api/sessions/user/:userId', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    // 找到该用户的所有会话ID
+    const userSessions = await Session.findAll({ where: { userId }, attributes: ['id'] });
+    const sessionIds = userSessions.map(s => s.id);
+    
+    // 删除所有相关的消息
+    await Message.destroy({ where: { sessionId: sessionIds } });
+    // 删除所有会话
+    await Session.destroy({ where: { userId } });
+    
+    res.json({ success: true, message: '所有会话已清空' });
+  } catch (error) {
+    console.error('清空会话失败:', error);
+    res.status(500).json({ success: false, message: '服务器错误' });
+  }
+});
+
 app.post('/api/messages', async (req, res) => {
   const { sessionId, userId, content } = req.body;
 
