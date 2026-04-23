@@ -802,7 +802,7 @@ app.post('/api/messages', async (req, res) => {
   const { sessionId, userId, content } = req.body;
 
   try {
-    // 1. 确保 Session 存在（补全 title 和时间）
+    // 1. 确保 Session 存在
     let session = await Session.findByPk(sessionId);
     if (!session) {
       await Session.create({
@@ -814,7 +814,7 @@ app.post('/api/messages', async (req, res) => {
       });
     }
 
-    // 2. 保存用户消息
+    // 2. 保存用户发送的消息
     await Message.create({
       id: generateId(),
       sessionId: sessionId,
@@ -824,40 +824,40 @@ app.post('/api/messages', async (req, res) => {
       createdAt: new Date()
     });
 
-    // 3. 【核心修复：检查这里！！】
-    // 如果你有一段查找证书或公司背景的代码，请务必确保带上 await
-    // 假设你的逻辑是这样的：
-    const getContextInfo = async (text) => {
-        // 模拟查找数据库
-        return "【查询到的业务信息：筑建集成房屋专注MIC建筑】";
-    };
+    // 3. 生成 AI 回复（这里直接使用干净的逻辑，不再拼接旧台词）
+    const isChinese = /[\u4e00-\u9fa5]/.test(content);
+    let aiAnswer = "";
+    
+    // 简单的关键词匹配（你可以根据需要扩充，或调用真实的 AI API）
+    if (content.includes('产品')) {
+        aiAnswer = "我们提供集装箱房屋、钢结构别墅等核心产品。您想了解具体哪一类？";
+    } else if (content.includes('联系') || content.includes('电话')) {
+        aiAnswer = "您可以拨打我们的咨询电话：0757-XXXXXXXX。";
+    } else {
+        aiAnswer = isChinese
+            ? "感谢您对筑建集成的关注！请问有什么我可以帮您的吗？"
+            : "Thank you for your interest! How can I help you today?";
+    }
 
-    // ❌ 错误写法：const context = getContextInfo(content);
-    // ✅ 正确写法：
-    const context = await getContextInfo(content);
-
-    // 4. 模拟 AI 回复内容拼接
-    // 确保拼接到 aiAnswer 里的每一个变量都是已经 await 拿到的字符串
-    const aiAnswer = `关于您的咨询，我注意到您之前有过相关咨询。${context}。还有其他想了解的吗？`;
-
-    // 5. 保存 AI 回复（确保带上 createdAt）
+    // 4. 保存 AI 的回复消息
     await Message.create({
       id: generateId(),
       sessionId: sessionId,
       userId: userId || null,
       role: 'assistant',
-      content: aiAnswer, // 此时 aiAnswer 已经是纯文字了
+      content: aiAnswer,
       createdAt: new Date()
     });
 
-    // 6. 更新 Session 活跃时间
+    // 5. 更新 Session 活跃时间
     await Session.update({ updatedAt: new Date() }, { where: { id: sessionId } });
 
+    // 6. 返回给前端
     res.json({ success: true, content: aiAnswer });
 
   } catch (error) {
-    console.error('🔴 聊天逻辑崩溃:', error);
-    res.status(500).json({ success: false, message: '系统繁忙' });
+    console.error('🔴 聊天保存失败:', error);
+    res.status(500).json({ success: false, message: '服务器繁忙' });
   }
 });
 
