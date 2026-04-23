@@ -136,6 +136,7 @@
   font-size: 11px;
   margin-top: 4px;
   display: block;
+  white-space: nowrap; /* 关键：强制不换行，解决37分行的问题 */
 }
 
 .userMessage .messageTime {
