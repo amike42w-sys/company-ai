@@ -14,14 +14,10 @@ Company.hasMany(Certificate, { foreignKey: 'companyId' });
 Certificate.belongsTo(Company, { foreignKey: 'companyId' });
 
 // 同步数据库
-const syncDatabase = async () => {
-  try {
-    await sequelize.sync({ alter: true });
-    console.log('数据库同步成功');
-  } catch (error) {
-    console.error('数据库同步失败:', error);
-    console.log('服务器将继续运行，但数据库功能将不可用');
-  }
+const syncDatabase = () => {
+  sequelize.sync()
+    .then(() => console.log('数据库同步成功'))
+    .catch(err => console.error('同步失败，但不影响运行:', err.message));
 };
 
 module.exports = {

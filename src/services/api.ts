@@ -53,10 +53,8 @@ export const api = {
   },
 
   async deleteSession(sessionId: string) {
-    const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
-      method: 'DELETE',
-    });
-    return response.json();
+    const response = await axios.delete(`/api/sessions/${sessionId}`);
+    return response.data;
   },
 
   async clearSessions(userId: string | number) {

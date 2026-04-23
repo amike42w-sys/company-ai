@@ -783,19 +783,18 @@ app.delete('/api/sessions/:sessionId', async (req, res) => {
 // 2. 清空指定用户的所有会话
 app.delete('/api/sessions/user/:userId', async (req, res) => {
   const { userId } = req.params;
+  console.log(`收到清空用户 ${userId} 所有记录的请求`);
   try {
     const userSessions = await Session.findAll({ where: { userId }, attributes: ['id'] });
-
     if (userSessions.length > 0) {
       const sessionIds = userSessions.map(s => s.id);
       await Message.destroy({ where: { sessionId: sessionIds } });
       await Session.destroy({ where: { userId } });
     }
-
-    res.json({ success: true, message: '所有会话已清空' });
+    res.json({ success: true, message: '所有历史已清空' });
   } catch (error) {
-    console.error('清空会话失败详情:', error);
-    res.status(500).json({ success: false, message: '服务器内部错误' });
+    console.error('后端清空失败详情:', error);
+    res.status(500).json({ success: false, message: '数据库操作失败' });
   }
 });
 
