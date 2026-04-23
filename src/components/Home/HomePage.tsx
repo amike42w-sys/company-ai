@@ -33,25 +33,6 @@ const HomePage: React.FC = () => {
     { src: '/images/banner/aerial3.jpg', title: '现代化生产基地' },
   ]
 
-  const features = [
-    {
-      icon: <MessageOutlined className={styles.featureIcon} />,
-      title: '智能咨询',
-      desc: '了解公司产品、服务、联系方式等信息',
-      action: () => navigate('/public-chat'),
-      btnText: '开始咨询 / Start Chat',
-      public: true,
-    },
-    {
-      icon: <ExperimentOutlined className={styles.featureIcon} />,
-      title: '成分分析',
-      desc: 'AI辅助分析物品材料成分（内部专用）',
-      action: () => navigate(isAuthenticated ? '/analysis' : '/login?tab=internal'),
-      btnText: isAuthenticated ? '成分分析 / Material Analysis' : '内部登录 / Internal Login',
-      public: false,
-    },
-  ]
-
   return (
     <div className={styles.container}>
       {/* Hero Section with Carousel */}
@@ -127,33 +108,58 @@ const HomePage: React.FC = () => {
 
       {/* Features Section */}
       <Row gutter={[24, 24]} className={styles.features}>
-        {features.map((feature, index) => (
-          <Col xs={24} md={12} key={index}>
+        {/* 智能咨询卡片 */}
+        <Col 
+          xs={24} 
+          md={isAuthenticated && role !== 'external' ? 12 : 24} 
+          style={{ display: 'flex', justifyContent: 'center' }}
+        >
+          <Card
+            className={styles.featureCard}
+            hoverable
+          >
+            <div className={styles.featureContent}>
+              <MessageOutlined className={styles.featureIcon} />
+              <Title level={4}>智能咨询</Title>
+              <Paragraph type="secondary">了解公司产品、服务、联系方式等信息</Paragraph>
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => navigate('/public-chat')}
+                icon={<ArrowRightOutlined />}
+              >
+                开始咨询 / Start Chat
+              </Button>
+            </div>
+          </Card>
+        </Col>
+        
+        {/* 只有内部员工登录后才能看到成分分析卡片 */}
+        {isAuthenticated && role !== 'external' && (
+          <Col xs={24} md={12}>
             <Card
               className={styles.featureCard}
               hoverable
             >
               <div className={styles.featureContent}>
-                {feature.icon}
-                <Title level={4}>{feature.title}</Title>
-                <Paragraph type="secondary">{feature.desc}</Paragraph>
-                {!feature.public && (
-                  <Tag color="warning" style={{ marginBottom: 16 }}>
-                    内部专用
-                  </Tag>
-                )}
+                <ExperimentOutlined className={styles.featureIcon} />
+                <Title level={4}>成分分析</Title>
+                <Paragraph type="secondary">AI辅助分析物品材料成分（内部专用）</Paragraph>
+                <Tag color="warning" style={{ marginBottom: 16 }}>
+                  内部专用
+                </Tag>
                 <Button
                   type="primary"
                   size="large"
-                  onClick={feature.action}
+                  onClick={() => navigate('/analysis')}
                   icon={<ArrowRightOutlined />}
                 >
-                  {feature.btnText}
+                  成分分析 / Material Analysis
                 </Button>
               </div>
             </Card>
           </Col>
-        ))}
+        )}
       </Row>
 
       {/* Company Info Section */}
