@@ -49,16 +49,27 @@
 }
 
 .featureCard {
+  width: 100%; /* 确保卡片占满父容器宽度 */
   height: 100%;
   border-radius: 12px;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  /* 关键：确保在手机端没有最大宽度限制 */
+  max-width: none !important;
+  box-sizing: border-box; /* 防止 padding 撑破宽度 */
 }
 
 .featureCard:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* 如果你的 Row 或 Col 有特殊的间距设置，确保它们是一致的 */
+@media (max-width: 576px) {
+  .featureCard {
+    margin-bottom: 16px; /* 增加底部间距，防止卡片粘在一起 */
+  }
 }
 
 .featureContent {
