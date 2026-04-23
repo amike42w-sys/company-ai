@@ -799,36 +799,29 @@ app.delete('/api/sessions/user/:userId', async (req, res) => {
 });
 
 app.post('/api/messages', async (req, res) => {
-  const { sessionId, userId, content } = req.body;
+  const { sessionId, userId, content, role } = req.body;
+
+  // 🔴 关键拦截：如果前端传来的 role 已经是 assistant，说明是重复保存，直接拦截
+  if (role === 'assistant') {
+    return res.json({ success: true, message: '跳过重复保存' });
+  }
 
   try {
-    // 1. 确保 Session 存在
-    let session = await Session.findByPk(sessionId);
-    if (!session) {
-      await Session.create({
-        id: sessionId,
-        userId: userId || null,
-        title: content.substring(0, 20),
-        type: 'company',
-        token: 'token_' + Date.now()
-      });
-    }
-
-    // 2. 保存用户发送的消息
+    // 1. 存用户的话
     await Message.create({
       id: generateId(),
-      sessionId: sessionId,
+      sessionId,
       userId: userId || null,
       role: 'user',
       content: content,
       createdAt: new Date()
     });
 
-    // 3. 生成 AI 回复（这里直接使用干净的逻辑，不再拼接旧台词）
+    // 2. AI 思考
     const isChinese = /[\u4e00-\u9fa5]/.test(content);
     let aiAnswer = "";
     
-    // 简单的关键词匹配（你可以根据需要扩充，或调用真实的 AI API）
+    // 简单的关键词匹配
     if (content.includes('产品')) {
         aiAnswer = "我们提供集装箱房屋、钢结构别墅等核心产品。您想了解具体哪一类？";
     } else if (content.includes('联系') || content.includes('电话')) {
@@ -839,25 +832,20 @@ app.post('/api/messages', async (req, res) => {
             : "Thank you for your interest! How can I help you today?";
     }
 
-    // 4. 保存 AI 的回复消息
+    // 3. 存 AI 的话
     await Message.create({
       id: generateId(),
-      sessionId: sessionId,
+      sessionId,
       userId: userId || null,
       role: 'assistant',
       content: aiAnswer,
       createdAt: new Date()
     });
 
-    // 5. 更新 Session 活跃时间
-    await Session.update({ updatedAt: new Date() }, { where: { id: sessionId } });
-
-    // 6. 返回给前端
     res.json({ success: true, content: aiAnswer });
-
   } catch (error) {
     console.error('🔴 聊天保存失败:', error);
-    res.status(500).json({ success: false, message: '服务器繁忙' });
+    res.status(500).json({ success: false });
   }
 });
 

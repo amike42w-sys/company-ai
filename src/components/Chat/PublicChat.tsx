@@ -168,53 +168,58 @@ const PublicChat: React.FC = () => {
   }
 
   const handleSend = async () => {
-    if (!inputValue.trim() || isLoading) return
+    // 增加对 currentSessionId 的判断，确保发送时它已存在
+    if (!inputValue.trim() || isLoading || !currentSessionId) return;
 
-    const question = inputValue.trim()
-    setInputValue('')
+    const question = inputValue.trim();
+    const sessionId = currentSessionId; // 捕获当前会话ID
+    setInputValue('');
     
-    // 如果没有当前会话，创建一个新会话
-    if (!currentSessionId && isAuthenticated && user) {
-      createSession(user.id, 'company')
-    }
-    
-    // 添加用户消息
-    addMessage({
+    // 1. 本地立即显示用户消息（手动构造符合 Message 接口的对象，补齐 id）
+    const userMsg: any = {
+      id: 'temp_' + Date.now(), // 生成临时ID解决报错
       role: 'user',
       content: question,
+      timestamp: Date.now(),
       type: 'company',
-    }, user?.id)
+      sessionId: sessionId
+    };
 
-    setLoading(true)
+    useChatStore.setState((state) => ({
+      messages: [...state.messages, userMsg]
+    }));
+
+    setLoading(true);
 
     try {
-      // 获取上下文消息（用于AI记忆）
-      const contextMessages = currentSessionId
-        ? getContextMessages(currentSessionId, 6).map(m => ({
-            role: m.role,
-            content: m.content,
-          }))
-        : []
-
-      // 调用AI服务（传入上下文）
-      const answer = await AIService.askCompanyQuestion(question, contextMessages)
+      // 2. 调用接口。后端会负责：存用户消息 -> 思考 -> 存AI消息 -> 返回结果
+      // 使用 sessionId! 或确保其为 string 类型解决报错
+      const result = await api.saveMessage(sessionId, user?.id || '', 'user', question, 'company');
       
-      addMessage({
-        role: 'assistant',
-        content: answer,
-        type: 'company',
-      }, user?.id)
+      if (result.success) {
+        // 3. 把后端生成的 AI 回复显示在屏幕上（同样补齐 id）
+        const aiMsg: any = {
+          id: 'temp_ai_' + Date.now(),
+          role: 'assistant',
+          content: result.content,
+          timestamp: Date.now(),
+          type: 'company',
+          sessionId: sessionId
+        };
+
+        useChatStore.setState((state) => ({
+          messages: [...state.messages, aiMsg]
+        }));
+        
+        // 4. 刷新左侧列表
+        loadUserSessions();
+      }
     } catch (error) {
-      addMessage({
-        role: 'assistant',
-        content: '抱歉，我暂时无法回答您的问题，请稍后再试。',
-        type: 'company',
-      }, user?.id)
+      console.error("发送失败:", error);
     } finally {
-      setLoading(false)
-      loadUserSessions(); // 【新增】发送完后刷一下侧边栏，让新对话标题跳出来
+      setLoading(false);
     }
-  }
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
