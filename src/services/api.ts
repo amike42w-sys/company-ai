@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 const API_BASE = '/api';
 
 export const api = {
@@ -53,14 +51,18 @@ export const api = {
   },
 
   async deleteSession(sessionId: string) {
-    const response = await axios.delete(`/api/sessions/${sessionId}`);
-    return response.data;
+    const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
+      method: 'DELETE',
+    });
+    return response.json();
   },
 
   async clearSessions(userId: string | number) {
     try {
-      const response = await axios.delete(`/api/sessions/user/${userId}`);
-      return response.data;
+      const response = await fetch(`${API_BASE}/sessions/user/${userId}`, {
+        method: 'DELETE',
+      });
+      return response.json();
     } catch (error) {
       console.error('API Error:', error);
       throw error;
