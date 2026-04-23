@@ -101,11 +101,13 @@ const PublicChat: React.FC = () => {
   const userSessions = isAuthenticated ? sessions : []
 
   // 开始新会话
-  const handleNewSession = () => {
+  const handleNewSession = async () => {
     if (isAuthenticated && user) {
-      createSession(user.id, 'company')
+      await createSession(user.id, 'company');
+      await loadUserSessions();
+      message.success('已开启新对话');
     } else {
-      clearMessages()
+      clearMessages();
     }
   }
 
@@ -256,7 +258,10 @@ const PublicChat: React.FC = () => {
             <Tooltip title="历史记录">
               <Button
                 icon={<HistoryOutlined />}
-                onClick={() => setHistoryDrawerOpen(true)}
+                onClick={() => {
+                  loadUserSessions();
+                  setHistoryDrawerOpen(true);
+                }}
                 className={styles.actionBtn}
               >
                 <span className={styles.btnText}>历史</span>
