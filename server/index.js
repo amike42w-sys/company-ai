@@ -801,13 +801,23 @@ app.delete('/api/sessions/user/:userId', async (req, res) => {
 app.post('/api/messages', async (req, res) => {
   const { sessionId, userId, content, role } = req.body;
 
-  // 🔴 关键拦截：如果前端传来的 role 已经是 assistant，说明是重复保存，直接拦截
-  if (role === 'assistant') {
-    return res.json({ success: true, message: '跳过重复保存' });
-  }
+  // 1. 拦截重复保存请求
+  if (role === 'assistant') return res.json({ success: true });
 
   try {
-    // 1. 存用户的话
+    // 2. 确保 Session 存在
+    let session = await Session.findByPk(sessionId);
+    if (!session) {
+      await Session.create({
+        id: sessionId,
+        userId: userId || null,
+        title: content.substring(0, 20),
+        type: 'company',
+        token: 'token_' + Date.now()
+      });
+    }
+
+    // 3. 保存用户消息
     await Message.create({
       id: generateId(),
       sessionId,
@@ -817,22 +827,29 @@ app.post('/api/messages', async (req, res) => {
       createdAt: new Date()
     });
 
-    // 2. AI 思考
+    // 4. 【核心逻辑】更丰富的关键词匹配
     const isChinese = /[\u4e00-\u9fa5]/.test(content);
+    const lowContent = content.toLowerCase();
     let aiAnswer = "";
-    
-    // 简单的关键词匹配
-    if (content.includes('产品')) {
-        aiAnswer = "我们提供集装箱房屋、钢结构别墅等核心产品。您想了解具体哪一类？";
-    } else if (content.includes('联系') || content.includes('电话')) {
-        aiAnswer = "您可以拨打我们的咨询电话：0757-XXXXXXXX。";
+
+    if (lowContent.includes('法人') || lowContent.includes('创始人') || lowContent.includes('老板')) {
+      aiAnswer = "我们的创始人及法定代表人是甘湛锋先生。";
+    } else if (lowContent.includes('钢结构') || lowContent.includes('别墅')) {
+      aiAnswer = "我们专业生产轻钢结构别墅，符合欧洲标准，抗震防风，支持定制化设计。您是想了解设计方案还是价格？";
+    } else if (lowContent.includes('产品') || lowContent.includes('业务')) {
+      aiAnswer = "我们的核心产品包括：集装箱房屋、模块化集成房屋（MIC）以及钢结构别墅。";
+    } else if (lowContent.includes('联系') || lowContent.includes('电话') || lowContent.includes('地址')) {
+      aiAnswer = "您可以拨打 0757-XXXXXXXX 或前往佛山市顺德区怡和中心12楼联系我们。";
+    } else if (lowContent.includes('价格') || lowContent.includes('多少钱')) {
+      aiAnswer = "价格取决于您的定制需求（尺寸、材料、配置）。建议您留下电话，我们的销售经理为您提供详细报价单。";
     } else {
-        aiAnswer = isChinese
-            ? "感谢您对筑建集成的关注！请问有什么我可以帮您的吗？"
-            : "Thank you for your interest! How can I help you today?";
+      // 兜底回复
+      aiAnswer = isChinese
+        ? "感谢您对筑建集成的关注！请问您是想了解集装箱房屋、钢结构别墅，还是公司的联系方式？"
+        : "Thank you for your interest! Are you interested in our container houses, steel structure villas, or our contact information?";
     }
 
-    // 3. 存 AI 的话
+    // 5. 保存 AI 回复
     await Message.create({
       id: generateId(),
       sessionId,
@@ -842,9 +859,13 @@ app.post('/api/messages', async (req, res) => {
       createdAt: new Date()
     });
 
+    // 6. 更新 Session 活跃时间
+    await Session.update({ updatedAt: new Date() }, { where: { id: sessionId } });
+
     res.json({ success: true, content: aiAnswer });
+
   } catch (error) {
-    console.error('🔴 聊天保存失败:', error);
+    console.error('🔴 后端匹配报错:', error);
     res.status(500).json({ success: false });
   }
 });
