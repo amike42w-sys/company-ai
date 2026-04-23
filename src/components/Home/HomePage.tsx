@@ -191,9 +191,13 @@ const HomePage: React.FC = () => {
       <div className={styles.section}>
         <Title level={4}>核心产品</Title>
         <Row gutter={[16, 16]}>
-          {companyInfo.products.map((product, index) => (
-            <Col xs={24} sm={12} lg={6} key={index}>
-              <Card className={styles.productCard} hoverable>
+          {companyInfo.products.map((product) => (
+            <Col xs={24} sm={12} lg={6} key={product.id}>
+              <Card 
+                className={styles.productCard} 
+                hoverable
+                onClick={() => navigate(`/product/${product.id}`)} // 点击跳转
+              >
                 <div className={styles.productIcon}>{product.icon}</div>
                 <div className={styles.productName}>{product.name}</div>
                 <div className={styles.productSlogan}>{product.slogan}</div>

@@ -16,28 +16,76 @@ export const companyInfo = {
   
   products: [
     {
+      id: 'container-house',
       name: '集装箱房屋',
       slogan: '模块化集成，7天快速交付',
       description: '模块化设计，快速搭建，坚固耐用，可用于临时宿舍、办公、民宿等场景，工厂预制率高，交付周期短。',
       icon: '🏠',
+      detailInfo: {
+        title: '福田博园小学 / Futian Expo Garden Primary School',
+        images: ['/images/products/school1.jpg', '/images/products/school2.jpg'],
+        stats: [
+          { label: 'MiC数量', value: '145个' },
+          { label: '设计层数', value: '3层' },
+          { label: '总建筑占地面积', value: '3066㎡' }
+        ],
+        descZh: '学校配备有标准教室、专业教室、办公室、阅览室等设施，采用模块化集成建筑技术，7天快速交付，满足紧急教育需求。',
+        descEn: 'The school is equipped with standard classrooms, professional classrooms, offices, reading rooms and other facilities, using modular integrated building technology, 7 days fast delivery, to meet emergency educational needs.'
+      }
     },
     {
+      id: 'mobile-board-house',
       name: '活动板房',
       slogan: '灵活组合，经济实用',
       description: '灵活组合，经济实用，环保节能，适用于工地临建、临时展厅、应急安置等，可重复拆装利用。',
       icon: '🏢',
+      detailInfo: {
+        title: '建筑工地临时办公区 / Construction Site Temporary Office Area',
+        images: ['/images/products/office1.jpg', '/images/products/office2.jpg'],
+        stats: [
+          { label: '建筑面积', value: '800㎡' },
+          { label: '搭建周期', value: '3天' },
+          { label: '使用年限', value: '10年以上' }
+        ],
+        descZh: '为建筑工地提供临时办公、住宿解决方案，灵活组合，经济实用，环保节能，可重复拆装利用，满足工地临时需求。',
+        descEn: 'Provide temporary office and accommodation solutions for construction sites, flexible combination, economical and practical, environmentally friendly and energy-saving, can be repeatedly disassembled and reused to meet temporary construction site needs.'
+      }
     },
     {
+      id: 'steel-structure-villa',
       name: '钢结构别墅',
       slogan: '轻钢结构豪宅，抗震宜居可定制',
       description: '轻钢结构主体，抗震防风，舒适宜居，符合欧洲建筑标准，可定制化设计为高端住宅、度假民宿。',
       icon: '🏡',
+      detailInfo: {
+        title: '高端度假别墅 / High-end Holiday Villa',
+        images: ['/images/products/villa1.jpg', '/images/products/villa2.jpg'],
+        stats: [
+          { label: '建筑面积', value: '350㎡' },
+          { label: '抗震等级', value: '8级' },
+          { label: '节能标准', value: 'A+级' }
+        ],
+        descZh: '采用轻钢结构主体，抗震防风，舒适宜居，符合欧洲建筑标准，可定制化设计为高端住宅、度假民宿，美观大方，节能环保。',
+        descEn: 'Using light steel structure main body, earthquake-resistant and wind-resistant, comfortable and livable, in line with European building standards, can be customized as high-end residential, holiday homestay, beautiful and generous, energy-saving and environmental protection.'
+      }
     },
     {
+      id: 'mobile-sentry-box',
       name: '移动岗亭',
       slogan: '定制化设计，部署灵活高效',
       description: '定制化设计，功能齐全，移动便捷，可作为保安岗、收费亭、便民服务站等，部署灵活高效。',
       icon: '🚧',
+      detailInfo: {
+        title: '智能安防岗亭 / Intelligent Security Sentry Box',
+        images: ['/images/products/sentry1.jpg', '/images/products/sentry2.jpg'],
+        stats: [
+          { label: '尺寸', value: '2.5m×2.5m' },
+          { label: '重量', value: '1.2吨' },
+          { label: '部署时间', value: '2小时' }
+        ],
+        descZh: '定制化设计，功能齐全，移动便捷，可作为保安岗、收费亭、便民服务站等，部署灵活高效，满足多种场景需求。',
+        descEn: 'Customized design, full-featured, mobile and convenient, can be used as security posts, toll booths, convenient service stations, etc., flexible and efficient deployment to meet a variety of scene needs.'
+      }
     },
   ],
   

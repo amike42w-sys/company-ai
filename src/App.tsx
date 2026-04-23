@@ -12,6 +12,7 @@ import SupplierCertificateManager from './components/Supplier/SupplierCertificat
 import ChatMonitor from './components/Admin/ChatMonitor'
 import Login from './components/Auth/Login'
 import ProfilePage from './components/Auth/ProfilePage'
+import ProductDetail from './pages/ProductDetail'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
           <Route path="public-chat" element={<PublicChat />} />
+          <Route path="product/:id" element={<ProductDetail />} />
           <Route 
             path="analysis" 
             element={
