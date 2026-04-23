@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const API_BASE = '/api';
 
 export const api = {
@@ -57,14 +59,14 @@ export const api = {
     return response.json();
   },
 
-  async clearSessions(userId: string, type?: 'company' | 'analysis') {
-    const url = type 
-      ? `${API_BASE}/sessions/user/${userId}?type=${type}`
-      : `${API_BASE}/sessions/user/${userId}`;
-    const response = await fetch(url, {
-      method: 'DELETE',
-    });
-    return response.json();
+  async clearSessions(userId: string | number) {
+    try {
+      const response = await axios.delete(`/api/sessions/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
   },
 
   async saveMessage(sessionId: string, userId: string, role: 'user' | 'assistant', content: string, type?: 'company' | 'analysis') {
