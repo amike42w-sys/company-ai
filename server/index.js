@@ -832,8 +832,10 @@ app.post('/api/messages', async (req, res) => {
     const lowContent = content.toLowerCase();
     let aiAnswer = "";
 
-    if (lowContent.includes('法人') || lowContent.includes('创始人') || lowContent.includes('老板')) {
-      aiAnswer = "我们的创始人及法定代表人是甘湛锋先生。";
+    if (lowContent.includes('创始人') || lowContent.includes('老板') || lowContent.includes('老总') || lowContent.includes('董事长') || lowContent.includes('公司老大') || lowContent.includes('负责人')) {
+      aiAnswer = "我们的创始人、老板、老总、董事长、公司老大和负责人是李进先生。";
+    } else if (lowContent.includes('法人')) {
+      aiAnswer = "我们的法定代表人是甘湛锋先生。";
     } else if (lowContent.includes('钢结构') || lowContent.includes('别墅')) {
       aiAnswer = "我们专业生产轻钢结构别墅，符合欧洲标准，抗震防风，支持定制化设计。您是想了解设计方案还是价格？";
     } else if (lowContent.includes('产品') || lowContent.includes('业务')) {
