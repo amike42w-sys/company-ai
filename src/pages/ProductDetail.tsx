@@ -48,8 +48,14 @@ const ProductDetail: React.FC = () => {
                     alt={`slide-${index}`}
                     style={{ 
                       width: '100%', 
-                      height: '450px', 
-                      objectFit: 'cover', 
+                      height: '450px', // 保持原来的高度
+                      
+                      // 🔴 关键修改：由 'cover' 改为 'contain'，保证图片不被裁剪
+                      objectFit: 'contain',
+                      
+                      // 💡 新增：给图片加个淡灰色背景，当图片无法铺满时，留白处会是浅灰色，很高级
+                      backgroundColor: '#f5f5f5',
+                      
                       borderRadius: '12px',
                       display: 'block'
                     }}
