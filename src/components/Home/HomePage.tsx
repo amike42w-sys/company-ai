@@ -163,8 +163,11 @@ const HomePage: React.FC = () => {
       </Row>
 
       {/* Company Info Section */}
-      <Card className={styles.infoCard}>
-        <Title level={4}>公司概况</Title>
+      <Title level={3} style={{ marginTop: 40, marginBottom: 20 }}>
+        公司概况
+      </Title>
+      
+      <Card className={styles.infoCard} bordered={false}>
         <Row gutter={[48, 24]}>
           <Col xs={24} sm={8}>
             <div className={styles.statItem}>
