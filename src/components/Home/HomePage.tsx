@@ -189,7 +189,7 @@ const HomePage: React.FC = () => {
 
       {/* Products Section */}
       <div className={styles.section}>
-        <Title level={4}>核心产品</Title>
+        <Title level={4} id="products-section">核心产品</Title>
         <Row gutter={[16, 16]}>
           {companyInfo.products.map((product) => (
             <Col xs={24} sm={12} lg={6} key={product.id}>

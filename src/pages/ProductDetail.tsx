@@ -29,7 +29,7 @@ const ProductDetail: React.FC = () => {
     <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', minHeight: '100vh' }}>
       <Button 
         icon={<ArrowLeftOutlined />} 
-        onClick={() => navigate('/')} 
+        onClick={() => navigate('/#products-section')} // 加上锚点 ID
         style={{ marginBottom: 24, borderRadius: '6px' }} 
       >
         返回产品列表
@@ -39,17 +39,24 @@ const ProductDetail: React.FC = () => {
         <Row gutter={[40, 32]}>
           {/* 左侧：多图轮播区域 */}
           <Col xs={24} lg={13}>
-            <Carousel autoplay effect="fade" className={styles.imageCarousel}>
+            <Carousel autoplay className={styles.imageCarousel}>
               {details.images.map((img, index) => (
                 <div key={index}>
-                  <div 
+                  <img 
+                    src={img} 
+                    alt={`slide-${index}`}
                     style={{ 
+                      width: '100%', 
                       height: '450px', 
-                      backgroundImage: `url(${img})`, 
-                      backgroundSize: 'cover', 
-                      backgroundPosition: 'center', 
-                      borderRadius: '12px' 
-                    }} 
+                      objectFit: 'cover', 
+                      borderRadius: '12px',
+                      display: 'block'
+                    }}
+                    onError={(e) => {
+                      console.error("图片加载失败:", img);
+                      // 容错：如果加载失败显示一个占位图
+                      e.currentTarget.src = "https://via.placeholder.com/800x450?text=Image+Not+Found";
+                    }}
                   />
                 </div>
               ))}

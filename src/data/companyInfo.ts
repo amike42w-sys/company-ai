@@ -20,13 +20,13 @@ export const companyInfo = {
       name: '集装箱房屋 / MIC建筑',
       details: {
         title: '福田博园小学 / Futian Expo Garden Primary School',
-        // 这里放入你存放在 public/images/products 文件夹下的 5 张学校图片文件名
+        // 修改点：改为 .png 且匹配中划线命名
         images: [
-          '/images/products/school1.jpg',
-          '/images/products/school2.jpg',
-          '/images/products/school3.jpg',
-          '/images/products/school4.jpg',
-          '/images/products/school5.jpg'
+          '/images/products/school-01.png',
+          '/images/products/school-02.png',
+          '/images/products/school-03.png',
+          '/images/products/school-04.png',
+          '/images/products/school-05.png'
         ],
         specs: [
           { label: 'MiC数量', value: '145个' },
@@ -42,13 +42,13 @@ export const companyInfo = {
       name: '集成模块化医院',
       details: {
         title: '湛江医院 / Zhanjiang Hospital',
-        // 这里放入文件夹下的 5 张医院图片文件名
+        // 修改点：改为 .png 且匹配中划线命名
         images: [
-          '/images/products/hospital1.jpg',
-          '/images/products/hospital2.jpg',
-          '/images/products/hospital3.jpg',
-          '/images/products/hospital4.jpg',
-          '/images/products/hospital5.jpg'
+          '/images/products/hospital-01.png',
+          '/images/products/hospital-02.png',
+          '/images/products/hospital-03.png',
+          '/images/products/hospital-04.png',
+          '/images/products/hospital-05.png'
         ],
         specs: [
           { label: 'MiC数量', value: '60个' },
