@@ -29,10 +29,11 @@ const ProductDetail: React.FC = () => {
     <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', minHeight: '100vh' }}>
       <Button 
         icon={<ArrowLeftOutlined />} 
-        onClick={() => navigate('/#products-section')} // 加上锚点 ID
+        // 修改为 navigate(-1)，这样会直接退回到你刚才点击卡片时的页面位置
+        onClick={() => navigate(-1)}
         style={{ marginBottom: 24, borderRadius: '6px' }} 
       >
-        返回产品列表
+        返回
       </Button>
       
       <Card className={styles.mainCard} bordered={false} style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
