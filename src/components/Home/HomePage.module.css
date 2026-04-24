@@ -192,6 +192,40 @@
   margin-bottom: 32px;
 }
 
+/* 强制修改箭头位置 - 增加 .bannerContainer 前缀提升权重 */
+.bannerContainer :global(.ant-carousel .slick-prev),
+.bannerContainer :global(.ant-carousel .slick-next) {
+  top: 80% !important; /* 调整这个百分比，越大越往下 */
+  width: 40px !important;
+  height: 40px !important;
+  z-index: 100 !important; /* 确保在文字层之上 */
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: #fff !important;
+  transition: all 0.3s ease !important;
+}
+
+.bannerContainer :global(.ant-carousel .slick-prev):hover,
+.bannerContainer :global(.ant-carousel .slick-next):hover {
+  background: rgba(255, 255, 255, 0.4) !important;
+  scale: 1.1;
+}
+
+.bannerContainer :global(.ant-carousel .slick-prev) {
+  left: 30px !important;
+}
+
+.bannerContainer :global(.ant-carousel .slick-next) {
+  right: 30px !important;
+}
+
+/* 修改箭头本身的颜色（可选，防止背景太亮看不见） */
+.bannerContainer :global(.ant-carousel .slick-prev::after),
+.bannerContainer :global(.ant-carousel .slick-next::after) {
+  color: #fff;
+  font-size: 24px;
+}
+
 .slideItem {
   position: relative;
   height: 400px;
@@ -201,131 +235,10 @@
   text-align: center;
 }
 
-.slideImage {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  z-index: 1;
-}
-
-.slideContent {
-  position: relative;
-  z-index: 2;
-  background: rgba(0, 0, 0, 0.4);
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0 40px;
-}
-
-.iconWrapper {
-  margin-bottom: 16px;
-}
-
-/* 适配手机端高度 */
-@media (max-width: 768px) {
-  .bannerContainer, .slideItem {
-    height: 300px;
-  }
-  
-  .slideContent {
-    padding: 0 20px;
-  }
-}
-
-/* 专门针对手机端的样式修正 */
-@media (max-width: 768px) {
-  .bannerContainer {
-    height: 250px !important;
-    margin-bottom: 16px !important;
-  }
-
-  .slideContent {
-    padding: 0 15px !important;
-  }
-
-  .iconWrapper {
-    margin-bottom: 8px !important;
-  }
-
-  .headerButtons {
-    scale: 0.9;
-    transform-origin: right;
-  }
-  
-  .cardContent {
-    padding: 16px !important;
-  }
-}
-
-/* 左右按钮公用样式 */
-.arrowBtn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: none !important;
-  color: #fff !important;
-  transition: all 0.3s ease !important;
-}
-
-.arrowBtn:hover {
-  background: rgba(255, 255, 255, 0.4) !important;
-  scale: 1.1;
-}
-
-/* 左箭头位置 */
-.arrowLeft {
-  left: 20px;
-}
-
-/* 右箭头位置 */
-.arrowRight {
-  right: 20px;
-}
-
-/* 1. 移动左右箭头的位置 */
-.homeCarousel :global(.slick-prev),
-.homeCarousel :global(.slick-next) {
-  /* 默认是 50%，改为 75% 左右可以移到下方，避开中间文字 */
-  top: 75% !important;
-  z-index: 10;
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.2) !important;
-  border: none !important;
-  color: #fff !important;
-  transition: all 0.3s ease !important;
-}
-
-.homeCarousel :global(.slick-prev):hover,
-.homeCarousel :global(.slick-next):hover {
-  background: rgba(255, 255, 255, 0.4) !important;
-  scale: 1.1;
-}
-
-.homeCarousel :global(.slick-prev) {
-  left: 20px !important;
-}
-
-.homeCarousel :global(.slick-next) {
-  right: 20px !important;
-}
-
-/* 2. 确保图片可以点击且样式正确 */
+/* 确保图片高度和位置正确 */
 .bannerImage {
   width: 100%;
-  height: 400px; /* 保持原来的高度 */
+  height: 400px;
   object-fit: cover;
   cursor: pointer;
   position: absolute;
@@ -334,20 +247,20 @@
   z-index: 1;
 }
 
-/* 3. 点击预览时的遮罩文字样式 */
-.previewMask {
-  font-size: 14px;
-  color: #fff;
-}
-
-@media (max-width: 768px) {
-  .bannerImage {
-    height: 250px; /* 手机端高度 */
-  }
-  .homeCarousel :global(.slick-prev),
-  .homeCarousel :global(.slick-next) {
-    top: 85% !important; /* 手机端箭头再往下一点 */
-  }
+/* 遮罩层逻辑：允许穿透 */
+.slideContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background: rgba(0, 0, 0, 0.3); /* 半透明背景 */
+  z-index: 5;
 }
 
 /* 手机端适配：缩小按钮或隐藏 */
@@ -358,4 +271,31 @@
   }
   .arrowLeft { left: 10px; }
   .arrowRight { right: 10px; }
+  
+  .bannerContainer {
+    height: 250px !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .slideItem {
+    height: 250px !important;
+  }
+  
+  .bannerImage {
+    height: 250px !important;
+  }
+  
+  .slideContent {
+    padding: 0 15px !important;
+  }
+  
+  .iconWrapper {
+    margin-bottom: 8px !important;
+  }
+  
+  /* 手机端箭头位置 */
+  .bannerContainer :global(.ant-carousel .slick-prev),
+  .bannerContainer :global(.ant-carousel .slick-next) {
+    top: 85% !important; /* 手机端箭头再往下一点 */
+  }
 }
