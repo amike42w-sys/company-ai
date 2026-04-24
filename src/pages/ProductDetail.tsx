@@ -42,27 +42,14 @@ const ProductDetail: React.FC = () => {
           <Col xs={24} lg={13}>
             <Carousel autoplay className={styles.imageCarousel}>
               {details.images.map((img, index) => (
-                <div key={index}>
+                <div key={index} className={styles.carouselItem}>
                   <img 
                     src={img} 
                     alt={`slide-${index}`}
-                    style={{ 
-                      width: '100%', 
-                      height: '450px', // 保持原来的高度
-                      
-                      // 🔴 关键修改：由 'cover' 改为 'contain'，保证图片不被裁剪
-                      objectFit: 'contain',
-                      
-                      // 💡 新增：给图片加个淡灰色背景，当图片无法铺满时，留白处会是浅灰色，很高级
-                      backgroundColor: '#f5f5f5',
-                      
-                      borderRadius: '12px',
-                      display: 'block'
-                    }}
+                    className={styles.detailImage} // 使用类名代替行内高度
+                    loading="lazy" // 💡 优化1：开启浏览器原生懒加载，提高首屏速度
                     onError={(e) => {
-                      console.error("图片加载失败:", img);
-                      // 容错：如果加载失败显示一个占位图
-                      e.currentTarget.src = "https://via.placeholder.com/800x450?text=Image+Not+Found";
+                      e.currentTarget.src = "https://via.placeholder.com/800x450?text=Image+Error";
                     }}
                   />
                 </div>
