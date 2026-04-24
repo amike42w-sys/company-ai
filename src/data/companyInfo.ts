@@ -16,39 +16,47 @@ export const companyInfo = {
   
   products: [
     {
-      id: 'container-house',
-      name: '集装箱房屋',
-      slogan: '模块化集成，7天快速交付',
-      description: '模块化设计，快速搭建，坚固耐用，可用于临时宿舍、办公、民宿等场景，工厂预制率高，交付周期短。',
-      icon: '🏠',
-      detailInfo: {
+      id: 'mic-school',
+      name: '集装箱房屋 / MIC建筑',
+      details: {
         title: '福田博园小学 / Futian Expo Garden Primary School',
-        images: ['/images/products/school1.jpg', '/images/products/school2.jpg'],
-        stats: [
+        // 这里放入你存放在 public/images/products 文件夹下的 5 张学校图片文件名
+        images: [
+          '/images/products/school1.jpg',
+          '/images/products/school2.jpg',
+          '/images/products/school3.jpg',
+          '/images/products/school4.jpg',
+          '/images/products/school5.jpg'
+        ],
+        specs: [
           { label: 'MiC数量', value: '145个' },
           { label: '设计层数', value: '3层' },
           { label: '总建筑占地面积', value: '3066㎡' }
         ],
-        descZh: '学校配备有标准教室、专业教室、办公室、阅览室等设施，采用模块化集成建筑技术，7天快速交付，满足紧急教育需求。',
-        descEn: 'The school is equipped with standard classrooms, professional classrooms, offices, reading rooms and other facilities, using modular integrated building technology, 7 days fast delivery, to meet emergency educational needs.'
+        introZh: '学校配备有标准教室、专业教室、办公室、阅览室、卫生间、舞蹈室、会议室、楼梯等。',
+        introEn: 'The school is equipped with standard classrooms, specialized classrooms, offices, a library, bathrooms, dance studios, meeting rooms, stairs, and more.'
       }
     },
     {
-      id: 'mobile-board-house',
-      name: '活动板房',
-      slogan: '灵活组合，经济实用',
-      description: '灵活组合，经济实用，环保节能，适用于工地临建、临时展厅、应急安置等，可重复拆装利用。',
-      icon: '🏢',
-      detailInfo: {
-        title: '建筑工地临时办公区 / Construction Site Temporary Office Area',
-        images: ['/images/products/office1.jpg', '/images/products/office2.jpg'],
-        stats: [
-          { label: '建筑面积', value: '800㎡' },
-          { label: '搭建周期', value: '3天' },
-          { label: '使用年限', value: '10年以上' }
+      id: 'mic-hospital',
+      name: '集成模块化医院',
+      details: {
+        title: '湛江医院 / Zhanjiang Hospital',
+        // 这里放入文件夹下的 5 张医院图片文件名
+        images: [
+          '/images/products/hospital1.jpg',
+          '/images/products/hospital2.jpg',
+          '/images/products/hospital3.jpg',
+          '/images/products/hospital4.jpg',
+          '/images/products/hospital5.jpg'
         ],
-        descZh: '为建筑工地提供临时办公、住宿解决方案，灵活组合，经济实用，环保节能，可重复拆装利用，满足工地临时需求。',
-        descEn: 'Provide temporary office and accommodation solutions for construction sites, flexible combination, economical and practical, environmentally friendly and energy-saving, can be repeatedly disassembled and reused to meet temporary construction site needs.'
+        specs: [
+          { label: 'MiC数量', value: '60个' },
+          { label: '模块尺寸', value: '7*3.6*4 m' },
+          { label: '建造时间', value: '23天' }
+        ],
+        introZh: '该医院设备和功能室都一应俱全，里面包含了值班室、会议室、休息室、更衣室、厕所、抢救室、门诊室、候诊室、采样室、抽血室、治疗室和隔离室，还区分了成人和儿童诊室。',
+        introEn: 'The hospital is fully equipped with facilities, including a duty room, conference room, lounge, changing room, bathroom, emergency room, outpatient room, waiting room, sampling room, blood collection room, treatment room, and isolation room, and it also differentiates between adult and pediatric consultation rooms.'
       }
     },
     {

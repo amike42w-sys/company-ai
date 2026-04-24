@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Row, Col, Typography, Space, Divider } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Tag } from 'antd';
+import { ArrowLeftOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { companyInfo } from '../data/companyInfo';
 import styles from './ProductDetail.module.css';
 
@@ -12,38 +12,85 @@ const ProductDetail: React.FC = () => {
   const navigate = useNavigate();
   const product = companyInfo.products.find(p => p.id === id);
 
-  if (!product) return <div>未找到该产品信息</div>;
+  // 【关键修复】同时检查 product 和 product.details 是否存在
+  if (!product || !product.details) {
+    return (
+      <div style={{ padding: 50, textAlign: 'center' }}>
+        <Title level={4}>未找到该产品的详细信息</Title>
+        <Button onClick={() => navigate('/')}>返回首页</Button>
+      </div>
+    );
+  }
 
-  const { detailInfo } = product;
+  // 此时 TypeScript 知道 details 肯定存在了
+  const { details } = product;
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-      <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} style={{ marginBottom: 20 }}>
-        返回首页
+    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', minHeight: '100vh' }}>
+      <Button 
+        icon={<ArrowLeftOutlined />} 
+        onClick={() => navigate('/')} 
+        style={{ marginBottom: 24, borderRadius: '6px' }} 
+      >
+        返回产品列表
       </Button>
       
-      <Card className={styles.detailCard}>
-        <Title level={2}>{detailInfo.title}</Title>
-        
-        <Row gutter={[24, 24]}>
-          {/* 左侧大图 */}
-          <Col xs={24} md={14}>
-            <img src={detailInfo.images[0]} alt="project" style={{ width: '100%', borderRadius: '8px' }} />
-          </Col>
-          
-          {/* 右侧参数和介绍 */}
-          <Col xs={24} md={10}>
-            <div className={styles.statsBox}>
-              {detailInfo.stats.map((item, index) => (
-                <div key={index} style={{ marginBottom: '12px' }}>
-                  <Text strong style={{ fontSize: '16px' }}>{item.label}：</Text>
-                  <Text style={{ fontSize: '16px' }}>{item.value}</Text>
+      <Card className={styles.mainCard} bordered={false} style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+        <Row gutter={[40, 32]}>
+          {/* 左侧：多图轮播区域 */}
+          <Col xs={24} lg={13}>
+            <Carousel autoplay effect="fade" className={styles.imageCarousel}>
+              {details.images.map((img, index) => (
+                <div key={index}>
+                  <div 
+                    style={{ 
+                      height: '450px', 
+                      backgroundImage: `url(${img})`, 
+                      backgroundSize: 'cover', 
+                      backgroundPosition: 'center', 
+                      borderRadius: '12px' 
+                    }} 
+                  />
                 </div>
               ))}
+            </Carousel>
+            <div style={{ marginTop: 12, textAlign: 'center', color: '#999' }}>
+              <Text type="secondary">← 左右滑动查看更多实景图 →</Text>
             </div>
-            <Divider />
-            <Paragraph style={{ fontSize: '15px' }}>{detailInfo.descZh}</Paragraph>
-            <Paragraph type="secondary" style={{ fontSize: '14px' }}>{detailInfo.descEn}</Paragraph>
+          </Col>
+          
+          {/* 右侧：文字介绍区域 */}
+          <Col xs={24} lg={11}>
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+              <div>
+                <Tag color="blue" style={{ marginBottom: 8 }}>项目案例 / Project Case</Tag>
+                <Title level={2} style={{ marginTop: 0 }}>{details.title.split(' / ')[0]}</Title>
+                <Title level={4} type="secondary" style={{ marginTop: -10, fontWeight: 400 }}>
+                  {details.title.split(' / ')[1]}
+                </Title>
+              </div>
+
+              <div className={styles.specsGrid}>
+                {details.specs.map((item, index) => (
+                  <div key={index} className={styles.specItem}>
+                    <Text type="secondary" style={{ display: 'block', fontSize: '12px' }}>{item.label}</Text>
+                    <Text strong style={{ fontSize: '18px', color: '#1890ff' }}>{item.value}</Text>
+                  </div>
+                ))}
+              </div>
+
+              <Divider />
+
+              <div>
+                <Title level={5}><EnvironmentOutlined /> 项目简介</Title>
+                <Paragraph style={{ fontSize: '15px', lineHeight: '1.8', textAlign: 'justify' }}>
+                  {details.introZh}
+                </Paragraph>
+                <Paragraph type="secondary" style={{ fontSize: '13px', lineHeight: '1.6', fontStyle: 'italic' }}>
+                  {details.introEn}
+                </Paragraph>
+              </div>
+            </Space>
           </Col>
         </Row>
       </Card>
