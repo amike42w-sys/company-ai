@@ -294,6 +294,62 @@
   right: 20px;
 }
 
+/* 1. 移动左右箭头的位置 */
+.homeCarousel :global(.slick-prev),
+.homeCarousel :global(.slick-next) {
+  /* 默认是 50%，改为 75% 左右可以移到下方，避开中间文字 */
+  top: 75% !important;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
+  color: #fff !important;
+  transition: all 0.3s ease !important;
+}
+
+.homeCarousel :global(.slick-prev):hover,
+.homeCarousel :global(.slick-next):hover {
+  background: rgba(255, 255, 255, 0.4) !important;
+  scale: 1.1;
+}
+
+.homeCarousel :global(.slick-prev) {
+  left: 20px !important;
+}
+
+.homeCarousel :global(.slick-next) {
+  right: 20px !important;
+}
+
+/* 2. 确保图片可以点击且样式正确 */
+.bannerImage {
+  width: 100%;
+  height: 400px; /* 保持原来的高度 */
+  object-fit: cover;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* 3. 点击预览时的遮罩文字样式 */
+.previewMask {
+  font-size: 14px;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .bannerImage {
+    height: 250px; /* 手机端高度 */
+  }
+  .homeCarousel :global(.slick-prev),
+  .homeCarousel :global(.slick-next) {
+    top: 85% !important; /* 手机端箭头再往下一点 */
+  }
+}
+
 /* 手机端适配：缩小按钮或隐藏 */
 @media (max-width: 768px) {
   .arrowBtn {

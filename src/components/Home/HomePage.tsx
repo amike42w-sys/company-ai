@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Card, Row, Col, Typography, Button, Tag, Carousel } from 'antd'
+import { Card, Row, Col, Typography, Button, Tag, Carousel, Image } from 'antd'
 import {
   RocketOutlined,
   SafetyOutlined,
@@ -46,56 +46,64 @@ const HomePage: React.FC = () => {
         />
 
         {/* 绑定 ref 到 Carousel */}
-        <Carousel
-          ref={carouselRef}
-          autoplay
-          effect="fade"
-          autoplaySpeed={5000}
-        >
-          {bannerImages.map((img, index) => (
-            <div key={index} className={styles.slideItem}>
-              {/* 背景图片层 */}
-              <div
-                className={styles.slideImage}
-                style={{ backgroundImage: `url(${img.src})` }}
-              />
-              {/* 文字遮罩层 - 保证文字清晰可见 */}
-              <div className={styles.slideContent}>
-                <div className={styles.iconWrapper}>
-                  <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
-                </div>
-                <Title 
-                  level={isMobile ? 3 : 1} 
-                  style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0', fontSize: isMobile ? '20px' : '' }}
-                >
-                  欢迎来到 {companyInfo.name}
-                </Title>
-                <Title 
-                  level={isMobile ? 5 : 3} 
-                  style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal', fontSize: isMobile ? '14px' : '' }}
-                >
-                  {companyInfo.slogan}
-                </Title>
-                <Paragraph 
-                  style={{ 
-                    color: 'rgba(255,255,255,0.8)', 
-                    fontSize: isMobile ? '12px' : '18px', 
-                    display: 'block', 
-                    marginBottom: isMobile ? 12 : 24, 
-                    lineHeight: 1.4 
+        <Image.PreviewGroup>
+          <Carousel
+            ref={carouselRef}
+            autoplay
+            effect="fade"
+            autoplaySpeed={5000}
+            arrows
+            className={styles.homeCarousel}
+          >
+            {bannerImages.map((img, index) => (
+              <div key={index} className={styles.slideItem}>
+                {/* 背景图片层 */}
+                <Image
+                  src={img.src}
+                  alt={`banner-${index}`}
+                  className={styles.bannerImage}
+                  preview={{
+                    mask: <div className={styles.previewMask}>点击查看大图</div>
                   }}
-                >
-                  {companyInfo.description}
-                </Paragraph>
-                {role === 'internal' && (
-                  <Tag color="success" icon={<CheckCircleOutlined />}>
-                    已登录内部账号
-                  </Tag>
-                )}
+                />
+                {/* 文字遮罩层 - 保证文字清晰可见 */}
+                <div className={styles.slideContent}>
+                  <div className={styles.iconWrapper}>
+                    <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
+                  </div>
+                  <Title 
+                    level={isMobile ? 3 : 1} 
+                    style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0', fontSize: isMobile ? '20px' : '' }}
+                  >
+                    欢迎来到 {companyInfo.name}
+                  </Title>
+                  <Title 
+                    level={isMobile ? 5 : 3} 
+                    style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal', fontSize: isMobile ? '14px' : '' }}
+                  >
+                    {companyInfo.slogan}
+                  </Title>
+                  <Paragraph 
+                    style={{ 
+                      color: 'rgba(255,255,255,0.8)', 
+                      fontSize: isMobile ? '12px' : '18px', 
+                      display: 'block', 
+                      marginBottom: isMobile ? 12 : 24, 
+                      lineHeight: 1.4 
+                    }}
+                  >
+                    {companyInfo.description}
+                  </Paragraph>
+                  {role === 'internal' && (
+                    <Tag color="success" icon={<CheckCircleOutlined />}>
+                      已登录内部账号
+                    </Tag>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </Carousel>
+            ))}
+          </Carousel>
+        </Image.PreviewGroup>
 
         {/* 右箭头按钮 */}
         <Button
