@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Tag } from 'antd';
+import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Tag, Image } from 'antd';
 import { ArrowLeftOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { companyInfo } from '../data/companyInfo';
 import styles from './ProductDetail.module.css';
@@ -40,23 +40,29 @@ const ProductDetail: React.FC = () => {
         <Row gutter={[40, 32]}>
           {/* 左侧：多图轮播区域 */}
           <Col xs={24} lg={13}>
-            <Carousel autoplay className={styles.imageCarousel}>
-              {details.images.map((img, index) => (
-                <div key={index} className={styles.carouselItem}>
-                  <img 
-                    src={img} 
-                    alt={`slide-${index}`}
-                    className={styles.detailImage} // 使用类名代替行内高度
-                    loading="lazy" // 💡 优化1：开启浏览器原生懒加载，提高首屏速度
-                    onError={(e) => {
-                      e.currentTarget.src = "https://via.placeholder.com/800x450?text=Image+Error";
-                    }}
-                  />
-                </div>
-              ))}
-            </Carousel>
+            {/* 使用 PreviewGroup 包裹，实现点击预览 */}
+            <Image.PreviewGroup>
+              <Carousel autoplay className={styles.imageCarousel}>
+                {details.images.map((img, index) => (
+                  <div key={index} className={styles.carouselItem}>
+                    <Image
+                      src={img}
+                      alt={`slide-${index}`}
+                      className={styles.detailImage}
+                      // 💡 提示：Image 组件自带预览功能，不需要额外写点击事件
+                      placeholder={
+                         <div className={styles.imagePlaceholder}>加载中...</div>
+                      }
+                      onError={(e: any) => {
+                        e.currentTarget.src = "https://via.placeholder.com/800x450?text=Image+Error";
+                      }}
+                    />
+                  </div>
+                ))}
+              </Carousel>
+            </Image.PreviewGroup>
             <div style={{ marginTop: 12, textAlign: 'center', color: '#999' }}>
-              <Text type="secondary">← 左右滑动查看更多实景图 →</Text>
+              <Text type="secondary">← 左右滑动切换 / 点击图片放大查看 →</Text>
             </div>
           </Col>
           
