@@ -17,6 +17,49 @@ import styles from './HomePage.module.css'
 
 const { Title, Paragraph } = Typography
 
+// 1. 定义自定义箭头组件
+const CustomPrevArrow = (props: any) => {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        display: 'block',
+        left: '30px',
+        top: '85%', // 👈 强制移动到下方 85% 的位置
+        zIndex: 100,
+        fontSize: '24px',
+        color: '#fff'
+      }}
+      onClick={onClick}
+    >
+      <LeftOutlined />
+    </div>
+  );
+};
+
+const CustomNextArrow = (props: any) => {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        display: 'block',
+        right: '30px',
+        top: '85%', // 👈 强制移动到下方 85% 的位置
+        zIndex: 100,
+        fontSize: '24px',
+        color: '#fff'
+      }}
+      onClick={onClick}
+    >
+      <RightOutlined />
+    </div>
+  );
+};
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
@@ -37,15 +80,6 @@ const HomePage: React.FC = () => {
     <div className={styles.container}>
       {/* Hero Section with Carousel */}
       <div className={styles.bannerContainer}>
-        {/* 左箭头按钮 */}
-        <Button
-          className={`${styles.arrowBtn} ${styles.arrowLeft}`}
-          icon={<LeftOutlined />}
-          shape="circle"
-          onClick={() => carouselRef.current.prev()}
-        />
-
-        {/* 绑定 ref 到 Carousel */}
         <Image.PreviewGroup>
           <Carousel
             ref={carouselRef}
@@ -53,67 +87,66 @@ const HomePage: React.FC = () => {
             effect="fade"
             autoplaySpeed={5000}
             arrows
+            prevArrow={<CustomPrevArrow />} // 👈 使用自定义组件
+            nextArrow={<CustomNextArrow />} // 👈 使用自定义组件
             className={styles.homeCarousel}
           >
             {bannerImages.map((img, index) => (
-              <div key={index} className={styles.slideItem}>
-                {/* 背景图片层 */}
+              <div key={index} className={styles.carouselItem}>
+                {/* 关键点：图片必须在文字层之下，但要能被点击 */}
                 <Image
                   src={img.src}
                   alt={`banner-${index}`}
                   className={styles.bannerImage}
+                  style={{ cursor: 'pointer' }}
                   preview={{
-                    mask: <div className={styles.previewMask}>点击查看大图</div>
+                    mask: <div className={styles.customMask}>点击查看实景</div>,
                   }}
                 />
-                {/* 文字遮罩层 - 保证文字清晰可见 */}
-                <div className={styles.slideContent} style={{ pointerEvents: 'none' }}>
-                  <div style={{ pointerEvents: 'auto' }}>
-                    <div className={styles.iconWrapper}>
-                      <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
-                    </div>
-                    <Title 
-                      level={isMobile ? 3 : 1} 
-                      style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0', fontSize: isMobile ? '20px' : '' }}
-                    >
-                      欢迎来到 {companyInfo.name}
-                    </Title>
-                    <Title 
-                      level={isMobile ? 5 : 3} 
-                      style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal', fontSize: isMobile ? '14px' : '' }}
-                    >
-                      {companyInfo.slogan}
-                    </Title>
-                    <Paragraph 
-                      style={{ 
-                        color: 'rgba(255,255,255,0.8)', 
-                        fontSize: isMobile ? '12px' : '18px', 
-                        display: 'block', 
-                        marginBottom: isMobile ? 12 : 24, 
-                        lineHeight: 1.4 
-                      }}
-                    >
-                      {companyInfo.description}
-                    </Paragraph>
-                    {role === 'internal' && (
-                      <Tag color="success" icon={<CheckCircleOutlined />}>
-                        已登录内部账号
-                      </Tag>
-                    )}
-                  </div>
+                
+                {/* 2. 关键点：给文字层增加 pointer-events: none
+                    这样你的鼠标点击会直接"穿透"这层文字，点到下面的图片上 */}
+                <div className={styles.carouselContent} style={{ pointerEvents: 'none' }}>
+                   {/* 💡 如果文字里有按钮需要点击，给按钮加 pointer-events: auto */}
+                   <div style={{ pointerEvents: 'auto' }}>
+                      {/* 这里放你原本的火箭图标、文字等 */}
+                      <div className={styles.iconWrapper}>
+                        <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
+                      </div>
+                      <Title 
+                        level={isMobile ? 3 : 1} 
+                        style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0', fontSize: isMobile ? '20px' : '' }}
+                      >
+                        欢迎来到 {companyInfo.name}
+                      </Title>
+                      <Title 
+                        level={isMobile ? 5 : 3} 
+                        style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal', fontSize: isMobile ? '14px' : '' }}
+                      >
+                        {companyInfo.slogan}
+                      </Title>
+                      <Paragraph 
+                        style={{ 
+                          color: 'rgba(255,255,255,0.8)', 
+                          fontSize: isMobile ? '12px' : '18px', 
+                          display: 'block', 
+                          marginBottom: isMobile ? 12 : 24, 
+                          lineHeight: 1.4 
+                        }}
+                      >
+                        {companyInfo.description}
+                      </Paragraph>
+                      {role === 'internal' && (
+                        <Tag color="success" icon={<CheckCircleOutlined />}>
+                          已登录内部账号
+                        </Tag>
+                      )}
+                   </div>
                 </div>
               </div>
             ))}
           </Carousel>
         </Image.PreviewGroup>
-
-        {/* 右箭头按钮 */}
-        <Button
-          className={`${styles.arrowBtn} ${styles.arrowRight}`}
-          icon={<RightOutlined />}
-          shape="circle"
-          onClick={() => carouselRef.current.next()}
-        />
       </div>
 
       {/* Features Section */}
