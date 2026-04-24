@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Tag, Image } from 'antd';
+import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Tag, Image, Spin } from 'antd';
 import { ArrowLeftOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { companyInfo } from '../data/companyInfo';
 import styles from './ProductDetail.module.css';
@@ -49,9 +49,13 @@ const ProductDetail: React.FC = () => {
                       src={img}
                       alt={`slide-${index}`}
                       className={styles.detailImage}
-                      // 💡 提示：Image 组件自带预览功能，不需要额外写点击事件
+                      // 💡 只有当图片进入视野时才加载
+                      loading="lazy"
+                      // 💡 图片没出来前，显示一个漂亮的加载状态
                       placeholder={
-                         <div className={styles.imagePlaceholder}>加载中...</div>
+                        <div className={styles.imagePlaceholder}>
+                          <Spin tip="图片加载中..." />
+                        </div>
                       }
                       onError={(e: any) => {
                         e.currentTarget.src = "https://via.placeholder.com/800x450?text=Image+Error";
