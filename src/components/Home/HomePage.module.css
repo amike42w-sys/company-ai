@@ -3,6 +3,18 @@
   margin: 0 auto;
 }
 
+/* 💡 关键：隐藏所有轮播图默认箭头的伪元素内容 */
+.homeCarousel :global(.slick-prev::before),
+.homeCarousel :global(.slick-next::before) {
+  content: '' !important;
+  display: none !important;
+}
+
+/* 隐藏可能存在的默认按钮背景 */
+.homeCarousel :global(.slick-arrow) {
+  background: transparent !important;
+}
+
 .hero {
   text-align: center;
   padding: 48px 24px;

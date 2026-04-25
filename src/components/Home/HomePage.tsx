@@ -19,18 +19,22 @@ const { Title, Paragraph } = Typography
 
 // 1. 定义自定义箭头组件
 const CustomPrevArrow = (props: any) => {
-  const { className, style, onClick } = props;
+  const { style, onClick } = props;
   return (
     <div
-      className={className}
       style={{
         ...style,
-        display: 'block',
-        left: '30px',
-        top: '85%', // 👈 强制移动到下方 85% 的位置
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        left: '20px',
+        top: '85%',
         zIndex: 100,
         fontSize: '24px',
-        color: '#fff'
+        color: '#fff',
+        width: '40px',
+        height: '40px',
+        position: 'absolute'
       }}
       onClick={onClick}
     >
@@ -40,18 +44,22 @@ const CustomPrevArrow = (props: any) => {
 };
 
 const CustomNextArrow = (props: any) => {
-  const { className, style, onClick } = props;
+  const { style, onClick } = props;
   return (
     <div
-      className={className}
       style={{
         ...style,
-        display: 'block',
-        right: '30px',
-        top: '85%', // 👈 强制移动到下方 85% 的位置
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: '20px',
+        top: '85%',
         zIndex: 100,
         fontSize: '24px',
-        color: '#fff'
+        color: '#fff',
+        width: '40px',
+        height: '40px',
+        position: 'absolute'
       }}
       onClick={onClick}
     >
