@@ -3,38 +3,40 @@
   margin: 0 auto;
 }
 
-/* 💡 终极必杀：强制隐藏所有属于 slick 内部生成的按钮和伪元素 */
-.homeCarousel :global(button.slick-arrow) {
+/* 1. 强制隐藏所有官方生成的按钮 */
+.homeCarousel :global(.slick-arrow),
+.homeCarousel :global(.slick-prev),
+.homeCarousel :global(.slick-next) {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
-  width: 0 !important;
-  height: 0 !important;
-  pointer-events: none !important;
 }
 
-/* 确保伪元素内容也消失 */
-.homeCarousel :global(.slick-prev::before),
-.homeCarousel :global(.slick-next::before) {
-  display: none !important;
-  content: "" !important;
+/* 2. 确保你的自定义按钮样式不受影响 */
+.customPrevBtn, .customNextBtn {
+  position: absolute;
+  top: 85%;
+  z-index: 1000 !important;
+  display: flex !important;
+  width: 46px;
+  height: 46px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 22px;
+  transition: all 0.3s ease;
 }
 
-/* 💡 针对图一里看到的默认样式进行强力覆盖 */
-.homeCarousel :global(.slick-arrow),
-.homeCarousel :global(.ant-carousel .slick-prev),
-.homeCarousel :global(.ant-carousel .slick-next) {
-    /* 强制让默认的、在50%位置的箭头消失 */
-    display: none !important;
-    opacity: 0 !important;
+.customPrevBtn:hover, .customNextBtn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) scale(1.1);
 }
 
-/* 💡 针对箭头里的那个小尖尖（伪元素）进行强力清空 */
-.homeCarousel :global(.slick-prev::before),
-.homeCarousel :global(.slick-next::before) {
-    content: '' !important;
-    display: none !important;
-}
+.customPrevBtn { left: 20px; }
+.customNextBtn { right: 20px; }
 
 .bannerContainer {
   position: relative;
