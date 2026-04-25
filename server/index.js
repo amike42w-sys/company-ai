@@ -1,5 +1,4 @@
 const express = require('express');
-const compression = require('compression'); // 1. 引入压缩中间件
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -48,9 +47,6 @@ async function callAI(content) {
 
 const app = express();
 const PORT = 3001;
-
-// 2. 开启压缩（必须放在所有路由之前）
-app.use(compression());
 
 // 在 app 启动前先同步数据库
 syncDatabase(); // 确保数据库表存在
