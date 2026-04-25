@@ -22,11 +22,11 @@ export const companyInfo = {
         title: '福田博园小学 / Futian Expo Garden Primary School',
         // 修改点：改为 .png 且匹配中划线命名
         images: [
-          '/images/products/school-01.png',
-          '/images/products/school-02.png',
-          '/images/products/school-03.png',
-          '/images/products/school-04.png',
-          '/images/products/school-05.png'
+          '/images/products/school-01.png?v=0423',
+          '/images/products/school-02.png?v=0423',
+          '/images/products/school-03.png?v=0423',
+          '/images/products/school-04.png?v=0423',
+          '/images/products/school-05.png?v=0423'
         ],
         specs: [
           { label: 'MiC数量', value: '145个' },
@@ -44,11 +44,11 @@ export const companyInfo = {
         title: '湛江医院 / Zhanjiang Hospital',
         // 修改点：改为 .png 且匹配中划线命名
         images: [
-          '/images/products/hospital-01.png',
-          '/images/products/hospital-02.png',
-          '/images/products/hospital-03.png',
-          '/images/products/hospital-04.png',
-          '/images/products/hospital-05.png'
+          '/images/products/hospital-01.png?v=0423',
+          '/images/products/hospital-02.png?v=0423',
+          '/images/products/hospital-03.png?v=0423',
+          '/images/products/hospital-04.png?v=0423',
+          '/images/products/hospital-05.png?v=0423'
         ],
         specs: [
           { label: 'MiC数量', value: '60个' },
