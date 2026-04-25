@@ -17,6 +17,60 @@ import styles from './HomePage.module.css'
 
 const { Title, Paragraph } = Typography
 
+const CustomPrevArrow = (props: any) => {
+  const { style, onClick } = props;
+  return (
+    <div
+      style={{
+        ...style,
+        display: 'flex !important',
+        alignItems: 'center',
+        justifyContent: 'center',
+        left: '20px',
+        top: '85% !important',
+        zIndex: 10000,
+        fontSize: '30px',
+        color: '#fff',
+        width: '50px',
+        height: '50px',
+        position: 'absolute',
+        background: 'rgba(0,0,0,0.2)',
+        borderRadius: '50%'
+      }}
+      onClick={onClick}
+    >
+      <LeftOutlined />
+    </div>
+  );
+};
+
+const CustomNextArrow = (props: any) => {
+  const { style, onClick } = props;
+  return (
+    <div
+      style={{
+        ...style,
+        display: 'flex !important',
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: '20px',
+        top: '85% !important',
+        zIndex: 10000,
+        fontSize: '30px',
+        color: '#fff',
+        width: '50px',
+        height: '50px',
+        position: 'absolute',
+        background: 'rgba(0,0,0,0.2)',
+        borderRadius: '50%'
+      }}
+      onClick={onClick}
+    >
+      <RightOutlined />
+    </div>
+  );
+};
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
@@ -43,7 +97,9 @@ const HomePage: React.FC = () => {
             autoplay
             effect="fade"
             autoplaySpeed={5000}
-            arrows={false}
+            arrows
+            prevArrow={<CustomPrevArrow />}
+            nextArrow={<CustomNextArrow />}
             dots={true}
             className={styles.homeCarousel}
           >
@@ -96,13 +152,6 @@ const HomePage: React.FC = () => {
             ))}
           </Carousel>
         </Image.PreviewGroup>
-
-        <div className={styles.customArrowBtn} style={{ left: '20px' }} onClick={() => carouselRef.current.prev()}>
-          <LeftOutlined />
-        </div>
-        <div className={styles.customArrowBtn} style={{ right: '20px' }} onClick={() => carouselRef.current.next()}>
-          <RightOutlined />
-        </div>
       </div>
 
       {/* Features Section */}
