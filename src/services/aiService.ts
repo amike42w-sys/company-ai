@@ -83,7 +83,7 @@ export class AIService {
     // 员工人数相关问题
     if (lowerQuestion.includes('员工人数') || lowerQuestion.includes('多少人') || 
         lowerQuestion.includes('员工规模') || lowerQuestion.includes('有多少员工')) {
-      return `我们公司现有员工${companyInfo.employees}人。`
+      return `我们公司现有员工${companyInfo.employees.zh}人。`
     }
     
     // 市场相关问题
@@ -122,10 +122,10 @@ export class AIService {
         return `我们提供以下核心产品和配套定制服务：
 
 **核心产品**：
-${companyInfo.products.map(p => `• ${p.name}：${p.slogan}`).join('\n')}
+${companyInfo.products.map(p => `• ${p.name.zh}：${p.slogan?.zh || ''}`).join('\n')}
 
 **配套与定制服务**：
-${companyInfo.supportingServices?.map(s => `• ${s.name}：${s.description}`).join('\n')}
+${companyInfo.supportingServices?.map(s => `• ${s.name.zh}：${s.description?.zh || ''}`).join('\n')}
 
 以及${companyInfo.services.join('、')}等服务。
 
@@ -150,12 +150,12 @@ Would you like to know more about specific products? For example, Container Hous
     }
     
     if (lowerQuestion.includes('集装箱')) {
-      const product = companyInfo.products.find(p => p.name.includes('集装箱'))
+      const product = companyInfo.products.find(p => (p.name as any).zh.includes('集装箱'))
       if (product) {
         if (isChinese) {
-          return `**${product.name}** - ${product.slogan}
+          return `**${(product.name as any).zh}** - ${(product.slogan as any)?.zh || ''}
 
-${product.description}
+${(product.description as any)?.zh || ''}
 
 **适用场景**：临时宿舍、办公、民宿等
 **优势**：工厂预制率高，交付周期短，7天即可快速交付
@@ -175,12 +175,12 @@ Would you like to know about Container House prices, customization options, or a
     }
     
     if (lowerQuestion.includes('钢结构') || lowerQuestion.includes('别墅')) {
-      const product = companyInfo.products.find(p => p.name.includes('钢结构'))
+      const product = companyInfo.products.find(p => (p.name as any).zh.includes('钢结构'))
       if (product) {
         if (isChinese) {
-          return `**${product.name}** - ${product.slogan}
+          return `**${(product.name as any).zh}** - ${(product.slogan as any)?.zh || ''}
 
-${product.description}
+${(product.description as any)?.zh || ''}
 
 **优势**：
 • 轻钢结构主体，抗震防风
@@ -235,7 +235,7 @@ Welcome to contact us for consultation at any time!`
     // 公司名称相关问题
     if (lowerQuestion.includes('公司') && (lowerQuestion.includes('叫啥') || lowerQuestion.includes('叫什么') || lowerQuestion.includes('名字') || lowerQuestion.includes('名称'))) {
       if (isChinese) {
-        return `我们公司的名称是${companyInfo.name}。`
+        return `我们公司的名称是${companyInfo.name.zh}。`
       } else {
         return `Our company name is Matrix Living (Foshan) Modular House Co., Ltd.`
       }
@@ -243,13 +243,13 @@ Welcome to contact us for consultation at any time!`
     
     if (lowerQuestion.includes('公司') || lowerQuestion.includes('介绍') || lowerQuestion.includes('关于')) {
       if (isChinese) {
-        return `${companyInfo.name} - ${companyInfo.slogan}
+        return `${companyInfo.name.zh} - ${companyInfo.slogan.zh}
 
-${companyInfo.description}
+${companyInfo.description.zh}
 
 **公司概况**：
-• 成立时间：${companyInfo.founded}
-• 员工规模：${companyInfo.employees}
+• 成立时间：${companyInfo.founded.zh}
+• 员工规模：${companyInfo.employees.zh}
 • 总部地址：${companyInfo.contact.address}
 
 我们已为超过1000家企业和个人客户提供优质的集成房屋解决方案。
@@ -359,7 +359,7 @@ Please tell me your specific needs, and we will provide you with professional cu
     
     // 兜底默认回复
     if (isChinese) {
-      return `感谢您对${companyInfo.name}的关注！
+      return `感谢您对${companyInfo.name.zh}的关注！
 
 我可以为您介绍：
 • 我们的核心产品（集装箱房屋、钢结构别墅等）

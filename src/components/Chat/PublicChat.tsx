@@ -30,6 +30,7 @@ import {
 } from '@ant-design/icons'
 import ReactMarkdown from 'react-markdown'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useChatStore, type ChatSession } from '../../store/chatStore'
 import { useAuthStore } from '../../store/authStore'
 import { AIService } from '../../services/aiService'
@@ -42,6 +43,7 @@ const { Text } = Typography
 const PublicChat: React.FC = () => {
   const navigate = useNavigate()
   const { user, isAuthenticated, role } = useAuthStore()
+  const { i18n } = useTranslation()
   const {
     messages,
     isLoading,
@@ -194,7 +196,7 @@ const PublicChat: React.FC = () => {
     try {
       // 2. 调用接口。后端会负责：存用户消息 -> 思考 -> 存AI消息 -> 返回结果
       // 使用 sessionId! 或确保其为 string 类型解决报错
-      const result = await api.saveMessage(sessionId, user?.id || '', 'user', question, 'company');
+      const result = await api.saveMessage(sessionId, user?.id || '', 'user', question, 'company', i18n.language || 'zh');
       
       if (result.success) {
         // 3. 把后端生成的 AI 回复显示在屏幕上（同样补齐 id）

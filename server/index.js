@@ -802,7 +802,7 @@ app.delete('/api/sessions/user/:userId', async (req, res) => {
 });
 
 app.post('/api/messages', async (req, res) => {
-  const { sessionId, userId, content, role } = req.body;
+  const { sessionId, userId, content, role, lang } = req.body;
 
   // 1. 拦截重复保存请求
   if (role === 'assistant') return res.json({ success: true });
@@ -830,12 +830,12 @@ app.post('/api/messages', async (req, res) => {
       createdAt: new Date()
     });
 
-    // 4. 【核心逻辑】智能语言检测与回复
-    const isEnglish = !/[\u4e00-\u9fa5]/.test(content);
+    // 4. 【核心逻辑】根据 lang 参数决定回复语种
+    const isEn = lang && lang.startsWith('en');
     const lowContent = content.toLowerCase();
     let aiAnswer = "";
 
-    if (isEnglish) {
+    if (isEn) {
       // 英文回复逻辑
       if (lowContent.includes('founder') || lowContent.includes('boss') || lowContent.includes('owner') || lowContent.includes('ceo') || lowContent.includes('chairman') || lowContent.includes('leader')) {
         aiAnswer = "Our founder is Mr. Li Jin, who is also our chairman and responsible for the company's overall strategic planning and development.";
