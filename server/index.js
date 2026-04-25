@@ -830,30 +830,45 @@ app.post('/api/messages', async (req, res) => {
       createdAt: new Date()
     });
 
-    // 4. 【核心逻辑】更丰富的关键词匹配
-    const isChinese = /[\u4e00-\u9fa5]/.test(content);
+    // 4. 【核心逻辑】智能语言检测与回复
+    const isEnglish = !/[\u4e00-\u9fa5]/.test(content);
     const lowContent = content.toLowerCase();
     let aiAnswer = "";
 
-    if (lowContent.includes('法人')) {
-      // 只有问"法人"时回复甘先生
-      aiAnswer = "甘湛锋先生。";
-    } else if (lowContent.includes('创始人') || lowContent.includes('老板') || lowContent.includes('老总') || lowContent.includes('董事长') || lowContent.includes('老大') || lowContent.includes('负责人')) {
-      // 问创始人、老板、董事长等回复李先生
-      aiAnswer = "李进先生。";
-    } else if (lowContent.includes('钢结构') || lowContent.includes('别墅')) {
-      aiAnswer = "我们专业生产轻钢结构别墅，符合欧洲标准，抗震防风，支持定制化设计。您是想了解设计方案还是价格？";
-    } else if (lowContent.includes('产品') || lowContent.includes('业务')) {
-      aiAnswer = "我们的核心产品包括：集装箱房屋、模块化集成房屋（MIC）以及钢结构别墅。";
-    } else if (lowContent.includes('联系') || lowContent.includes('电话') || lowContent.includes('地址')) {
-      aiAnswer = "您可以拨打 0757-XXXXXXXX 或前往佛山市顺德区怡和中心12楼联系我们。";
-    } else if (lowContent.includes('价格') || lowContent.includes('多少钱')) {
-      aiAnswer = "价格取决于您的定制需求（尺寸、材料、配置）。建议您留下电话，我们的销售经理为您提供详细报价单。";
+    if (isEnglish) {
+      // 英文回复逻辑
+      if (lowContent.includes('founder') || lowContent.includes('boss') || lowContent.includes('owner') || lowContent.includes('ceo') || lowContent.includes('chairman') || lowContent.includes('leader')) {
+        aiAnswer = "Our founder is Mr. Li Jin, who is also our chairman and responsible for the company's overall strategic planning and development.";
+      } else if (lowContent.includes('legal') || lowContent.includes('representative')) {
+        aiAnswer = "Our legal representative is Mr. Gan Zhanfeng.";
+      } else if (lowContent.includes('steel') || lowContent.includes('villa')) {
+        aiAnswer = "We specialize in light steel structure villas that meet European standards, earthquake-resistant and wind-resistant, with customizable design. Would you like to learn about our design plans or pricing?";
+      } else if (lowContent.includes('product') || lowContent.includes('business')) {
+        aiAnswer = "Our core products include: Container Houses, Modular Integrated Houses (MIC), and Steel Structure Villas.";
+      } else if (lowContent.includes('contact') || lowContent.includes('phone') || lowContent.includes('address') || lowContent.includes('location')) {
+        aiAnswer = "You can reach us at 0757-6684-1598 or visit us at 3rd Floor, Building 12, Yihe Center, Shunde District, Foshan.";
+      } else if (lowContent.includes('price') || lowContent.includes('cost') || lowContent.includes('how much')) {
+        aiAnswer = "Price depends on your customization requirements (size, materials, configuration). We recommend leaving your phone number and our sales manager will provide you with a detailed quote.";
+      } else {
+        aiAnswer = "Thank you for your interest in Matrix Living! Are you interested in our container houses, steel structure villas, or our contact information?";
+      }
     } else {
-      // 兜底回复
-      aiAnswer = isChinese
-        ? "感谢您对筑建集成的关注！请问您是想了解集装箱房屋、钢结构别墅，还是公司的联系方式？"
-        : "Thank you for your interest! Are you interested in our container houses, steel structure villas, or our contact information?";
+      // 中文回复逻辑
+      if (lowContent.includes('法人')) {
+        aiAnswer = "甘湛锋先生。";
+      } else if (lowContent.includes('创始人') || lowContent.includes('老板') || lowContent.includes('老总') || lowContent.includes('董事长') || lowContent.includes('老大') || lowContent.includes('负责人')) {
+        aiAnswer = "李进先生。";
+      } else if (lowContent.includes('钢结构') || lowContent.includes('别墅')) {
+        aiAnswer = "我们专业生产轻钢结构别墅，符合欧洲标准，抗震防风，支持定制化设计。您是想了解设计方案还是价格？";
+      } else if (lowContent.includes('产品') || lowContent.includes('业务')) {
+        aiAnswer = "我们的核心产品包括：集装箱房屋、模块化集成房屋（MIC）以及钢结构别墅。";
+      } else if (lowContent.includes('联系') || lowContent.includes('电话') || lowContent.includes('地址')) {
+        aiAnswer = "您可以拨打 0757-6684-1598 或前往佛山市顺德区怡和中心12楼联系我们。";
+      } else if (lowContent.includes('价格') || lowContent.includes('多少钱')) {
+        aiAnswer = "价格取决于您的定制需求（尺寸、材料、配置）。建议您留下电话，我们的销售经理为您提供详细报价单。";
+      } else {
+        aiAnswer = "感谢您对筑建集成的关注！请问您是想了解集装箱房屋、钢结构别墅，还是公司的联系方式？";
+      }
     }
 
     // 5. 保存 AI 回复

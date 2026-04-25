@@ -18,6 +18,7 @@ import {
 } from '@ant-design/icons'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
+import LanguageSwitcher from './LanguageSwitcher'
 import styles from './MainLayout.module.css'
 
 const { Header, Content, Sider } = Layout
@@ -141,6 +142,7 @@ const MainLayout: React.FC = () => {
           )}
         </div>
         <div className={styles.headerRight}>
+          <LanguageSwitcher />
           {isAuthenticated ? (
             <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow>
               <div className={styles.userInfo}>
