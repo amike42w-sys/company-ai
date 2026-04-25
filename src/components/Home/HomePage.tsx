@@ -17,57 +17,6 @@ import styles from './HomePage.module.css'
 
 const { Title, Paragraph } = Typography
 
-// 1. 定义自定义箭头组件
-const CustomPrevArrow = (props: any) => {
-  const { style, onClick } = props;
-  return (
-    <div
-      style={{
-        ...style,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        left: '20px',
-        top: '85%',
-        zIndex: 100,
-        fontSize: '24px',
-        color: '#fff',
-        width: '40px',
-        height: '40px',
-        position: 'absolute'
-      }}
-      onClick={onClick}
-    >
-      <LeftOutlined />
-    </div>
-  );
-};
-
-const CustomNextArrow = (props: any) => {
-  const { style, onClick } = props;
-  return (
-    <div
-      style={{
-        ...style,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        right: '20px',
-        top: '85%',
-        zIndex: 100,
-        fontSize: '24px',
-        color: '#fff',
-        width: '40px',
-        height: '40px',
-        position: 'absolute'
-      }}
-      onClick={onClick}
-    >
-      <RightOutlined />
-    </div>
-  );
-};
-
 const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
@@ -94,30 +43,22 @@ const HomePage: React.FC = () => {
             autoplay
             effect="fade"
             autoplaySpeed={5000}
-            arrows
-            prevArrow={<CustomPrevArrow />} // 👈 使用自定义组件
-            nextArrow={<CustomNextArrow />} // 👈 使用自定义组件
+            arrows={false}
+            dots={true}
             className={styles.homeCarousel}
           >
             {bannerImages.map((img, index) => (
               <div key={index} className={styles.carouselItem}>
-                {/* 关键点：图片必须在文字层之下，但要能被点击 */}
                 <Image
                   src={img.src}
                   alt={`banner-${index}`}
                   className={styles.bannerImage}
-                  style={{ cursor: 'pointer' }}
                   preview={{
                     mask: <div className={styles.customMask}>点击查看实景</div>,
                   }}
                 />
-                
-                {/* 2. 关键点：给文字层增加 pointer-events: none
-                    这样你的鼠标点击会直接"穿透"这层文字，点到下面的图片上 */}
                 <div className={styles.carouselContent} style={{ pointerEvents: 'none' }}>
-                   {/* 💡 如果文字里有按钮需要点击，给按钮加 pointer-events: auto */}
                    <div style={{ pointerEvents: 'auto' }}>
-                      {/* 这里放你原本的火箭图标、文字等 */}
                       <div className={styles.iconWrapper}>
                         <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
                       </div>
@@ -155,6 +96,13 @@ const HomePage: React.FC = () => {
             ))}
           </Carousel>
         </Image.PreviewGroup>
+
+        <div className={styles.myCustomPrev} onClick={() => carouselRef.current.prev()}>
+          <LeftOutlined />
+        </div>
+        <div className={styles.myCustomNext} onClick={() => carouselRef.current.next()}>
+          <RightOutlined />
+        </div>
       </div>
 
       {/* Features Section */}

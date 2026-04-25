@@ -15,6 +15,55 @@
   background: transparent !important;
 }
 
+.bannerContainer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 32px;
+}
+
+.myCustomPrev, .myCustomNext {
+  position: absolute;
+  top: 85%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.3s;
+}
+
+.myCustomPrev:hover, .myCustomNext:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.myCustomPrev {
+  left: 30px;
+}
+
+.myCustomNext {
+  right: 30px;
+}
+
+@media (max-width: 768px) {
+  .myCustomPrev, .myCustomNext {
+    top: 88%;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  .myCustomPrev { left: 15px; }
+  .myCustomNext { right: 15px; }
+}
+
 .hero {
   text-align: center;
   padding: 48px 24px;
@@ -195,14 +244,6 @@
 }
 
 /* Banner Carousel Styles */
-.bannerContainer {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  border-radius: 12px;
-  margin-bottom: 32px;
-}
-
 .carouselItem {
   position: relative;
   height: 500px; /* 电脑端高度 */
