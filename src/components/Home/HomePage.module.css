@@ -3,21 +3,18 @@
   margin: 0 auto;
 }
 
-/* 1. 强制隐藏所有官方生成的按钮 */
-.homeCarousel :global(.slick-arrow),
-.homeCarousel :global(.slick-prev),
-.homeCarousel :global(.slick-next) {
+/* 💡 终极屏蔽：屏蔽任何在 bannerContainer 里的 slick 箭头 */
+.bannerContainer :global(.slick-arrow) {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
 }
 
-/* 2. 确保你的自定义按钮样式不受影响 */
 .customPrevBtn, .customNextBtn {
   position: absolute;
   top: 85%;
-  z-index: 1000 !important;
-  display: flex !important;
+  z-index: 1000 !important; /* 确保层级最高 */
+  display: flex !important; /* 强制显示我们自己的 */
   width: 46px;
   height: 46px;
   background: rgba(0, 0, 0, 0.3);

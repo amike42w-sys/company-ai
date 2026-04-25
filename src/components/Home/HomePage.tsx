@@ -23,6 +23,9 @@ const HomePage: React.FC = () => {
   const isMobile = window.innerWidth < 768;
   const carouselRef = useRef<any>(null); // 💡 用于控制轮播
 
+  // 💡 【修复】把指纹打印移到这里！
+  console.log("HomePage Version: 4-Arrows-Fixed-01");
+
   const bannerImages = [
     { src: '/images/banner/exterior.jpg', title: '公司外观' },
     { src: '/images/banner/factory1.jpg', title: '生产车间' },
@@ -36,6 +39,7 @@ const HomePage: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.bannerContainer}>
+
         <Image.PreviewGroup>
           <Carousel
             ref={carouselRef} // 💡 绑定 Ref
