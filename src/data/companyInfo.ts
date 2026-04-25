@@ -22,11 +22,11 @@ export const companyInfo = {
         title: '福田博园小学 / Futian Expo Garden Primary School',
         // 修改点：改为 .png 且匹配中划线命名
         images: [
-          '/images/products/school-01.jpg?v=2',
-          '/images/products/school-02.png?v=2',
-          '/images/products/school-03.png?v=2',
-          '/images/products/school-04.png?v=2',
-          '/images/products/school-05.png?v=2'
+          '/images/products/school-01.png?v=202604231030',
+          '/images/products/school-02.png?v=202604231030',
+          '/images/products/school-03.png?v=202604231030',
+          '/images/products/school-04.png?v=202404231030',
+          '/images/products/school-05.png?v=202404231030'
         ],
         specs: [
           { label: 'MiC数量', value: '145个' },
