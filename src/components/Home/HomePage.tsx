@@ -97,10 +97,10 @@ const HomePage: React.FC = () => {
           </Carousel>
         </Image.PreviewGroup>
 
-        <div className={styles.myCustomPrev} onClick={() => carouselRef.current.prev()}>
+        <div className={styles.customArrowBtn} style={{ left: '20px' }} onClick={() => carouselRef.current.prev()}>
           <LeftOutlined />
         </div>
-        <div className={styles.myCustomNext} onClick={() => carouselRef.current.next()}>
+        <div className={styles.customArrowBtn} style={{ right: '20px' }} onClick={() => carouselRef.current.next()}>
           <RightOutlined />
         </div>
       </div>

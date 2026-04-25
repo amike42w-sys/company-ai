@@ -3,13 +3,21 @@
   margin: 0 auto;
 }
 
-/* 1. 彻底杀死所有默认生成的 slick 箭头 */
-.homeCarousel :global(.slick-arrow),
-.homeCarousel :global(.slick-prev),
-.homeCarousel :global(.slick-next) {
+/* 💡 终极必杀：强制隐藏所有属于 slick 内部生成的按钮和伪元素 */
+.homeCarousel :global(button.slick-arrow) {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 确保伪元素内容也消失 */
+.homeCarousel :global(.slick-prev::before),
+.homeCarousel :global(.slick-next::before) {
+  display: none !important;
+  content: "" !important;
 }
 
 .bannerContainer {
@@ -20,13 +28,15 @@
   margin-bottom: 32px;
 }
 
-.myCustomPrev, .myCustomNext {
+/* --- 下面是我们自己手写的按钮，保持不变，但增加一个类名确保不被误杀 --- */
+.customArrowBtn {
   position: absolute;
-  top: 80% !important;
-  z-index: 9999 !important;
-  width: 44px;
-  height: 44px;
-  background: rgba(0, 0, 0, 0.3);
+  top: 85%;
+  transform: translateY(-50%);
+  z-index: 9999 !important; /* 确保层级在最顶端 */
+  width: 46px;
+  height: 46px;
+  background: rgba(0, 0, 0, 0.4);
   color: #fff;
   border-radius: 50%;
   display: flex;
@@ -34,19 +44,12 @@
   justify-content: center;
   cursor: pointer;
   font-size: 20px;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  /* 💡 关键：确保我们的按钮不受上面的 display:none 影响 */
 }
 
-.myCustomPrev:hover, .myCustomNext:hover {
-  background: rgba(0, 0, 0, 0.6);
-}
-
-.myCustomPrev {
-  left: 30px;
-}
-
-.myCustomNext {
-  right: 30px;
+.customArrowBtn:hover {
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .textWrapper {
@@ -59,14 +62,12 @@
 }
 
 @media (max-width: 768px) {
-  .myCustomPrev, .myCustomNext {
-    top: 88%;
+  .customArrowBtn {
+    top: 90%;
     width: 36px;
     height: 36px;
     font-size: 16px;
   }
-  .myCustomPrev { left: 15px; }
-  .myCustomNext { right: 15px; }
 }
 
 .hero {
