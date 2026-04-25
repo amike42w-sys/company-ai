@@ -40,33 +40,30 @@ const ProductDetail: React.FC = () => {
         <Row gutter={[40, 32]}>
           {/* 左侧：多图轮播区域 */}
           <Col xs={24} lg={13}>
-            {/* 使用 PreviewGroup 包裹，实现点击预览 */}
             <Image.PreviewGroup>
-              <Carousel autoplay className={styles.imageCarousel}>
+              <Carousel 
+                autoplay 
+                className={styles.imageCarousel}
+                adaptiveHeight={true} // 💡 关键：让轮播图自动根据图片高度调整
+              >
                 {details.images.map((img, index) => (
                   <div key={index} className={styles.carouselItem}>
                     <Image
                       src={img}
                       alt={`slide-${index}`}
                       className={styles.detailImage}
-                      // 💡 只有当图片进入视野时才加载
-                      loading="lazy"
-                      // 💡 图片没出来前，显示一个漂亮的加载状态
-                      placeholder={
-                        <div className={styles.imagePlaceholder}>
-                          <Spin tip="图片加载中..." />
-                        </div>
-                      }
-                      onError={(e: any) => {
-                        e.currentTarget.src = "https://via.placeholder.com/800x450?text=Image+Error";
+                      preview={{
+                        mask: <div className={styles.previewMask}>点击放大预览</div>
                       }}
                     />
                   </div>
                 ))}
               </Carousel>
             </Image.PreviewGroup>
-            <div style={{ marginTop: 12, textAlign: 'center', color: '#999' }}>
-              <Text type="secondary">← 左右滑动切换 / 点击图片放大查看 →</Text>
+            
+            {/* 💡 紧跟在轮播图后的提示语，减少 margin */}
+            <div className={styles.carouselHint}>
+              ← 左右滑动切换 / 点击图片放大查看 →
             </div>
           </Col>
           
