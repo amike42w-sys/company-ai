@@ -72,16 +72,16 @@ const ProductDetail: React.FC = () => {
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
               <div>
                 <Tag color="blue" style={{ marginBottom: 8 }}>项目案例 / Project Case</Tag>
-                <Title level={2} style={{ marginTop: 0 }}>{details.title.split(' / ')[0]}</Title>
+                <Title level={2} style={{ marginTop: 0 }}>{details.title.zh}</Title>
                 <Title level={4} type="secondary" style={{ marginTop: -10, fontWeight: 400 }}>
-                  {details.title.split(' / ')[1]}
+                  {details.title.en}
                 </Title>
               </div>
 
               <div className={styles.specsGrid}>
                 {details.specs.map((item, index) => (
                   <div key={index} className={styles.specItem}>
-                    <Text type="secondary" style={{ display: 'block', fontSize: '12px' }}>{item.label}</Text>
+                    <Text type="secondary" style={{ display: 'block', fontSize: '12px' }}>{item.label.zh} / {item.label.en}</Text>
                     <Text strong style={{ fontSize: '18px', color: '#1890ff' }}>{item.value}</Text>
                   </div>
                 ))}
@@ -92,10 +92,10 @@ const ProductDetail: React.FC = () => {
               <div>
                 <Title level={5}><EnvironmentOutlined /> 项目简介</Title>
                 <Paragraph style={{ fontSize: '15px', lineHeight: '1.8', textAlign: 'justify' }}>
-                  {details.introZh}
+                  {details.intro.zh}
                 </Paragraph>
                 <Paragraph type="secondary" style={{ fontSize: '13px', lineHeight: '1.6', fontStyle: 'italic' }}>
-                  {details.introEn}
+                  {details.intro.en}
                 </Paragraph>
               </div>
             </Space>

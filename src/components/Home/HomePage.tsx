@@ -26,6 +26,12 @@ const HomePage: React.FC = () => {
   // 💡 【修复】把指纹打印移到这里！
   console.log("HomePage Version: 4-Arrows-Fixed-01");
 
+  // 💡 定义一个转换双语字符串的工具函数
+  const tDual = (obj: any) => {
+    if (!obj) return "";
+    return `${obj.zh} / ${obj.en}`;
+  };
+
   const bannerImages = [
     { src: '/images/banner/exterior.jpg', title: '公司外观' },
     { src: '/images/banner/factory1.jpg', title: '生产车间' },
@@ -64,13 +70,13 @@ const HomePage: React.FC = () => {
                         <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
                       </div>
                       <Title level={isMobile ? 3 : 1} style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0' }}>
-                        欢迎来到 {companyInfo.name}
+                        欢迎来到 {tDual(companyInfo.name)}
                       </Title>
                       <Title level={isMobile ? 5 : 3} style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal' }}>
-                        {companyInfo.slogan}
+                        {tDual(companyInfo.slogan)}
                       </Title>
                       <Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: isMobile ? '12px' : '18px' }}>
-                        {companyInfo.description}
+                        {tDual(companyInfo.description)}
                       </Paragraph>
                       {role === 'internal' && (
                         <Tag color="success" icon={<CheckCircleOutlined />}>
@@ -158,13 +164,13 @@ const HomePage: React.FC = () => {
         <Row gutter={[48, 24]}>
           <Col xs={24} sm={8}>
             <div className={styles.statItem}>
-              <div className={styles.statValue}>{companyInfo.founded}</div>
+              <div className={styles.statValue}>{tDual(companyInfo.founded)}</div>
               <div className={styles.statLabel}>成立时间</div>
             </div>
           </Col>
           <Col xs={24} sm={8}>
             <div className={styles.statItem}>
-              <div className={styles.statValue}>{companyInfo.employees}</div>
+              <div className={styles.statValue}>{tDual(companyInfo.employees)}</div>
               <div className={styles.statLabel}>员工规模</div>
             </div>
           </Col>
@@ -189,9 +195,9 @@ const HomePage: React.FC = () => {
                 onClick={() => navigate(`/product/${product.id}`)} // 点击跳转
               >
                 <div className={styles.productIcon}>{product.icon}</div>
-                <div className={styles.productName}>{product.name}</div>
-                <div className={styles.productSlogan}>{product.slogan}</div>
-                <div className={styles.productDesc}>{product.description}</div>
+                <div className={styles.productName}>{tDual(product.name)}</div>
+                <div className={styles.productSlogan}>{product.slogan ? tDual(product.slogan) : ""}</div>
+                <div className={styles.productDesc}>{product.description ? tDual(product.description) : ""}</div>
               </Card>
             </Col>
           ))}
@@ -206,8 +212,8 @@ const HomePage: React.FC = () => {
             <Col xs={24} sm={12} key={index}>
               <Card className={styles.serviceCard} hoverable>
                 <div className={styles.serviceIcon}>{service.icon}</div>
-                <div className={styles.serviceName}>{service.name}</div>
-                <div className={styles.serviceDesc}>{service.description}</div>
+                <div className={styles.serviceName}>{tDual(service.name)}</div>
+                <div className={styles.serviceDesc}>{tDual(service.description)}</div>
               </Card>
             </Col>
           ))}
