@@ -17,65 +17,11 @@ import styles from './HomePage.module.css'
 
 const { Title, Paragraph } = Typography
 
-const CustomPrevArrow = (props: any) => {
-  const { style, onClick } = props;
-  return (
-    <div
-      style={{
-        ...style,
-        display: 'flex !important',
-        alignItems: 'center',
-        justifyContent: 'center',
-        left: '20px',
-        top: '85% !important',
-        zIndex: 10000,
-        fontSize: '30px',
-        color: '#fff',
-        width: '50px',
-        height: '50px',
-        position: 'absolute',
-        background: 'rgba(0,0,0,0.2)',
-        borderRadius: '50%'
-      }}
-      onClick={onClick}
-    >
-      <LeftOutlined />
-    </div>
-  );
-};
-
-const CustomNextArrow = (props: any) => {
-  const { style, onClick } = props;
-  return (
-    <div
-      style={{
-        ...style,
-        display: 'flex !important',
-        alignItems: 'center',
-        justifyContent: 'center',
-        right: '20px',
-        top: '85% !important',
-        zIndex: 10000,
-        fontSize: '30px',
-        color: '#fff',
-        width: '50px',
-        height: '50px',
-        position: 'absolute',
-        background: 'rgba(0,0,0,0.2)',
-        borderRadius: '50%'
-      }}
-      onClick={onClick}
-    >
-      <RightOutlined />
-    </div>
-  );
-};
-
 const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
   const isMobile = window.innerWidth < 768;
-  const carouselRef = useRef<any>(null);
+  const carouselRef = useRef<any>(null); // 💡 用于控制轮播
 
   const bannerImages = [
     { src: '/images/banner/exterior.jpg', title: '公司外观' },
@@ -89,17 +35,14 @@ const HomePage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      {/* Hero Section with Carousel */}
       <div className={styles.bannerContainer}>
         <Image.PreviewGroup>
           <Carousel
-            ref={carouselRef}
+            ref={carouselRef} // 💡 绑定 Ref
             autoplay
             effect="fade"
             autoplaySpeed={5000}
-            arrows
-            prevArrow={<CustomPrevArrow />}
-            nextArrow={<CustomNextArrow />}
+            arrows={false} // 💡 彻底关闭自带箭头，解决4个箭头的重影
             dots={true}
             className={styles.homeCarousel}
           >
@@ -109,36 +52,20 @@ const HomePage: React.FC = () => {
                   src={img.src}
                   alt={`banner-${index}`}
                   className={styles.bannerImage}
-                  preview={{
-                    mask: false
-                  }}
+                  preview={{ mask: null }} // 去掉默认遮罩
                 />
                 <div className={styles.carouselContent} style={{ pointerEvents: 'none' }}>
                    <div className={styles.textWrapper}>
                       <div className={styles.iconWrapper}>
                         <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
                       </div>
-                      <Title 
-                        level={isMobile ? 3 : 1} 
-                        style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0', fontSize: isMobile ? '20px' : '' }}
-                      >
+                      <Title level={isMobile ? 3 : 1} style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0' }}>
                         欢迎来到 {companyInfo.name}
                       </Title>
-                      <Title 
-                        level={isMobile ? 5 : 3} 
-                        style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal', fontSize: isMobile ? '14px' : '' }}
-                      >
+                      <Title level={isMobile ? 5 : 3} style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal' }}>
                         {companyInfo.slogan}
                       </Title>
-                      <Paragraph 
-                        style={{ 
-                          color: 'rgba(255,255,255,0.8)', 
-                          fontSize: isMobile ? '12px' : '18px', 
-                          display: 'block', 
-                          marginBottom: isMobile ? 12 : 24, 
-                          lineHeight: 1.4 
-                        }}
-                      >
+                      <Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: isMobile ? '12px' : '18px' }}>
                         {companyInfo.description}
                       </Paragraph>
                       {role === 'internal' && (
@@ -152,6 +79,14 @@ const HomePage: React.FC = () => {
             ))}
           </Carousel>
         </Image.PreviewGroup>
+
+        {/* 💡 2. 手动编写两个完全独立的按钮，放在 Carousel 外面 */}
+        <div className={styles.customPrevBtn} onClick={() => carouselRef.current.prev()}>
+          <LeftOutlined />
+        </div>
+        <div className={styles.customNextBtn} onClick={() => carouselRef.current.next()}>
+          <RightOutlined />
+        </div>
       </div>
 
       {/* Features Section */}

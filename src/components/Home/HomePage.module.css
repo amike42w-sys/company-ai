@@ -39,10 +39,37 @@
 .bannerContainer {
   position: relative;
   width: 100%;
-  overflow: hidden;
   border-radius: 12px;
+  overflow: hidden;
   margin-bottom: 32px;
 }
+
+/* 自定义左/右按钮通用样式 */
+.customPrevBtn, .customNextBtn {
+  position: absolute;
+  top: 85%; /* 💡 按照你的要求放在下方 */
+  transform: translateY(-50%);
+  z-index: 1000;
+  width: 46px;
+  height: 46px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 22px;
+  transition: all 0.3s ease;
+}
+
+.customPrevBtn:hover, .customNextBtn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.customPrevBtn { left: 20px; }
+.customNextBtn { right: 20px; }
 
 .textWrapper {
   max-width: 800px;
@@ -51,6 +78,20 @@
 
 .bannerImage {
   cursor: zoom-in !important;
+}
+
+/* 彻底隐藏可能残留的 slick 默认样式 */
+.homeCarousel :global(.slick-arrow) {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .customPrevBtn, .customNextBtn {
+    top: 90%;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
 }
 
 .hero {
