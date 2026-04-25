@@ -3,16 +3,13 @@
   margin: 0 auto;
 }
 
-/* 💡 关键：隐藏所有轮播图默认箭头的伪元素内容 */
-.homeCarousel :global(.slick-prev::before),
-.homeCarousel :global(.slick-next::before) {
-  content: '' !important;
+/* 1. 彻底杀死所有默认生成的 slick 箭头 */
+.homeCarousel :global(.slick-arrow),
+.homeCarousel :global(.slick-prev),
+.homeCarousel :global(.slick-next) {
   display: none !important;
-}
-
-/* 隐藏可能存在的默认按钮背景 */
-.homeCarousel :global(.slick-arrow) {
-  background: transparent !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 .bannerContainer {
@@ -25,9 +22,8 @@
 
 .myCustomPrev, .myCustomNext {
   position: absolute;
-  top: 85%;
-  transform: translateY(-50%);
-  z-index: 1000;
+  top: 80% !important;
+  z-index: 9999 !important;
   width: 44px;
   height: 44px;
   background: rgba(0, 0, 0, 0.3);
@@ -51,6 +47,15 @@
 
 .myCustomNext {
   right: 30px;
+}
+
+.textWrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.bannerImage {
+  cursor: zoom-in !important;
 }
 
 @media (max-width: 768px) {

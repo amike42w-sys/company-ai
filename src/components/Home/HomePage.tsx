@@ -54,11 +54,11 @@ const HomePage: React.FC = () => {
                   alt={`banner-${index}`}
                   className={styles.bannerImage}
                   preview={{
-                    mask: <div className={styles.customMask}>点击查看实景</div>,
+                    mask: false
                   }}
                 />
                 <div className={styles.carouselContent} style={{ pointerEvents: 'none' }}>
-                   <div style={{ pointerEvents: 'auto' }}>
+                   <div className={styles.textWrapper}>
                       <div className={styles.iconWrapper}>
                         <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
                       </div>
