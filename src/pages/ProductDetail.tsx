@@ -15,7 +15,9 @@ const ProductDetail: React.FC = () => {
 
   const currentLang = (i18n.language.startsWith('zh') ? 'zh' : 'en') as 'zh' | 'en';
 
-  const product = companyInfo.products.find(p => p.id === id);
+  const product = companyInfo.categories
+    .flatMap(cat => cat.projects)
+    .find(p => p.id === id);
 
   if (!product || !product.details) {
     return (

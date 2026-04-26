@@ -20,99 +20,74 @@ export const companyInfo = {
     },
   },
   
-  products: [
+  categories: [
     {
-      id: 'mic-school',
-      name: { zh: '集装箱房屋 / MIC建筑', en: 'Container House / MIC Building' },
-      details: {
-        title: { zh: '福田博园小学', en: 'Futian Expo Garden Primary School' },
-        images: [
-          '/images/products/school-01.png?v=202604231030',
-          '/images/products/school-02.png?v=202604231030',
-          '/images/products/school-03.png?v=202604231030',
-          '/images/products/school-04.png?v=202404231030',
-          '/images/products/school-05.png?v=202404231030'
-        ],
-        specs: [
-          { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '145个', en: '145 Units' } },
-          { label: { zh: '设计层数', en: 'Floors' }, value: { zh: '3层', en: '3 Floors' } },
-          { label: { zh: '总建筑占地面积', en: 'Total Area' }, value: { zh: '3066㎡', en: '3066㎡' } }
-        ],
-        intro: {
-          zh: '学校配备有标准教室、专业教室、办公室、阅览室、卫生间、舞蹈室、会议室、楼梯等。',
-          en: 'The school is equipped with standard classrooms, specialized classrooms, offices, a library, bathrooms, dance studios, meeting rooms, stairs, and more.'
-        }
-      }
+      id: 'school-cat',
+      name: { zh: '集装箱房屋 / MIC建筑 (学校)', en: 'Container House / MIC (Schools)' },
+      icon: '🏫',
+      description: { zh: '提供现代化的模块化教育空间解决方案', en: 'Modern modular educational space solutions' },
+      projects: [
+        {
+          id: 'mic-school',
+          name: { zh: '福田博园小学', en: 'Futian Expo Garden Primary School' },
+          details: {
+            title: { zh: '福田博园小学', en: 'Futian Expo Garden Primary School' },
+            images: [
+              '/images/products/school-01.png?v=202604231030',
+              '/images/products/school-02.png?v=202604231030',
+              '/images/products/school-03.png?v=202604231030',
+              '/images/products/school-04.png?v=202404231030',
+              '/images/products/school-05.png?v=202404231030'
+            ],
+            specs: [
+              { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '145个', en: '145 Units' } },
+              { label: { zh: '设计层数', en: 'Floors' }, value: { zh: '3层', en: '3 Floors' } },
+              { label: { zh: '总建筑占地面积', en: 'Total Area' }, value: { zh: '3066㎡', en: '3066㎡' } }
+            ],
+            intro: {
+              zh: '学校配备有标准教室、专业教室、办公室、阅览室、卫生间、舞蹈室、会议室、楼梯等。',
+              en: 'The school is equipped with standard classrooms, specialized classrooms, offices, a library, bathrooms, dance studios, meeting rooms, stairs, and more.'
+            }
+          }
+        },
+      ]
     },
     {
-      id: 'mic-hospital',
+      id: 'hospital-cat',
       name: { zh: '集成模块化医院', en: 'Integrated Modular Hospital' },
-      details: {
-        title: { zh: '湛江医院', en: 'Zhanjiang Hospital' },
-        images: [
-          '/images/products/hospital-01.png?v=0423',
-          '/images/products/hospital-02.png?v=0423',
-          '/images/products/hospital-03.png?v=0423',
-          '/images/products/hospital-04.png?v=0423',
-          '/images/products/hospital-05.png?v=0423'
-        ],
-        specs: [
-          { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '60个', en: '60 Units' } },
-          { label: { zh: '模块尺寸', en: 'Module Size' }, value: { zh: '7*3.6*4 m', en: '7*3.6*4 m' } },
-          { label: { zh: '建造时间', en: 'Construction Time' }, value: { zh: '23天', en: '23 Days' } }
-        ],
-        intro: {
-          zh: '该医院设备和功能室都一应俱全，里面包含了值班室、会议室、休息室、更衣室、厕所、抢救室、门诊室、候诊室、采样室、抽血室、治疗室和隔离室，还区分了成人和儿童诊室。',
-          en: 'The hospital is fully equipped with facilities, including a duty room, conference room, lounge, changing room, bathroom, emergency room, outpatient room, waiting room, sampling room, blood collection room, treatment room, and isolation room, and it also differentiates between adult and pediatric consultation rooms.'
+      icon: '🏥',
+      projects: [
+        {
+          id: 'mic-hospital',
+          name: { zh: '湛江医院', en: 'Zhanjiang Hospital' },
+          details: {
+            title: { zh: '湛江医院', en: 'Zhanjiang Hospital' },
+            images: [
+              '/images/products/hospital-01.png?v=0423',
+              '/images/products/hospital-02.png?v=0423',
+              '/images/products/hospital-03.png?v=0423',
+              '/images/products/hospital-04.png?v=0423',
+              '/images/products/hospital-05.png?v=0423'
+            ],
+            specs: [
+              { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '60个', en: '60 Units' } },
+              { label: { zh: '模块尺寸', en: 'Module Size' }, value: { zh: '7*3.6*4 m', en: '7*3.6*4 m' } },
+              { label: { zh: '建造时间', en: 'Construction Time' }, value: { zh: '23天', en: '23 Days' } }
+            ],
+            intro: {
+              zh: '该医院设备和功能室都一应俱全，里面包含了值班室、会议室、休息室、更衣室、厕所、抢救室、门诊室、候诊室、采样室、抽血室、治疗室和隔离室，还区分了成人和儿童诊室。',
+              en: 'The hospital is fully equipped with facilities, including a duty room, conference room, lounge, changing room, bathroom, emergency room, outpatient room, waiting room, sampling room, blood collection room, treatment room, and isolation room, and it also differentiates between adult and pediatric consultation rooms.'
+            }
+          }
         }
-      }
+      ]
     },
     {
-      id: 'steel-structure-villa',
-      name: { zh: '钢结构别墅', en: 'Steel Structure Villa' },
-      slogan: { zh: '轻钢结构豪宅，抗震宜居可定制', en: 'Light Steel Luxury Villa, Earthquake-resistant & Customizable' },
-      description: {
-        zh: '轻钢结构主体，抗震防风，舒适宜居，符合欧洲建筑标准，可定制化设计为高端住宅、度假民宿。',
-        en: 'Light steel structure main body, earthquake-resistant and wind-resistant, comfortable and livable, in line with European building standards, customizable as high-end residential or holiday homestay.'
-      },
-      icon: '🏡',
-      detailInfo: {
-        title: { zh: '高端度假别墅', en: 'High-end Holiday Villa' },
-        images: ['/images/products/villa1.jpg', '/images/products/villa2.jpg'],
-        stats: [
-          { label: { zh: '建筑面积', en: 'Building Area' }, value: '350㎡' },
-          { label: { zh: '抗震等级', en: 'Earthquake Resistance' }, value: '8级' },
-          { label: { zh: '节能标准', en: 'Energy Rating' }, value: 'A+级' }
-        ],
-        desc: {
-          zh: '采用轻钢结构主体，抗震防风，舒适宜居，符合欧洲建筑标准，可定制化设计为高端住宅、度假民宿，美观大方，节能环保。',
-          en: 'Using light steel structure main body, earthquake-resistant and wind-resistant, comfortable and livable, in line with European building standards, can be customized as high-end residential or holiday homestay, beautiful and generous, energy-saving and environmental protection.'
-        }
-      }
-    },
-    {
-      id: 'mobile-sentry-box',
-      name: { zh: '移动岗亭', en: 'Mobile Sentry Box' },
-      slogan: { zh: '定制化设计，部署灵活高效', en: 'Customized Design, Flexible & Efficient Deployment' },
-      description: {
-        zh: '定制化设计，功能齐全，移动便捷，可作为保安岗、收费亭、便民服务站等，部署灵活高效。',
-        en: 'Customized design, full-featured, mobile and convenient, can be used as security posts, toll booths, convenient service stations, etc., flexible and efficient deployment.'
-      },
-      icon: '🚧',
-      detailInfo: {
-        title: { zh: '智能安防岗亭', en: 'Intelligent Security Sentry Box' },
-        images: ['/images/products/sentry1.jpg', '/images/products/sentry2.jpg'],
-        stats: [
-          { label: { zh: '尺寸', en: 'Size' }, value: '2.5m×2.5m' },
-          { label: { zh: '重量', en: 'Weight' }, value: '1.2吨' },
-          { label: { zh: '部署时间', en: 'Deployment Time' }, value: '2小时' }
-        ],
-        desc: {
-          zh: '定制化设计，功能齐全，移动便捷，可作为保安岗、收费亭、便民服务站等，部署灵活高效，满足多种场景需求。',
-          en: 'Customized design, full-featured, mobile and convenient, can be used as security posts, toll booths, convenient service stations, etc., flexible and efficient deployment to meet a variety of scene needs.'
-        }
-      }
-    },
+      id: 'hk-cat',
+      name: { zh: '五所香港MiC项目', en: 'Five Hong Kong MiC Projects' },
+      icon: '🇭🇰',
+      projects: []
+    }
   ],
   
   supportingServices: [

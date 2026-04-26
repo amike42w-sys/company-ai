@@ -193,17 +193,16 @@ const HomePage: React.FC = () => {
       <div className={styles.section}>
         <Title level={4} id="products-section">{t('core_products_label')}</Title>
         <Row gutter={[16, 16]}>
-          {companyInfo.products.map((product) => (
-            <Col xs={24} sm={12} lg={6} key={product.id}>
-              <Card 
-                className={styles.productCard} 
+          {companyInfo.categories.map((cat) => (
+            <Col xs={24} sm={12} lg={6} key={cat.id}>
+              <Card
+                className={styles.productCard}
                 hoverable
-                onClick={() => navigate(`/product/${product.id}`)} // 点击跳转
+                onClick={() => navigate(`/category/${cat.id}`)}
               >
-                <div className={styles.productIcon}>{product.icon}</div>
-                <div className={styles.productName}>{product.name[currentLang]}</div>
-                <div className={styles.productSlogan}>{product.slogan ? product.slogan[currentLang] : ""}</div>
-                <div className={styles.productDesc}>{product.description ? product.description[currentLang] : ""}</div>
+                <div className={styles.productIcon}>{cat.icon}</div>
+                <div className={styles.productName}>{cat.name[currentLang]}</div>
+                <div className={styles.productSlogan}>{cat.description ? cat.description[currentLang] : ""}</div>
               </Card>
             </Col>
           ))}

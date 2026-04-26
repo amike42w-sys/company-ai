@@ -13,6 +13,7 @@ import ChatMonitor from './components/Admin/ChatMonitor'
 import Login from './components/Auth/Login'
 import ProfilePage from './components/Auth/ProfilePage'
 import ProductDetail from './pages/ProductDetail'
+import CategoryProjects from './pages/CategoryProjects'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
           <Route path="public-chat" element={<PublicChat />} />
+          <Route path="category/:categoryId" element={<CategoryProjects />} />
           <Route path="product/:id" element={<ProductDetail />} />
           <Route 
             path="analysis" 
