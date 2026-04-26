@@ -39,17 +39,17 @@ const MainLayout: React.FC = () => {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: '个人资料',
+      label: t('profile'),
       onClick: () => navigate('/profile'),
     },
     {
-      type: 'divider', // 增加一条分割线，更精致
+      type: 'divider',
     },
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: '退出登录',
-      danger: true, // 退出按钮变成红色警示，细节拉满
+      label: t('logout'),
+      danger: true,
       onClick: handleLogout,
     },
   ]
@@ -60,12 +60,12 @@ const MainLayout: React.FC = () => {
       {
         key: '/',
         icon: <HomeOutlined />,
-        label: '首页',
+        label: t('menu_home'),
       },
       {
         key: '/public-chat',
         icon: <MessageOutlined />,
-        label: '公司咨询',
+        label: t('menu_chat'),
       },
     ]
 
@@ -73,7 +73,7 @@ const MainLayout: React.FC = () => {
       items.push({ 
         key: '/analysis',
         icon: <ExperimentOutlined />,
-        label: '成分分析',
+        label: t('menu_analysis'),
       })
     }
     
@@ -81,17 +81,17 @@ const MainLayout: React.FC = () => {
       items.push({ 
         key: 'supplier',
         icon: <BankOutlined />,
-        label: '供应商管理',
+        label: t('menu_supplier'),
         children:[
           {
             key: '/suppliers',
             icon: <BankOutlined />,
-            label: '供应商列表',
+            label: t('menu_supplier_list'),
           },
           {
             key: '/supplier-certificates',
             icon: <SafetyCertificateOutlined />,
-            label: '证书管理',
+            label: t('menu_cert'),
           },
         ],
       })
@@ -101,22 +101,22 @@ const MainLayout: React.FC = () => {
       items.push({ 
         key: '/customers',
         icon: <CustomerServiceOutlined />,
-        label: '客户管理',
+        label: t('menu_customers'),
       })
       items.push({ 
         key: '/employees',
         icon: <TeamOutlined />,
-        label: '员工管理',
+        label: t('menu_employees'),
       })
       items.push({ 
         key: '/quotations',
         icon: <DollarOutlined />,
-        label: '报价管理',
+        label: t('menu_quotations'),
       })
       items.push({ 
         key: '/chat-monitor',
         icon: <EyeOutlined />,
-        label: '聊天监控',
+        label: t('menu_monitor'),
       })
     }
 
@@ -136,7 +136,7 @@ const MainLayout: React.FC = () => {
           </span>
           {(role === 'internal' || role === 'certificate_admin' || role === 'certificate_viewer') && (
             <Badge 
-              count="内部版" 
+              count={t('internal_badge')} 
               color="#2f54eb" 
               className={styles.internalBadge} 
               style={{ marginLeft: 4, boxShadow: 'none', scale: '0.8' }}
@@ -161,7 +161,7 @@ const MainLayout: React.FC = () => {
                 className={styles.navBtn} 
               >
                 <span className={styles.btnText}>{t('login_client')}</span>
-                <span className={styles.mobileBtnLabel}>客户</span>
+                <span className={styles.mobileBtnLabel}>{t('btn_client_short')}</span>
               </Button>
               <Button 
                 type="primary" 
@@ -170,7 +170,7 @@ const MainLayout: React.FC = () => {
                 className={styles.navBtn} 
               >
                 <span className={styles.btnText}>{t('login_staff')}</span>
-                <span className={styles.mobileBtnLabel}>内部</span>
+                <span className={styles.mobileBtnLabel}>{t('btn_internal_short')}</span>
               </Button>
             </Space>
           )}
