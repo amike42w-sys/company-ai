@@ -37,6 +37,9 @@ i18n
           "core_products_label": "核心产品",
           "supporting_services": "配套与定制服务",
           "back": "返回",
+          "project_case": "项目案例",
+          "project_intro": "项目简介",
+          "swipe_hint": "← 左右滑动切换 / 点击图片放大查看 →",
           "nav_home": "首页",
           "nav_chat": "智能咨询"
         }
@@ -71,6 +74,9 @@ i18n
           "core_products_label": "Core Products",
           "supporting_services": "Supporting & Custom Services",
           "back": "Back",
+          "project_case": "Project Case",
+          "project_intro": "Project Introduction",
+          "swipe_hint": "← Swipe to switch / Click to enlarge →",
           "nav_home": "Home",
           "nav_chat": "AI Chat"
         }
