@@ -65,7 +65,9 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '150mb' }));
 
 // 1. 设置静态资源目录 (指向打包好的 dist 文件夹)
-app.use(express.static(path.join(__dirname, '../dist'), {
+const distPath = path.resolve(__dirname, '../dist');
+
+app.use(express.static(distPath, {
   maxAge: '7d', // 💡 让图片在用户手机里缓存7天，第二次点开秒开！
   immutable: true
 }));
@@ -960,7 +962,7 @@ app.get('/api/admin/chat-messages/:sessionId', async (req, res) => {
 // 必须放在所有 API 接口之后！
 app.get('*', (req, res) => {
   // 确保路径指向你打包后的 index.html
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 app.listen(PORT, () => {
