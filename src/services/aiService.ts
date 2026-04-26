@@ -122,7 +122,7 @@ export class AIService {
         return `我们提供以下核心产品和配套定制服务：
 
 **核心产品**：
-${companyInfo.products.map(p => `• ${p.name.zh}：${p.slogan?.zh || ''}`).join('\n')}
+${companyInfo.categories.map((cat: any) => `• ${cat.name.zh}`).join('\n')}
 
 **配套与定制服务**：
 ${companyInfo.supportingServices?.map(s => `• ${s.name.zh}：${s.description?.zh || ''}`).join('\n')}
@@ -150,57 +150,28 @@ Would you like to know more about specific products? For example, Container Hous
     }
     
     if (lowerQuestion.includes('集装箱')) {
-      const product = companyInfo.products.find(p => (p.name as any).zh.includes('集装箱'))
-      if (product) {
+      const category = companyInfo.categories.find((c: any) => c.name.zh.includes('集装箱') || c.name.zh.includes('MIC'))
+      if (category) {
         if (isChinese) {
-          return `**${(product.name as any).zh}** - ${(product.slogan as any)?.zh || ''}
-
-${(product.description as any)?.zh || ''}
-
-**适用场景**：临时宿舍、办公、民宿等
-**优势**：工厂预制率高，交付周期短，7天即可快速交付
-
-您是想了解集装箱房屋的价格、定制选项，还是应用案例呢？`
+          return `我们提供**${category.name.zh}**解决方案。
+包含：${category.projects.map((p: any) => p.name.zh).join('、')}等项目案例。
+您是想了解具体的学校案例、价格，还是定制选项？`
         } else {
-          return `**Container House** - Modular integration, 7-day quick delivery
-
-Modular design, quick construction, sturdy and durable, can be used for temporary dormitories, offices, homestays and other scenarios, with high factory prefabrication rate and short delivery cycle.
-
-**Applicable scenarios**: Temporary dormitories, offices, homestays, etc.
-**Advantages**: High factory prefabrication rate, short delivery cycle, 7-day quick delivery
-
-Would you like to know about Container House prices, customization options, or application cases?`
+          return `We provide **${category.name.en}** solutions.
+Including: ${category.projects.map((p: any) => p.name.en).join(', ')} and other project cases.`
         }
       }
     }
     
     if (lowerQuestion.includes('钢结构') || lowerQuestion.includes('别墅')) {
-      const product = companyInfo.products.find(p => (p.name as any).zh.includes('钢结构'))
-      if (product) {
+      const category = companyInfo.categories.find((c: any) => c.name.zh.includes('钢结构'))
+      if (category) {
         if (isChinese) {
-          return `**${(product.name as any).zh}** - ${(product.slogan as any)?.zh || ''}
-
-${(product.description as any)?.zh || ''}
-
-**优势**：
-• 轻钢结构主体，抗震防风
-• 符合欧洲建筑标准
-• 可定制化设计
-• 适合高端住宅、度假民宿
-
-您对钢结构别墅的哪个方面感兴趣？设计、价格还是施工周期？`
+          return `关于**${category.name.zh}**，我们符合欧洲建筑标准，支持定制化设计。
+目前主要项目有：${category.projects.map((p: any) => p.name.zh).join('、')}。
+您对哪个方面感兴趣？`
         } else {
-          return `**Steel Structure Villa** - Light steel structure luxury, earthquake-resistant and livable, customizable
-
-Light steel structure main body, earthquake-resistant and wind-resistant, comfortable and livable, meets European building standards, can be customized as high-end residential, vacation homestay.
-
-**Advantages**:
-• Light steel structure main body, earthquake-resistant and wind-resistant
-• Meets European building standards
-• Customizable design
-• Suitable for high-end residential, vacation homestay
-
-Which aspect of Steel Structure Villa are you interested in? Design, price, or construction cycle?`
+          return `Regarding **${category.name.en}**, we meet European building standards.`
         }
       }
     }
