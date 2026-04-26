@@ -17,6 +17,7 @@ import {
   EyeOutlined,
 } from '@ant-design/icons'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../store/authStore'
 import LanguageSwitcher from './LanguageSwitcher'
 import styles from './MainLayout.module.css'
@@ -27,6 +28,7 @@ const MainLayout: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, isAuthenticated, role, logout } = useAuthStore()
+  const { t } = useTranslation()
 
   const handleLogout = () => {
     logout()
@@ -129,8 +131,8 @@ const MainLayout: React.FC = () => {
         <div className={styles.logo}>
           <SafetyOutlined className={styles.logoIcon} />
           <span className={styles.logoText}>
-            <span className={styles.fullText}>公司AI智能助手</span>
-            <span className={styles.shortText}>公司AI</span>
+            <span className={styles.fullText}>{t('app_name')}智能助手</span>
+            <span className={styles.shortText}>{t('app_name')}</span>
           </span>
           {(role === 'internal' || role === 'certificate_admin' || role === 'certificate_viewer') && (
             <Badge 
@@ -158,7 +160,7 @@ const MainLayout: React.FC = () => {
                 onClick={() => navigate('/login')} 
                 className={styles.navBtn} 
               >
-                <span className={styles.btnText}>客户登录</span>
+                <span className={styles.btnText}>{t('login_client')}</span>
                 <span className={styles.mobileBtnLabel}>客户</span>
               </Button>
               <Button 
@@ -167,7 +169,7 @@ const MainLayout: React.FC = () => {
                 onClick={() => navigate('/login?tab=internal')} 
                 className={styles.navBtn} 
               >
-                <span className={styles.btnText}>内部登录</span>
+                <span className={styles.btnText}>{t('login_staff')}</span>
                 <span className={styles.mobileBtnLabel}>内部</span>
               </Button>
             </Space>

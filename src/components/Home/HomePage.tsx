@@ -22,7 +22,7 @@ const { Title, Paragraph } = Typography
 const HomePage: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   const isMobile = window.innerWidth < 768;
   const carouselRef = useRef<any>(null);
   const currentLang = (i18n.language.startsWith('zh') ? 'zh' : 'en') as 'zh' | 'en';
@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
                         <RocketOutlined style={{ fontSize: '48px', color: '#fff' }} />
                       </div>
                       <Title level={isMobile ? 3 : 1} style={{ color: '#fff', margin: isMobile ? '8px 0' : '16px 0' }}>
-                        欢迎来到 {companyInfo.name[currentLang]}
+                        {t('welcome_prefix')} {companyInfo.name[currentLang]}
                       </Title>
                       <Title level={isMobile ? 5 : 3} style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 'normal' }}>
                         {companyInfo.slogan[currentLang]}
@@ -119,15 +119,15 @@ const HomePage: React.FC = () => {
           >
             <div className={styles.featureContent}>
               <MessageOutlined className={styles.featureIcon} />
-              <Title level={4}>智能咨询</Title>
-              <Paragraph type="secondary">了解公司产品、服务、联系方式等信息</Paragraph>
+              <Title level={4}>{t('ai_consult_title')}</Title>
+              <Paragraph type="secondary">{t('ai_consult_desc')}</Paragraph>
               <Button
                 type="primary"
                 size="large"
                 onClick={() => navigate('/public-chat')}
                 icon={<ArrowRightOutlined />}
               >
-                开始咨询 / Start Chat
+                {t('start_chat_btn')}
               </Button>
             </div>
           </Card>
@@ -163,7 +163,7 @@ const HomePage: React.FC = () => {
 
       {/* Company Info Section */}
       <Title level={3} style={{ marginTop: 40, marginBottom: 20 }}>
-        公司概况
+        {t('company_overview')}
       </Title>
       
       <Card className={styles.infoCard} bordered={false}>
@@ -171,19 +171,19 @@ const HomePage: React.FC = () => {
           <Col xs={24} sm={8}>
             <div className={styles.statItem}>
               <div className={styles.statValue}>{companyInfo.founded[currentLang]}</div>
-              <div className={styles.statLabel}>成立时间</div>
+              <div className={styles.statLabel}>{t('founded_label')}</div>
             </div>
           </Col>
           <Col xs={24} sm={8}>
             <div className={styles.statItem}>
               <div className={styles.statValue}>{companyInfo.employees[currentLang]}</div>
-              <div className={styles.statLabel}>员工规模</div>
+              <div className={styles.statLabel}>{t('employees_label')}</div>
             </div>
           </Col>
           <Col xs={24} sm={8}>
             <div className={styles.statItem}>
               <div className={styles.statValue}>5+</div>
-              <div className={styles.statLabel}>核心产品</div>
+              <div className={styles.statLabel}>{t('core_products_label')}</div>
             </div>
           </Col>
         </Row>
@@ -191,7 +191,7 @@ const HomePage: React.FC = () => {
 
       {/* Products Section */}
       <div className={styles.section}>
-        <Title level={4} id="products-section">核心产品</Title>
+        <Title level={4} id="products-section">{t('core_products_label')}</Title>
         <Row gutter={[16, 16]}>
           {companyInfo.products.map((product) => (
             <Col xs={24} sm={12} lg={6} key={product.id}>
@@ -212,7 +212,7 @@ const HomePage: React.FC = () => {
 
       {/* Supporting Services Section */}
       <div className={styles.section}>
-        <Title level={4}>配套与定制服务</Title>
+        <Title level={4}>{t('supporting_services')}</Title>
         <Row gutter={[16, 16]}>
           {companyInfo.supportingServices?.map((service, index) => (
             <Col xs={24} sm={12} key={index}>
