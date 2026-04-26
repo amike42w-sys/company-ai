@@ -23,21 +23,19 @@ export const companyInfo = {
   categories: [
     {
       id: 'school-cat',
-      name: { zh: '集装箱房屋 / MIC建筑 (学校)', en: 'Container House / MIC (Schools)' },
+      name: { zh: '集装箱房屋 / MIC建筑', en: 'Container House / MIC Building' },
       icon: '🏫',
-      description: { zh: '提供现代化的模块化教育空间解决方案', en: 'Modern modular educational space solutions' },
       projects: [
+        // 1. 福田博园小学
         {
-          id: 'mic-school',
+          id: 'mic-school-01',
           name: { zh: '福田博园小学', en: 'Futian Expo Garden Primary School' },
           details: {
             title: { zh: '福田博园小学', en: 'Futian Expo Garden Primary School' },
             images: [
-              '/images/products/school-01.png?v=202604231030',
-              '/images/products/school-02.png?v=202604231030',
-              '/images/products/school-03.png?v=202604231030',
-              '/images/products/school-04.png?v=202404231030',
-              '/images/products/school-05.png?v=202404231030'
+              '/images/products/school-01.png', '/images/products/school-02.png',
+              '/images/products/school-03.png', '/images/products/school-04.png',
+              '/images/products/school-05.png'
             ],
             specs: [
               { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '145个', en: '145 Units' } },
@@ -50,6 +48,72 @@ export const companyInfo = {
             }
           }
         },
+        // 2. 荔园外国语小学深南校区
+        {
+          id: 'mic-school-liyuan',
+          name: { zh: '荔园外国语小学深南校区', en: 'Liyuan Foreign Language Primary School' },
+          details: {
+            title: { zh: '荔园外国语小学深南校区', en: 'Liyuan Foreign Language Primary School Shennan Campus' },
+            images: [
+              '/images/products/liyuan-01.png', '/images/products/liyuan-02.png',
+              '/images/products/liyuan-03.png', '/images/products/liyuan-04.png',
+              '/images/products/liyuan-05.png'
+            ],
+            specs: [
+              { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '160个', en: '160 Units' } },
+              { label: { zh: '设计层数', en: 'Floors' }, value: { zh: '3层', en: '3 Floors' } },
+              { label: { zh: '总建筑占地面积', en: 'Total Area' }, value: { zh: '3420㎡', en: '3420㎡' } }
+            ],
+            intro: {
+              zh: '学校配备有标准教室、专业教室、办公室、阅览室、卫生间、舞蹈室、会议室、楼梯等。',
+              en: 'The school is equipped with standard classrooms, specialized classrooms, offices, a library, bathrooms, dance studios, meeting rooms, stairs, and more.'
+            }
+          }
+        },
+        // 3. 翠北实验小学愉贝校区
+        {
+          id: 'mic-school-cuibei',
+          name: { zh: '翠北实验小学愉贝校区', en: 'Cuibei Experimental Primary School' },
+          details: {
+            title: { zh: '翠北实验小学愉贝校区', en: 'Cuibei Experimental Primary School Yubei Campus' },
+            images: [
+              '/images/products/cuibei-01.png', '/images/products/cuibei-02.png',
+              '/images/products/cuibei-03.png', '/images/products/cuibei-04.png',
+              '/images/products/cuibei-05.png'
+            ],
+            specs: [
+              { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '79个', en: '79 Units' } },
+              { label: { zh: '设计层数', en: 'Floors' }, value: { zh: '2层', en: '2 Floors' } },
+              { label: { zh: '总建筑占地面积', en: 'Total Area' }, value: { zh: '3498㎡', en: '3498㎡' } }
+            ],
+            intro: {
+              zh: '学校配备有标准教室、专业教室、办公室、阅览室、卫生间、舞蹈室、会议室、楼梯等。',
+              en: 'The school is equipped with standard classrooms, specialized classrooms, offices, a library, bathrooms, dance studios, meeting rooms, stairs, and more.'
+            }
+          }
+        },
+        // 4. 翠园中学东晓校区
+        {
+          id: 'mic-school-cuiyuan',
+          name: { zh: '翠园中学东晓校区', en: 'Cuiyuan High School' },
+          details: {
+            title: { zh: '翠园中学东晓校区', en: 'Cuiyuan High School Dongxiao Campus' },
+            images: [
+              '/images/products/cuiyuan-01.png', '/images/products/cuiyuan-02.png',
+              '/images/products/cuiyuan-03.png', '/images/products/cuiyuan-04.png',
+              '/images/products/cuiyuan-05.png'
+            ],
+            specs: [
+              { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '74个', en: '74 Units' } },
+              { label: { zh: '设计层数', en: 'Floors' }, value: { zh: '2层', en: '2 Floors' } },
+              { label: { zh: '总建筑占地面积', en: 'Total Area' }, value: { zh: '3253㎡', en: '3253㎡' } }
+            ],
+            intro: {
+              zh: '学校配备有标准教室、专业教室、办公室、阅览室、卫生间、舞蹈室、会议室、楼梯等。',
+              en: 'The school is equipped with standard classrooms, specialized classrooms, offices, a library, bathrooms, dance studios, meeting rooms, stairs, and more.'
+            }
+          }
+        }
       ]
     },
     {
