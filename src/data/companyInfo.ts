@@ -25,6 +25,10 @@ export const companyInfo = {
       id: 'school-cat',
       name: { zh: '集装箱房屋 / MIC建筑', en: 'Container House / MIC Building' },
       icon: '🏫',
+      description: {
+        zh: '提供现代化的模块化教育空间解决方案',
+        en: 'Modern modular educational space solutions'
+      },
       projects: [
         // 1. 福田博园小学
         {
@@ -120,6 +124,10 @@ export const companyInfo = {
       id: 'hospital-cat',
       name: { zh: '集成模块化医院', en: 'Integrated Modular Hospital' },
       icon: '🏥',
+      description: {
+        zh: '快速部署的高标准医疗建筑系统',
+        en: 'High-standard rapidly deployable medical buildings'
+      },
       projects: [
         {
           id: 'mic-hospital',
@@ -150,6 +158,10 @@ export const companyInfo = {
       id: 'hk-cat',
       name: { zh: '五所香港MiC项目', en: 'Five Hong Kong MiC Projects' },
       icon: '🇭🇰',
+      description: {
+        zh: '香港政府认可的标杆性MiC工程案例',
+        en: 'Landmark MiC projects approved by HK Government'
+      },
       projects: []
     }
   ],
