@@ -76,7 +76,7 @@ const ProductDetail: React.FC = () => {
                       {item.label[currentLang]}
                     </Text>
                     <Text strong style={{ fontSize: '18px', color: '#1890ff' }}>
-                      {item.value}
+                      {item.value[currentLang]}
                     </Text>
                   </div>
                 ))}

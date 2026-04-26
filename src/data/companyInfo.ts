@@ -34,9 +34,9 @@ export const companyInfo = {
           '/images/products/school-05.png?v=202404231030'
         ],
         specs: [
-          { label: { zh: 'MiC数量', en: 'MiC Units' }, value: '145个' },
-          { label: { zh: '设计层数', en: 'Floors' }, value: '3层' },
-          { label: { zh: '总建筑占地面积', en: 'Total Area' }, value: '3066㎡' }
+          { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '145个', en: '145 Units' } },
+          { label: { zh: '设计层数', en: 'Floors' }, value: { zh: '3层', en: '3 Floors' } },
+          { label: { zh: '总建筑占地面积', en: 'Total Area' }, value: { zh: '3066㎡', en: '3066㎡' } }
         ],
         intro: {
           zh: '学校配备有标准教室、专业教室、办公室、阅览室、卫生间、舞蹈室、会议室、楼梯等。',
@@ -57,9 +57,9 @@ export const companyInfo = {
           '/images/products/hospital-05.png?v=0423'
         ],
         specs: [
-          { label: { zh: 'MiC数量', en: 'MiC Units' }, value: '60个' },
-          { label: { zh: '模块尺寸', en: 'Module Size' }, value: '7*3.6*4 m' },
-          { label: { zh: '建造时间', en: 'Construction Time' }, value: '23天' }
+          { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '60个', en: '60 Units' } },
+          { label: { zh: '模块尺寸', en: 'Module Size' }, value: { zh: '7*3.6*4 m', en: '7*3.6*4 m' } },
+          { label: { zh: '建造时间', en: 'Construction Time' }, value: { zh: '23天', en: '23 Days' } }
         ],
         intro: {
           zh: '该医院设备和功能室都一应俱全，里面包含了值班室、会议室、休息室、更衣室、厕所、抢救室、门诊室、候诊室、采样室、抽血室、治疗室和隔离室，还区分了成人和儿童诊室。',
