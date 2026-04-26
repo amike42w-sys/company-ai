@@ -129,17 +129,61 @@ export const companyInfo = {
         en: 'High-standard rapidly deployable medical buildings'
       },
       projects: [
+        // 1. 原有的湛江医院 (保持不变)
         {
-          id: 'mic-hospital',
+          id: 'mic-hospital-zhanjiang',
           name: { zh: '湛江医院', en: 'Zhanjiang Hospital' },
           details: {
             title: { zh: '湛江医院', en: 'Zhanjiang Hospital' },
             images: [
-              '/images/products/hospital-01.png?v=0423',
-              '/images/products/hospital-02.png?v=0423',
-              '/images/products/hospital-03.png?v=0423',
-              '/images/products/hospital-04.png?v=0423',
-              '/images/products/hospital-05.png?v=0423'
+              '/images/products/hospital-01.png', '/images/products/hospital-02.png',
+              '/images/products/hospital-03.png', '/images/products/hospital-04.png',
+              '/images/products/hospital-05.png'
+            ],
+            specs: [
+              { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '60个', en: '60 Units' } },
+              { label: { zh: '模块尺寸', en: 'Module Size' }, value: { zh: '7*3.6*4 m', en: '7*3.6*4 m' } },
+              { label: { zh: '建造时间', en: 'Construction Time' }, value: { zh: '23天', en: '23 Days' } }
+            ],
+            intro: {
+              zh: '该医院设备和功能室都一应俱全，里面包含了值班室、会议室、休息室、更衣室、厕所、抢救室、门诊室、候诊室、采样室、抽血室、治疗室和隔离室，还区分了成人和儿童诊室。',
+              en: 'The hospital is fully equipped with facilities, including a duty room, conference room, lounge, emergency room, treatment room, and isolation room, differentiating between adult and pediatric consultation rooms.'
+            }
+          }
+        },
+        // 2. 新增：珠海医院 (Zhuhai Hospital)
+        {
+          id: 'mic-hospital-zhuhai',
+          name: { zh: '珠海医院', en: 'Zhuhai Hospital' },
+          details: {
+            title: { zh: '珠海医院', en: 'Zhuhai Hospital' },
+            images: [
+              '/images/products/zhuhai-01.png', '/images/products/zhuhai-02.png',
+              '/images/products/zhuhai-03.png', '/images/products/zhuhai-04.png',
+              '/images/products/zhuhai-05.png'
+            ],
+            specs: [
+              { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '129个', en: '129 Units' } },
+              { label: { zh: '设计层数', en: 'Floors' }, value: { zh: '3层', en: '3 Floors' } },
+              { label: { zh: '总建筑占地面积', en: 'Total Construction Area' }, value: { zh: '33900㎡', en: '33900㎡' } },
+              { label: { zh: '住院部面积', en: 'Inpatient Dept. Area' }, value: { zh: '4000㎡', en: '4000㎡' } }
+            ],
+            intro: {
+              zh: '该模块化医院仅仅用10天时间完成搭建，配置有接诊区、负压病房楼、ICU、医技楼、网络机房、中心供应库房、垃圾处理暂存间、救护车洗消间都有，ICU（极重症加强护理病房）设置两个病区；另外，还有两个重症护理病区。',
+              en: 'This modular hospital was completed in just 10 days and is equipped with a reception area, negative pressure ward building, ICU, medical technology building, network room, central supply warehouse, temporary garbage storage room, and ambulance disinfection area. The ICU has two patient areas; in addition, there are two critical care units.'
+            }
+          }
+        },
+        // 3. 新增：深圳发热门诊 (Shenzhen Fever Clinic)
+        {
+          id: 'mic-hospital-shenzhen',
+          name: { zh: '深圳发热门诊', en: 'Shenzhen Fever Clinic' },
+          details: {
+            title: { zh: '深圳发热门诊', en: 'Shenzhen Fever Clinic' },
+            images: [
+              '/images/products/sz-fever-01.png', '/images/products/sz-fever-02.png',
+              '/images/products/sz-fever-03.png', '/images/products/sz-fever-04.png',
+              '/images/products/sz-fever-05.png'
             ],
             specs: [
               { label: { zh: 'MiC数量', en: 'MiC Units' }, value: { zh: '60个', en: '60 Units' } },
