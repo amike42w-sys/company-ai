@@ -69,11 +69,11 @@ export const api = {
     }
   },
 
-  async saveMessage(sessionId: string, userId: string, role: 'user' | 'assistant', content: string, type?: 'company' | 'analysis') {
+  async saveMessage(sessionId: string, userId: string, role: 'user' | 'assistant', content: string, type?: 'company' | 'analysis', lang?: string) {
     const response = await fetch(`${API_BASE}/messages`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId, userId, role, content, type }),
+      body: JSON.stringify({ sessionId, userId, role, content, type, lang }),
     });
     return response.json();
   },

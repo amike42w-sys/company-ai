@@ -30,7 +30,7 @@ i18n
           "welcome_prefix": "欢迎来到",
           "ai_consult_title": "智能咨询",
           "ai_consult_desc": "了解公司产品、服务、联系方式等信息",
-          "start_chat_btn": "开始咨询 / Start Chat",
+          "start_chat_btn": "开始咨询",
           "company_overview": "公司概况",
           "founded_label": "成立时间",
           "employees_label": "员工规模",
