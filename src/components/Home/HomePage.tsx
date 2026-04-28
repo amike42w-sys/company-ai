@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
   };
 
   // 💡 【修复】把指纹打印移到这里！
-  console.log("HomePage Version: 4-Arrows-Fixed-01");
+  console.log("HomePage Version: [Perf-Optimized-V4]");
 
   const bannerImages = [
     { src: '/images/banner/exterior.jpg', title: '公司外观' },
