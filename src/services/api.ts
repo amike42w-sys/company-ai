@@ -1,4 +1,4 @@
-const API_BASE = '/api';
+const API_BASE = 'http://106.52.31.237:3001/api';
 
 export const api = {
   async login(username: string, password: string) {
