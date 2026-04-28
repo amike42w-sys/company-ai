@@ -1,11 +1,11 @@
-import { ContactInfo } from '../types';
-
 export const companyInfo = {
   name: {
     zh: '佛山市筑建集成房屋科技有限公司',
     en: 'Foshan Zhujian Integrated Housing Technology Co., Ltd.',
   },
-  established: '2012',
+  slogan: { zh: '筑建未来，智选空间', en: 'Building the Future, Smart Space Solutions' },
+  founded: { zh: '2012年', en: 'Since 2012' },
+  employees: { zh: '100+', en: '100+' },
   description: {
     zh: '专业从事集装箱房屋设计及生产的国际化企业，产品远销欧洲、澳洲、美洲等国际市场。',
     en: 'Professional international enterprise specializing in container house design and production, with products exported to Europe, Australia, America and other international markets.',
@@ -611,3 +611,14 @@ export const companyInfo = {
     },
   },
 } as const;
+
+export const companyQA = [
+  { question: '公司全称是什么？', answer: '佛山市筑建集成房屋科技有限公司' },
+  { question: '公司成立时间？', answer: '2012年10月17日' },
+  { question: '公司地址在哪里？', answer: '广东省佛山市顺德区北滘怡和中心12楼' },
+  { question: '公司电话是多少？', answer: '86-757-12345678' },
+  { question: '公司邮箱？', answer: 'info@zhujian-container.com' },
+  { question: '主要产品是什么？', answer: '集装箱房屋、模块化集成房屋（MIC）、钢结构别墅等' },
+  { question: '公司规模多大？', answer: '厂房面积40000平方米，员工100余人' },
+  { question: '产品出口哪些国家？', answer: '欧洲、澳洲、美洲等国际市场' },
+];

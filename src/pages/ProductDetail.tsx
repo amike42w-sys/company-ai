@@ -15,9 +15,9 @@ const ProductDetail: React.FC = () => {
 
   const currentLang = (i18n.language.startsWith('zh') ? 'zh' : 'en') as 'zh' | 'en';
 
-  const product = companyInfo.categories
-    .flatMap(cat => cat.projects)
-    .find(p => p.id === id);
+  const product = (companyInfo as any).categories
+    .flatMap((cat: any) => cat.projects)
+    .find((p: any) => p.id === id);
 
   if (!product || !product.details) {
     return (
@@ -45,7 +45,7 @@ const ProductDetail: React.FC = () => {
           <Col xs={24} lg={13}>
             <Image.PreviewGroup>
               <Carousel autoplay className={styles.imageCarousel} adaptiveHeight>
-                {details.images.map((img, index) => (
+                {details.images.map((img: string, index: number) => (
                   <div key={index} className={styles.carouselItem}>
                     <Image 
                       src={img} 
@@ -72,7 +72,7 @@ const ProductDetail: React.FC = () => {
               </div>
 
               <div className={styles.specsGrid}>
-                {details.specs.map((item, index) => (
+                {details.specs.map((item: any, index: number) => (
                   <div key={index} className={styles.specItem}>
                     <Text type="secondary" style={{ display: 'block', fontSize: '12px' }}>
                       {item.label[currentLang]}

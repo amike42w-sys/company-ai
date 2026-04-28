@@ -179,9 +179,9 @@ Including: ${category.projects.map((p: any) => p.name.en).join(', ')} and other 
     // 注册地址
     if (lowerQuestion.includes('注册地址') || lowerQuestion.includes('注册地')) {
       if (isChinese) {
-        return `我们的注册地址是：${companyInfo.contact.address}`
+        return `我们的注册地址是：${companyInfo.contact.address.zh}`
       } else {
-        return `Our registered address is: ${companyInfo.contact.address}`
+        return `Our registered address is: ${companyInfo.contact.address.en}`
       }
     }
     
@@ -190,14 +190,14 @@ Including: ${category.projects.map((p: any) => p.name.en).join(', ')} and other 
         return `联系方式：
 📞 电话：${companyInfo.contact.phone}
 📧 邮箱：${companyInfo.contact.email}
-📍 地址：${companyInfo.contact.address}
+📍 地址：${companyInfo.contact.address.zh}
 
 欢迎随时联系我们咨询！`
       } else {
         return `Contact Information:
 📞 Phone: ${companyInfo.contact.phone}
 📧 Email: ${companyInfo.contact.email}
-📍 Address: ${companyInfo.contact.address}
+📍 Address: ${companyInfo.contact.address.en}
 
 Welcome to contact us for consultation at any time!`
       }
