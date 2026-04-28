@@ -2,7 +2,7 @@ const { Sequelize } = require('sequelize');
 const path = require('path');
 
 const sequelize = new Sequelize('certificate_db', 'certificate_db', '050309', {
-  host: '127.0.0.1',
+  host: 'localhost',
   dialect: 'mysql',
   logging: console.log, // 【必须开启】我们要看 SQL 日志
   // --- 核心修改：加上下面这两行 ---
