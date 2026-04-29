@@ -1,4 +1,5 @@
 import React, { useRef } from 'react'
+import KeepAlive from 'react-activation' // 💡 引入 KeepAlive
 import { Card, Row, Col, Typography, Button, Tag, Carousel, Image } from 'antd'
 import {
   RocketOutlined,
@@ -19,7 +20,18 @@ import styles from './HomePage.module.css'
 
 const { Title, Paragraph } = Typography
 
-const HomePage: React.FC = () => {
+// 💡 【优化】将静态资源数组移到组件外部，防止重新定义
+const bannerImages = [
+  { src: '/images/banner/exterior.jpg', title: '公司外观' },
+  { src: '/images/banner/factory1.jpg', title: '生产车间' },
+  { src: '/images/banner/factory2.jpg', title: '加工细节' },
+  { src: '/images/banner/factory3.jpg', title: '组装流水线' },
+  { src: '/images/banner/aerial1.jpg', title: '工厂全景' },
+  { src: '/images/banner/aerial2.jpg', title: '园区俯拍' },
+  { src: '/images/banner/aerial3.jpg', title: '现代化生产基地' },
+]
+
+const HomePageContent: React.FC = () => {
   const navigate = useNavigate()
   const { isAuthenticated, role } = useAuthStore()
   const { i18n, t } = useTranslation()
@@ -33,16 +45,6 @@ const HomePage: React.FC = () => {
 
   // 💡 【修复】把指纹打印移到这里！
   console.log("HomePage Version: [Perf-Optimized-V4]");
-
-  const bannerImages = [
-    { src: '/images/banner/exterior.jpg', title: '公司外观' },
-    { src: '/images/banner/factory1.jpg', title: '生产车间' },
-    { src: '/images/banner/factory2.jpg', title: '加工细节' },
-    { src: '/images/banner/factory3.jpg', title: '组装流水线' },
-    { src: '/images/banner/aerial1.jpg', title: '工厂全景' },
-    { src: '/images/banner/aerial2.jpg', title: '园区俯拍' },
-    { src: '/images/banner/aerial3.jpg', title: '现代化生产基地' },
-  ]
 
   return (
     <div className={styles.container}>
@@ -227,5 +229,12 @@ const HomePage: React.FC = () => {
     </div>
   )
 }
+
+// 💡 导出时使用 KeepAlive 包裹
+const HomePage = () => (
+  <KeepAlive cacheKey="HomePage" saveScrollPosition="screen">
+    <HomePageContent />
+  </KeepAlive>
+)
 
 export default HomePage
