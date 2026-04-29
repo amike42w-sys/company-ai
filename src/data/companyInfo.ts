@@ -16,10 +16,10 @@ export const companyInfo = {
     {
       id: 'school-cat',
       name: { zh: '集装箱房屋 / MIC建筑', en: 'Container House / MIC Building' },
-      icon: '�',
+      icon: '🏗️',
       description: {
-        zh: '提供现代化的模块化教育空间解决方案',
-        en: 'Modern modular educational space solutions'
+        zh: '创新模块化建筑解决方案，适用于教育、医疗等多元场景',
+        en: 'Innovative modular building solutions for education, healthcare and diverse scenarios'
       },
       projects: [
         // 1. 福田博园小学
@@ -193,7 +193,7 @@ export const companyInfo = {
     {
       id: 'hk-cat',
       name: { zh: '香港MiC项目', en: 'Hong Kong MiC Projects' },
-      icon: '🇭🇰',
+      icon: '�️',
       description: {
         zh: '由香港政府及知名承建商合作的标杆性模块化建筑工程',
         en: 'Landmark MiC projects collaborated with HK Government and top contractors'
@@ -429,69 +429,113 @@ export const companyInfo = {
             }
           }
         },
-        // 2. 北极圈公寓 (PA ARCTIC CIRCLE)
+        // 2. 西欧标准公寓 (Western Europe Apartment)
         {
-          id: 'apt-arctic-circle',
-          name: { zh: '北极圈公寓', en: 'PA Arctic Circle Apartment' },
+          id: 'apt-europe-standard',
+          name: { zh: '西欧标准公寓', en: 'Western Europe Apartment' },
           details: {
-            title: { zh: '北极圈模块化公寓', en: 'PA Arctic Circle Modular Apartment' },
+            title: { zh: '西欧模块化公寓', en: 'Western Europe Modular Apartment' },
             images: [
-              '/images/products/apt-arctic-01.png', '/images/products/apt-arctic-02.png',
-              '/images/products/apt-arctic-03.png', '/images/products/apt-arctic-04.png',
-              '/images/products/apt-arctic-05.png'
+              '/images/products/apt-we-01.png', '/images/products/apt-we-02.png',
+              '/images/products/apt-we-03.png', '/images/products/apt-we-04.png',
+              '/images/products/apt-we-05.png'
             ],
             specs: [
-              { label: { zh: '集装箱总数', en: 'Total Containers' }, value: { zh: '108个标准箱', en: '108 Standard 40ft HC' } },
-              { label: { zh: '套房数量', en: 'Total Units' }, value: { zh: '32套普通公寓', en: '32 Apartment Units' } },
-              { label: { zh: '单户面积', en: 'Unit Area' }, value: { zh: '75-85平方米', en: '75-85 sqm' } }
+              { label: { zh: '规格尺寸', en: 'Size' }, value: { zh: '13870×3870×3650mm', en: '13870×3870×3650mm' } },
+              { label: { zh: '墙体材料', en: 'Wall' }, value: { zh: '轻钢龙骨+岩棉+100mm夹芯板', en: 'Light Steel Stud+Rock Wool' } },
+              { label: { zh: '地面材料', en: 'Floor' }, value: { zh: '20mm FC板+PVC地板', en: '20mm FC Board+PVC Flooring' } }
             ],
             intro: {
-              zh: '该项目由108个标准40英尺高箱构建而成，每套公寓面积在75-85平方米，在一居室一客厅或两居室一客厅，适合一家人居住。',
-              en: 'Built up by 108 standard 40ft HC containers, it has 32 units. Each unit is from 75-85 sqm, featuring 1-2 bedrooms, suitable for families.'
+              zh: '采用欧洲标准设计的模块化公寓，墙面采用轻钢龙骨加岩棉保温，天花板为波纹钢板加石膏板，地面为FC板加PVC地板，提供舒适的居住环境。',
+              en: 'European standard modular apartment with light steel stud walls, rock wool insulation, corrugated steel ceiling, and FC board with PVC flooring for comfortable living.'
             }
           }
         },
-        // 3. 澳洲汽车旅馆 (AUSTRALIA MOTEL)
+        // 3. NDU 学生公寓项目 (NDU Student Apartments)
         {
-          id: 'apt-au-motel',
-          name: { zh: '澳洲汽车旅馆', en: 'Australia Motel' },
+          id: 'apt-ndu-student',
+          name: { zh: 'NDU 学生公寓', en: 'NDU Student Apartments' },
           details: {
-            title: { zh: '澳洲模块化汽车旅馆', en: 'Australia Modular Motel' },
+            title: { zh: 'NDU 学生公寓项目', en: 'NDU Student Apartments Project' },
             images: [
-              '/images/products/apt-au-motel-01.png', '/images/products/apt-au-motel-02.png',
-              '/images/products/apt-au-motel-03.png', '/images/products/apt-au-motel-04.png',
-              '/images/products/apt-au-motel-05.png'
+              '/images/products/apt-ndu-01.png', '/images/products/apt-ndu-02.png',
+              '/images/products/apt-ndu-03.png', '/images/products/apt-ndu-04.png',
+              '/images/products/apt-ndu-05.png'
             ],
             specs: [
-              { label: { zh: '生产周期', en: 'Production' }, value: { zh: '60天', en: '60 Days' } },
-              { label: { zh: '安装周期', en: 'Assembly' }, value: { zh: '20天', en: '20 Days' } },
-              { label: { zh: '标准', en: 'Standard' }, value: { zh: 'AS-NZS 澳新标准', en: 'AS-NZS 6500' } }
+              { label: { zh: '规格尺寸', en: 'Size' }, value: { zh: '12192×3836×3100mm', en: '12192×3836×3100mm' } },
+              { label: { zh: '材料标准', en: 'Material Standard' }, value: { zh: '插座美标/其他国标', en: 'US Standard Socket' } },
+              { label: { zh: '箱体类型', en: 'Type' }, value: { zh: '公寓箱型', en: 'Apartment Container' } }
             ],
             intro: {
-              zh: '利用双拼40尺外带中间40CM搭桥组成的4个房间，每个房间配备独立卫浴，为当地旅行者带来舒适的住宿空间。',
-              en: 'Uses two 40ft containers with a 40cm extension hallway to create 4 rooms, each with a private bathroom, providing comfort for local travelers.'
+              zh: '专为学生宿舍设计的模块化公寓单元，采用标准化生产工艺，可快速组装部署，为校园提供舒适的居住空间。',
+              en: 'Modular apartment units designed specifically for student dormitories, featuring standardized production processes for rapid assembly and deployment.'
             }
           }
         },
-        // 4. 西欧 LUN 公寓 (LUN MOTEL)
+        // 4. 美国纽约公寓 (New York Apartment)
         {
-          id: 'apt-europe-lun',
-          name: { zh: '西欧 LUN 公寓', en: 'Western Europe LUN Apartment' },
+          id: 'apt-newyork',
+          name: { zh: '美国纽约公寓', en: 'New York Apartment' },
           details: {
-            title: { zh: 'LUN 公寓酒店项目', en: 'LUN Motel / Apartment Project' },
+            title: { zh: '美国纽约模块化公寓', en: 'New York Modular Apartment' },
             images: [
-              '/images/products/apt-lun-01.png', '/images/products/apt-lun-02.png',
-              '/images/products/apt-lun-03.png', '/images/products/apt-lun-04.png',
-              '/images/products/apt-lun-05.png'
+              '/images/products/apt-ny-01.png', '/images/products/apt-ny-02.png',
+              '/images/products/apt-ny-03.png', '/images/products/apt-ny-04.png',
+              '/images/products/apt-ny-05.png'
             ],
             specs: [
-              { label: { zh: '套房总数', en: 'Total Suites' }, value: { zh: '66个标准套房', en: '66 Standard Suites' } },
-              { label: { zh: '层数', en: 'Story' }, value: { zh: '3层', en: '3 Stories' } },
-              { label: { zh: '总建筑面积', en: 'Floor Space' }, value: { zh: '3000㎡', en: '3000 sqm' } }
+              { label: { zh: '容纳人数', en: 'Capacity' }, value: { zh: '2人', en: '2 Persons' } },
+              { label: { zh: '材料标准', en: 'Standard' }, value: { zh: '美标', en: 'US Standard' } },
+              { label: { zh: '主结构', en: 'Structure' }, value: { zh: '钢结构', en: 'Steel Structure' } }
             ],
             intro: {
-              zh: '这是一个家庭式公寓酒店，整栋酒店由集装箱如堆积木般搭建起来，做好连接及固定，最后给外部立面稍加装饰即可投入使用。',
-              en: 'A family apartment hotel composed of 66 suites. The whole hotel is built by stacking containers like blocks, with an added exterior facade.'
+              zh: '美式高端模块化公寓，包含浴室卧室模块和客厅厨房模块，采用轻钢龙骨、岩棉、石膏板等优质材料，打造舒适居住体验。',
+              en: 'American high-end modular apartment featuring bathroom/bedroom and living room/kitchen modules, constructed with light steel studs, rock wool, and gypsum board.'
+            }
+          }
+        },
+        // 5. 爱尔兰公寓 (Ireland Apartment)
+        {
+          id: 'apt-ireland',
+          name: { zh: '爱尔兰公寓', en: 'Ireland Apartment' },
+          details: {
+            title: { zh: '爱尔兰模块化公寓', en: 'Ireland Modular Apartment' },
+            images: [
+              '/images/products/apt-ireland-01.png', '/images/products/apt-ireland-02.png',
+              '/images/products/apt-ireland-03.png', '/images/products/apt-ireland-04.png',
+              '/images/products/apt-ireland-05.png'
+            ],
+            specs: [
+              { label: { zh: '规格尺寸', en: 'Size' }, value: { zh: '12192×2438×2896mm', en: '12192×2438×2896mm' } },
+              { label: { zh: '重量', en: 'Weight' }, value: { zh: '9.5吨', en: '9.5 Tons' } },
+              { label: { zh: '材料标准', en: 'Standard' }, value: { zh: 'CE欧洲标准', en: 'CE European Standard' } }
+            ],
+            intro: {
+              zh: '符合欧洲CE标准的模块化集装箱公寓，采用标准化设计，适合欧洲市场需求，可快速运输和组装。',
+              en: 'CE-certified modular container apartment designed for the European market, featuring standardized design for rapid transportation and assembly.'
+            }
+          }
+        },
+        // 6. 塞浦路斯公寓 (Cyprus Apartment)
+        {
+          id: 'apt-cyprus',
+          name: { zh: '塞浦路斯公寓', en: 'Cyprus Apartment' },
+          details: {
+            title: { zh: '塞浦路斯模块化公寓', en: 'Cyprus Modular Apartment' },
+            images: [
+              '/images/products/apt-cyprus-01.png', '/images/products/apt-cyprus-02.png',
+              '/images/products/apt-cyprus-03.png', '/images/products/apt-cyprus-04.png',
+              '/images/products/apt-cyprus-05.png'
+            ],
+            specs: [
+              { label: { zh: '规格尺寸', en: 'Size' }, value: { zh: '7600×2990×3100mm', en: '7600×2990×3100mm' } },
+              { label: { zh: '材料标准', en: 'Standard' }, value: { zh: 'CE欧洲标准', en: 'CE European Standard' } },
+              { label: { zh: '设计特点', en: 'Feature' }, value: { zh: '地中海风格', en: 'Mediterranean Style' } }
+            ],
+            intro: {
+              zh: '为塞浦路斯市场定制的模块化公寓，采用地中海风格设计，符合欧洲CE认证标准，适合度假和长期居住。',
+              en: 'Custom modular apartment for the Cyprus market, featuring Mediterranean style design with CE certification, ideal for vacation and long-term living.'
             }
           }
         }
@@ -528,19 +572,6 @@ export const companyInfo = {
               { label: { zh: '防腐', en: 'Anticorrosion' }, value: { zh: '热镀锌', en: 'Hot-dip galvanized' } }
             ],
             intro: { zh: '两箱横向拼接，空间更宽敞，适合高端民宿。', en: 'Double cabin splicing for spacious living, ideal for high-end homestays.' }
-          }
-        },
-        {
-          id: 'tour-iceland',
-          name: { zh: '冰岛环岛旅游项目', en: 'Iceland Tour Program' },
-          details: {
-            title: { zh: '冰岛环岛旅游豪华别墅', en: 'Iceland Island-Wide Tour Program' },
-            images: ['/images/products/tour-ice-01.png', '/images/products/tour-ice-02.png', '/images/products/tour-ice-03.png', '/images/products/tour-ice-04.png', '/images/products/tour-ice-05.png'],
-            specs: [
-              { label: { zh: '总面积', en: 'Total Area' }, value: { zh: '60㎡', en: '60 sqm' } },
-              { label: { zh: '门窗品牌', en: 'Windows' }, value: { zh: 'ALUK 品牌', en: 'ALUK Brand' } }
-            ],
-            intro: { zh: '由两个40尺箱拼接，两房一厅一卫。断桥热型材三层中空钢化玻璃，室内灯光WiFi操控。', en: 'Spliced by two 40ft containers. Features ALUK brand windows and WiFi-controlled lighting.' }
           }
         },
         {
