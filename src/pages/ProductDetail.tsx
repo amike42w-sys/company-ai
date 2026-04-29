@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Tag } from 'antd';
+import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Tag, Image } from 'antd';
 import { ArrowLeftOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { companyInfo } from '../data/companyInfo';
@@ -43,17 +43,20 @@ const ProductDetail: React.FC = () => {
       <Card className={styles.mainCard} bordered={false}>
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={13}>
-            <Carousel autoplay className={styles.imageCarousel}>
+            <Image.PreviewGroup>
+              <Carousel autoplay className={styles.imageCarousel}>
                 {details.images.slice(0, 5).map((img: string, index: number) => (
                   <div key={index} className={styles.carouselItem}>
-                    <img 
+                    <Image 
                       src={img} 
                       alt={`slide-${index}`} 
-                      className={styles.detailImage} 
+                      className={styles.detailImage}
+                      preview={{ mask: null }}
                     />
                   </div>
                 ))}
               </Carousel>
+            </Image.PreviewGroup>
             <div className={styles.carouselHint}>
               {t('swipe_hint')}
             </div>

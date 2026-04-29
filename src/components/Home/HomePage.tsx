@@ -198,7 +198,7 @@ const HomePage: React.FC = () => {
               <Card
                 className={styles.productCard}
                 hoverable
-                onClick={() => cat.projects?.length > 0 && navigate(`/product/${cat.projects[0].id}`)}
+                onClick={() => navigate(`/category/${cat.id}`)}
               >
                 <div className={styles.productIcon}>{cat.icon}</div>
                 <div className={styles.productName}>{cat.name[currentLang]}</div>
