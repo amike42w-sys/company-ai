@@ -86,11 +86,6 @@ const HomePageContent: React.FC = () => {
                       <Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: isMobile ? '12px' : '18px' }}>
                         {companyInfo.description[currentLang]}
                       </Paragraph>
-                      {role === 'internal' && (
-                        <Tag color="success" icon={<CheckCircleOutlined />}>
-                          已登录内部账号
-                        </Tag>
-                      )}
                    </div>
                 </div>
               </div>
