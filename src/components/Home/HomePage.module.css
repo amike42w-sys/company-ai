@@ -275,13 +275,18 @@
 /* Banner Carousel Styles */
 .carouselItem {
   position: relative;
-  height: 500px; /* 电脑端高度 */
+  height: 500px; /* 电脑端建议固定一个高度，或者用 vh */
+  width: 100%;
+  overflow: hidden;
+  background-color: #333; /* 防止图片加载出问题时的底色 */
 }
 
 .bannerImage {
-  width: 100%;
-  height: 500px !important;
-  object-fit: cover;
+  width: 100% !important;  /* 💡 强制宽度铺满容器 */
+  height: 500px !important; /* 💡 高度与容器一致 */
+  object-fit: cover;       /* 💡 关键：保持比例裁切，不留白 */
+  display: block;
+  cursor: zoom-in !important;
 }
 
 .carouselContent {
@@ -290,14 +295,14 @@
   left: 0;
   width: 100%;
   height: 100%;
+  /* 💡 增加一个半透明黑色遮罩，让白色文字在浅色工厂图中更清晰 */
+  background: rgba(0, 0, 0, 0.3);
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  z-index: 10; /* 文字层在图片之上 */
-  background: rgba(0, 0, 0, 0.2); /* 稍微压暗背景，让文字更清晰 */
-  padding: 0 40px;
+  justify-content: center;
   text-align: center;
+  z-index: 2;
+  padding: 0 40px;
 }
 
 .iconWrapper {
@@ -310,9 +315,10 @@
   color: #fff;
 }
 
+/* 适配移动端高度 */
 @media (max-width: 768px) {
   .carouselItem, .bannerImage {
-    height: 300px !important; /* 手机端高度 */
+    height: 300px !important; /* 手机端高度调低一点 */
   }
   
   .bannerContainer {
