@@ -179,7 +179,7 @@ const HomePageContent: React.FC = () => {
           </Col>
           <Col xs={24} sm={8}>
             <div className={styles.statItem}>
-              <div className={styles.statValue}>5+</div>
+              <div className={styles.statValue}>100+</div>
               <div className={styles.statLabel}>{t('core_products_label')}</div>
             </div>
           </Col>
