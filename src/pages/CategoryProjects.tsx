@@ -14,43 +14,41 @@ const CategoryProjects: React.FC = () => {
   const { t, i18n } = useTranslation();
 
   const currentLang = (i18n.language.startsWith('zh') ? 'zh' : 'en') as 'zh' | 'en';
-  const category = companyInfo.categories.find((cat) => cat.id === categoryId);
+  const category = (companyInfo.categories as any).find((cat: any) => cat.id === categoryId);
 
   if (!category) return null;
 
   return (
-    <div style={{ padding: '16px', maxWidth: '1400px', margin: '0 auto' }}>
-      <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} style={{ marginBottom: 24 }}>
+    <div style={{ padding: '16px', maxWidth: '1400px', margin: '0 auto', minHeight: '100vh' }}>
+      {/* 顶部仅保留返回按钮，删除多余的分类大卡片 */}
+      <Button
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate(-1)}
+        style={{ marginBottom: 16, borderRadius: '6px' }}
+      >
         {t('back')}
       </Button>
 
-      <div className={styles.headerSection}>
-        <div className={styles.categoryIcon}>{category.icon}</div>
-        <div>
-          {/* 💡 已删除小蓝框 Tag */}
-          <Title level={2} style={{ margin: 0 }}>{category.name[currentLang]}</Title>
-        </div>
-      </div>
+      {/* 💡 这里删除了原本显示“校园建筑”和图标的 headerSection */}
 
-      <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
-        {category.projects?.map((project) => (
+      <Row gutter={[16, 16]}>
+        {category.projects?.map((project: any) => (
           <Col xs={24} sm={12} lg={8} key={project.id}>
             <Card
               className={styles.projectCard}
               hoverable
               onClick={() => navigate(`/product/${project.id}`)}
-              /* 💡 关键：这里直接用 img 标签显示第一张图，不再使用 Carousel */
+              /* 💡 仅展示第一张图片作为封面，不再使用轮播图 */
               cover={
                 <img
                   alt={project.name[currentLang]}
                   src={project.details.images[0]}
-                  style={{ height: 220, objectFit: 'cover' }}
+                  style={{ height: 220, objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
                 />
               }
             >
-              {/* 💡 仅展示产品名字 */}
               <Card.Meta
-                title={<div style={{ textAlign: 'center' }}>{project.name[currentLang]}</div>}
+                title={<div style={{ textAlign: 'center', fontSize: '16px' }}>{project.name[currentLang]}</div>}
               />
             </Card>
           </Col>

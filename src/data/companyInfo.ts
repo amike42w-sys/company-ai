@@ -588,6 +588,121 @@ export const companyInfo = {
           }
         }
       ]
+    },
+    // 7. 数据中心分类 (Data Center)
+    {
+      id: 'datacenter-cat',
+      name: { zh: '数据中心模块', en: 'Data Center Modules' },
+      icon: '🗄️',
+      description: { zh: '预制模块化机房，助力全球通信与算力基础设施快速部署', en: 'Prefabricated modular data centers' },
+      projects: [
+        // 1. 孟加拉GB项目 (4张图)
+        {
+          id: 'dc-bangladesh-gb',
+          name: { zh: '孟加拉GB数据中心项目', en: 'GB Data Center Project in Bangladesh' },
+          details: {
+            title: { zh: '孟加拉GB数据中心项目', en: 'GB Data Center Project in Bangladesh' },
+            images: [
+              '/images/products/dc-bangladesh-01.png', '/images/products/dc-bangladesh-02.png',
+              '/images/products/dc-bangladesh-03.png', '/images/products/dc-bangladesh-04.png'
+            ],
+            specs: [
+              { label: { zh: 'MiC数量', en: 'MiC Quantity' }, value: { zh: '39个', en: '39 Units' } },
+              { label: { zh: '配置包括', en: 'Configuration' }, value: { zh: 'IT仓、配电仓、楼梯箱', en: 'IT, Power, Stairs' } },
+              { label: { zh: '模块尺寸', en: 'Size' }, value: { zh: '12192*2438*4150mm', en: '12192x2438x4150mm' } }
+            ],
+            intro: { zh: '采用高度集成的MiC模式，涵盖IT核心仓及动力保障系统。', en: 'Adopts highly integrated MiC model for IT and power systems.' }
+          }
+        },
+        // 2. 南苏丹项目 (3张图)
+        {
+          id: 'dc-south-sudan',
+          name: { zh: '南苏丹预制数据中心', en: 'South Sudan Prefabricated Data Center' },
+          details: {
+            title: { zh: '南苏丹装配式机房项目', en: 'South Sudan Prefabricated Data Center' },
+            images: [
+              '/images/products/dc-sudan-01.png', '/images/products/dc-sudan-02.png',
+              '/images/products/dc-sudan-03.png'
+            ],
+            specs: [
+              { label: { zh: '核心配置', en: 'Core Config' }, value: { zh: '高压柜、配电柜', en: 'HV switchgear, distribution cabinet' } },
+              { label: { zh: '生产预制', en: 'Production' }, value: { zh: '25天', en: '25 Days' } },
+              { label: { zh: '装配时间', en: 'Assembly' }, value: { zh: '10天', en: '10 Days' } }
+            ],
+            intro: { zh: '针对恶劣环境设计的工业级机房，保障关键电力的稳定分发。', en: 'Industrial-grade data center for harsh environments.' }
+          }
+        },
+        // 3. 利比亚项目 (5张图)
+        {
+          id: 'dc-libya',
+          name: { zh: '利比亚预制数据中心', en: 'Libya Prefabricated Data Center' },
+          details: {
+            title: { zh: '利比亚装配式机房项目', en: 'Libya Prefabricated Data Center' },
+            images: [
+              '/images/products/dc-libya-01.png', '/images/products/dc-libya-02.png',
+              '/images/products/dc-libya-03.png', '/images/products/dc-libya-04.png',
+              '/images/products/dc-libya-05.png'
+            ],
+            specs: [
+              { label: { zh: '核心配置', en: 'Core Config' }, value: { zh: 'UPS柜 (不间断电源)', en: 'UPS Cabinet' } },
+              { label: { zh: '生产预制', en: 'Production' }, value: { zh: '30天', en: '30 Days' } }
+            ],
+            intro: { zh: '高标准的预制化电力系统模块，内置高容量UPS设备。', en: 'Prefabricated power system with high-capacity UPS.' }
+          }
+        },
+        // 4. 中国装配式机房 (4张图)
+        {
+          id: 'dc-china',
+          name: { zh: '中国预制数据中心', en: 'China Prefabricated Data Center' },
+          details: {
+            title: { zh: '中国装配式机房项目', en: 'China Prefabricated Data Center' },
+            images: [
+              '/images/products/dc-china-01.png', '/images/products/dc-china-02.png',
+              '/images/products/dc-china-03.png', '/images/products/dc-china-04.png'
+            ],
+            specs: [
+              { label: { zh: '核心配置', en: 'Core Config' }, value: { zh: '联络柜、通信柜', en: 'Communication cabinet' } },
+              { label: { zh: '生产预制', en: 'Production' }, value: { zh: '22天', en: '22 Days' } }
+            ],
+            intro: { zh: '国内标杆性案例，强调高度的标准化与智能化运维。', en: 'A landmark prefabricated data center case in China.' }
+          }
+        },
+        // 5. 孟加拉电池储能箱 (4张图)
+        {
+          id: 'dc-bangladesh-battery',
+          name: { zh: '孟加拉电池储能机房', en: 'Bangladesh Battery Energy Storage' },
+          details: {
+            title: { zh: '孟加拉电池储能箱项目', en: 'Bangladesh Battery Storage Project' },
+            images: [
+              '/images/products/dc-bb-01.png', '/images/products/dc-bb-02.png',
+              '/images/products/dc-bb-03.png', '/images/products/dc-bb-04.png'
+            ],
+            specs: [
+              { label: { zh: '核心配置', en: 'Core Config' }, value: { zh: '电池储能箱', en: 'Battery energy storage box' } },
+              { label: { zh: '装配时间', en: 'Assembly' }, value: { zh: '8天', en: '8 Days' } }
+            ],
+            intro: { zh: '集成高密度电池组，提供卓越的热管理与安全监控系统。', en: 'Storage module with high-density battery banks.' }
+          }
+        },
+        // 6. 菲律宾项目 (5张图)
+        {
+          id: 'dc-philippines',
+          name: { zh: '菲律宾预制数据中心', en: 'Philippines Prefabricated Data Center' },
+          details: {
+            title: { zh: '菲律宾装配式机房项目', en: 'Philippines Prefabricated Data Center' },
+            images: [
+              '/images/products/dc-phi-01.png', '/images/products/dc-phi-02.png',
+              '/images/products/dc-phi-03.png', '/images/products/dc-phi-04.png',
+              '/images/products/dc-phi-05.png'
+            ],
+            specs: [
+              { label: { zh: '核心配置', en: 'Core Config' }, value: { zh: '变压器、UPS、数据柜', en: 'Transformer, UPS, data cabinet' } },
+              { label: { zh: '装配时间', en: 'Assembly' }, value: { zh: '15天', en: '15 Days' } }
+            ],
+            intro: { zh: '全功能集成机房，包含从变压器到数据柜的完整链路。', en: 'Full-function integrated data center from transformer to cabinets.' }
+          }
+        }
+      ]
     }
   ],
   

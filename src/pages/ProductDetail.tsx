@@ -29,37 +29,37 @@ const ProductDetail: React.FC = () => {
   }
 
   const { details } = product;
+  const currentImages = details.images; // 只有这 5 张
 
   return (
-    <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto', minHeight: '100vh' }}>
-      <Button 
-        icon={<ArrowLeftOutlined />} 
-        onClick={() => navigate(-1)} 
-        style={{ marginBottom: 16, borderRadius: '6px' }} 
-      >
+    <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
+      <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} style={{ marginBottom: 16 }}>
         {t('back')}
       </Button>
       
       <Card className={styles.mainCard} bordered={false}>
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={13}>
-            <Image.PreviewGroup>
-              <Carousel autoplay className={styles.imageCarousel}>
-                {details.images.slice(0, 5).map((img: string, index: number) => (
+            {/* 💡 关键修复：显式指定 items，防止 PreviewGroup 抓取页面其他图片 */}
+            <Image.PreviewGroup
+              items={currentImages.map(src => ({ src }))}
+            >
+              <Carousel autoplay className={styles.imageCarousel} dots={true}>
+                {currentImages.map((img: string, index: number) => (
                   <div key={index} className={styles.carouselItem}>
-                    <Image 
-                      src={img} 
-                      alt={`slide-${index}`} 
+                    {/* 💡 给 Image 增加 preview={{ visible: false }}，由 PreviewGroup 统一管理 */}
+                    <Image
+                      src={img}
+                      alt={`slide-${index}`}
                       className={styles.detailImage}
-                      preview={{ mask: null }}
+                      preview={false}
+                      onClick={() => {/* 触发预览逻辑 */}}
                     />
                   </div>
                 ))}
               </Carousel>
             </Image.PreviewGroup>
-            <div className={styles.carouselHint}>
-              {t('swipe_hint')}
-            </div>
+            <div className={styles.carouselHint}>{t('swipe_hint')}</div>
           </Col>
           
           <Col xs={24} lg={11}>
