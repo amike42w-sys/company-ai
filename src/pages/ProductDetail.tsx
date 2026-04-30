@@ -42,7 +42,7 @@ const ProductDetail: React.FC = () => {
           <Col xs={24} lg={13}>
             {/* 💡 关键修复：显式指定 items，防止 PreviewGroup 抓取页面其他图片 */}
             <Image.PreviewGroup
-              items={currentImages.map(src => ({ src }))}
+              items={currentImages.map((src: string) => ({ src }))}
             >
               <Carousel autoplay className={styles.imageCarousel} dots={true}>
                 {currentImages.map((img: string, index: number) => (
