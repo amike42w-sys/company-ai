@@ -5,10 +5,11 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { companyInfo } from '../data/companyInfo';
 import styles from './CategoryProjects.module.css';
+import KeepAlive from 'react-activation'; // 💡 引入保活插件
 
 const { Title } = Typography;
 
-const CategoryProjects: React.FC = () => {
+const CategoryProjectsContent: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -20,7 +21,6 @@ const CategoryProjects: React.FC = () => {
 
   return (
     <div style={{ padding: '16px', maxWidth: '1400px', margin: '0 auto', minHeight: '100vh' }}>
-      {/* 顶部仅保留返回按钮，删除多余的分类大卡片 */}
       <Button
         icon={<ArrowLeftOutlined />}
         onClick={() => navigate(-1)}
@@ -29,8 +29,6 @@ const CategoryProjects: React.FC = () => {
         {t('back')}
       </Button>
 
-      {/* 💡 这里删除了原本显示“校园建筑”和图标的 headerSection */}
-
       <Row gutter={[16, 16]}>
         {category.projects?.map((project: any) => (
           <Col xs={24} sm={12} lg={8} key={project.id}>
@@ -38,12 +36,12 @@ const CategoryProjects: React.FC = () => {
               className={styles.projectCard}
               hoverable
               onClick={() => navigate(`/product/${project.id}`)}
-              /* 💡 仅展示第一张图片作为封面，不再使用轮播图 */
               cover={
                 <img
                   alt={project.name[currentLang]}
                   src={project.details.images[0]}
                   style={{ height: 220, objectFit: 'cover', borderRadius: '8px 8px 0 0' }}
+                  loading="lazy" // 💡 优化：浏览器原生懒加载
                 />
               }
             >
@@ -57,5 +55,15 @@ const CategoryProjects: React.FC = () => {
     </div>
   );
 };
+
+// 💡 导出时包裹 KeepAlive，并设置唯一的 cacheKey
+const CategoryProjects = () => {
+  const { categoryId } = useParams();
+  return (
+    <KeepAlive cacheKey={`Category-${categoryId}`} saveScrollPosition="screen">
+      <CategoryProjectsContent />
+    </KeepAlive>
+  )
+}
 
 export default CategoryProjects;
