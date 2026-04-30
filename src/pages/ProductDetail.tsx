@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Tag, Image } from 'antd';
+import { Card, Button, Row, Col, Typography, Space, Divider, Carousel, Image } from 'antd';
 import { ArrowLeftOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { companyInfo } from '../data/companyInfo';
@@ -19,41 +19,38 @@ const ProductDetail: React.FC = () => {
     .flatMap((cat: any) => cat.projects)
     .find((p: any) => p.id === id);
 
-  if (!product || !product.details) {
-    return (
-      <div style={{ padding: 50, textAlign: 'center' }}>
-        <Title level={4}>未找到该产品的详细信息</Title>
-        <Button onClick={() => navigate('/')}>返回首页</Button>
-      </div>
-    );
-  }
+  if (!product || !product.details) return null;
 
   const { details } = product;
-  const currentImages = details.images; // 只有这 5 张
+  // 过滤掉空路径，确保图片数量准确
+  const currentImages = details.images.filter((img: any) => !!img);
 
   return (
-    <div style={{ padding: '16px', maxWidth: '1200px', margin: '0 auto' }}>
-      <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(-1)} style={{ marginBottom: 16 }}>
+    <div className={styles.detailContainer}>
+      <Button
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate(-1)}
+        style={{ marginBottom: 16, borderRadius: '6px' }}
+      >
         {t('back')}
       </Button>
       
       <Card className={styles.mainCard} bordered={false}>
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={13}>
-            {/* 💡 关键修复：显式指定 items，防止 PreviewGroup 抓取页面其他图片 */}
+            {/* 修复点 1：使用 items 锁定预览范围，解决 3/11 问题 */}
             <Image.PreviewGroup
               items={currentImages.map((src: string) => ({ src }))}
             >
               <Carousel autoplay className={styles.imageCarousel} dots={true}>
                 {currentImages.map((img: string, index: number) => (
                   <div key={index} className={styles.carouselItem}>
-                    {/* 💡 给 Image 增加 preview={{ visible: false }}，由 PreviewGroup 统一管理 */}
+                    {/* 修复点 2：去掉 preview={false}，改用 mask:null 允许点击放大 */}
                     <Image
                       src={img}
                       alt={`slide-${index}`}
                       className={styles.detailImage}
-                      preview={false}
-                      onClick={() => {/* 触发预览逻辑 */}}
+                      preview={{ mask: null }}
                     />
                   </div>
                 ))}
@@ -65,7 +62,7 @@ const ProductDetail: React.FC = () => {
           <Col xs={24} lg={11}>
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
               <div>
-                <Tag color="blue" style={{ marginBottom: 8 }}>{t('project_case')}</Tag>
+                {/* 修复点 3：删除了原本在这里的“项目案例”小蓝框 */}
                 <Title level={2} style={{ marginTop: 0 }}>
                   {details.title[currentLang]}
                 </Title>

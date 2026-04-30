@@ -1,91 +1,54 @@
-.mainCard {
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+.detailContainer {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
 }
 
 .imageCarousel {
   border-radius: 12px;
   overflow: hidden;
-}
-
-.imageCarousel :global(.slick-dots li button) {
-  background: #1890ff !important;
+  background: #f0f2f5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .carouselItem {
-  /* 取消之前的固定高度 */
-  height: auto !important;
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-  background-color: #fff; /* 改为白色底，或者透明，防止大块灰色 */
-}
-
-/* 确保 Ant Design 的 Image 容器也占满宽度 */
-.carouselItem :global(.ant-image) {
-  width: 100%;
+  /* 强制设定高度，防止图片比例不同导致留白 */
+  height: 350px;
 }
 
 .detailImage {
   width: 100%;
-  height: auto !important; /* 💡 关键：高度自适应 */
-  max-height: 500px; /* 电脑端限制最大高度 */
-  object-fit: contain;
+  height: 350px !important; /* 必须加 !important 覆盖 antd 默认样式 */
+  /* 💡 核心代码：让图片像图三一样填满容器，多余部分剪裁，不留白 */
+  object-fit: cover;
   display: block;
-  border-radius: 12px;
 }
 
-.imagePlaceholder {
-  width: 100%;
-  height: 450px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #eee;
-  border-radius: 12px;
+/* 适配手机端，高度调低一点 */
+@media (max-width: 768px) {
+  .carouselItem, .detailImage {
+    height: 240px !important;
+  }
 }
 
 .carouselHint {
-  margin-top: 8px; /* 💡 缩小间距，让提示语紧贴图片 */
   text-align: center;
   color: #999;
   font-size: 12px;
+  margin-top: 12px;
 }
 
 .specsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 20px;
-  background: #f9f9f9;
-  padding: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  background: #fafafa;
+  padding: 16px;
   border-radius: 8px;
 }
 
 .specItem {
   border-left: 3px solid #1890ff;
   padding-left: 12px;
-}
-
-@media (max-width: 768px) {
-  .mainCard {
-    margin: 0 -16px;
-    border-radius: 0;
-  }
-  
-  .detailImage {
-    max-height: 300px; /* 💡 手机端限制一个合理的高度，防止太高 */
-    border-radius: 8px;
-  }
-  
-  /* 隐藏轮播图下面的小点点(dots)，因为它经常会挡住文字提示 */
-  .imageCarousel :global(.slick-dots) {
-    bottom: -10px !important;
-    display: none !important;
-  }
-  
-  .specsGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 16px;
-  }
 }
